@@ -3,63 +3,49 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Game Database — player stats, loadouts, and skin showcases. Coming soon."
-    />
-    <title>Game Database · gdb.gg</title>
+    <meta name="description" content="gdb.gg — loading" />
+    <title>gdb.gg</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="bg-grid" aria-hidden="true"></div>
-    <div class="bg-glow" aria-hidden="true"></div>
+    <div class="stage">
+      <div class="mesh" aria-hidden="true"></div>
+      <div class="grid-drift" aria-hidden="true"></div>
 
-    <header class="site-header">
-      <a class="logo" href="/">gdb<span class="logo-dot">.</span>gg</a>
-      <span class="badge">Coming soon</span>
-    </header>
+      <div class="orbs" aria-hidden="true">
+        <span class="orb orb-1"></span>
+        <span class="orb orb-2"></span>
+        <span class="orb orb-3"></span>
+      </div>
 
-    <main>
-      <section class="hero">
-        <h1 class="hero-title">
-          <span class="hero-line">Game</span>
-          <span class="hero-line accent">Database</span>
-        </h1>
-        <p class="hero-lead">
-          Track profiles, stats, and collections — built for players who care
-          how they look and how they play.
-        </p>
-      </section>
+      <canvas id="sparkles" class="sparkles" aria-hidden="true"></canvas>
 
-      <section class="cards" aria-label="Highlights">
-        <article class="glass-card">
-          <div class="card-icon" aria-hidden="true">◇</div>
-          <h2>Player profiles</h2>
-          <p>Unified stats and history across your favorite titles.</p>
-        </article>
-        <article class="glass-card">
-          <div class="card-icon" aria-hidden="true">◈</div>
-          <h2>Skin showcases</h2>
-          <p>Show off loadouts and cosmetics in a clean, shareable view.</p>
-        </article>
-        <article class="glass-card">
-          <div class="card-icon" aria-hidden="true">◎</div>
-          <h2>More soon</h2>
-          <p>This page is a placeholder while we wire up the real thing.</p>
-        </article>
-      </section>
-    </main>
+      <div class="orbit" aria-hidden="true">
+        <div class="orbit-ring">
+          <span class="orbit-dot"></span>
+          <span class="orbit-dot"></span>
+          <span class="orbit-dot"></span>
+        </div>
+      </div>
 
-    <footer class="site-footer">
-      <p><strong>gdb.gg</strong> — Game Database</p>
-      <p class="footer-note">DNS &amp; hosting test page. No data collected here.</p>
-    </footer>
+      <main class="core">
+        <div class="glass-panel">
+          <h1 class="brand">
+            gdb<span class="brand-dot">.</span>gg
+          </h1>
+          <div class="load-row" role="status" aria-live="polite" aria-label="Loading">
+            <span class="loader-ring" aria-hidden="true"></span>
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          </div>
+        </div>
+      </main>
+    </div>
 
     <script src="script.js"></script>
   </body>
