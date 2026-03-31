@@ -102,10 +102,7 @@
                   '<a href="/hub.html#features">Features</a>' +
                   '<a href="/hub.html#about">About</a>' +
                   '</div>'
-                : '<div class="master-nav-anchors" aria-label="Quick links">' +
-                  '<a href="/marathon/">Marathon</a>' +
-                  '<a href="/hub.html">Explore</a>' +
-                  '</div>')
+                : '')
             : '';
 
         const mobileItems = [{ id: 'home', href: '/', label: 'Home', icon: HOME_ICON }].concat(PLATFORM_LINKS);
@@ -120,8 +117,8 @@
         return (
             '<nav class="master-nav" aria-label="gdb.gg sites">' +
             '<div class="master-nav-inner">' +
-            '<a href="/" class="master-nav-brand" title="gdb.gg home">' +
-            '<img src="/assets/icons/gdb-mark.svg" alt="" class="master-nav-brand-mark" width="20" height="20">' +
+            '<a href="/" class="master-nav-brand" title="GDB.GG home">' +
+            '<img src="/logo.png" alt="" class="master-nav-brand-mark" width="20" height="20">' +
             '<span class="master-nav-wordmark">gdb<span class="master-nav-dot">.</span>gg</span>' +
             '</a>' +
             '<div class="master-nav-platforms" role="navigation">' + platformsHTML + '</div>' +

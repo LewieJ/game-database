@@ -500,6 +500,11 @@
     body {
         padding-bottom: 80px !important;
     }
+
+    /* Landing page: keep padding minimal (avoid giant footer void). */
+    body.page-home-landing {
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+    }
 }
 
 /* Mobile bottom nav - injected via JS */

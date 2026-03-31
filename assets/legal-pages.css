@@ -1,0 +1,119 @@
+/* ============================================
+   GDB.GG — Legal / Info Pages
+   Shared styling for /pages/*
+   ============================================ */
+
+html[data-rnk-platform] body {
+  color: var(--text-primary, #e8eaed);
+}
+
+.legal-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 18px 46px;
+}
+
+.legal-card {
+  background: rgba(20, 20, 25, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  padding: 28px;
+}
+
+.legal-card h1 {
+  margin: 0 0 10px;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.legal-card .subtitle {
+  margin: 0 0 22px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.legal-card h2,
+.legal-card h3 {
+  color: #ffffff;
+  margin-top: 22px;
+  margin-bottom: 12px;
+}
+
+.legal-card p,
+.legal-card li {
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.7;
+}
+
+.legal-card a {
+  color: var(--accent-light, #8ab4f8);
+  text-decoration: none;
+}
+
+.legal-card a:hover {
+  text-decoration: underline;
+}
+
+.legal-card ul,
+.legal-card ol {
+  padding-left: 1.25rem;
+}
+
+/* Policy embed overrides (Terms/Privacy are generated HTML) */
+[data-custom-class='body'], [data-custom-class='body'] * {
+  background: transparent !important;
+}
+[data-custom-class='title'], [data-custom-class='title'] * {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif !important;
+  font-size: 26px !important;
+  color: #ffffff !important;
+}
+[data-custom-class='subtitle'], [data-custom-class='subtitle'] * {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  font-size: 14px !important;
+}
+[data-custom-class='heading_1'], [data-custom-class='heading_1'] * {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif !important;
+  font-size: 19px !important;
+  color: #ffffff !important;
+}
+[data-custom-class='heading_2'], [data-custom-class='heading_2'] * {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif !important;
+  font-size: 17px !important;
+  color: #ffffff !important;
+}
+[data-custom-class='body_text'], [data-custom-class='body_text'] * {
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-size: 14px !important;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif !important;
+}
+[data-custom-class='link'], [data-custom-class='link'] * {
+  color: var(--accent-light, #8ab4f8) !important;
+  font-size: 14px !important;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif !important;
+  word-break: break-word !important;
+}
+
+.legal-footer {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 18px 28px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.85rem;
+}
+
+.legal-footer a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+}
+
+.legal-footer a:hover {
+  text-decoration: underline;
+}
+
