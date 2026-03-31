@@ -1,0 +1,16 @@
+{
+  "name": "MARATHON DB",
+  "short_name": "MarathonDB",
+  "description": "Community database for Marathon by Bungie",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#d4ff00",
+  "icons": [
+    {
+      "src": "/marathon/rnk_128.jpg",
+      "sizes": "128x128",
+      "type": "image/jpeg"
+    }
+  ]
+}

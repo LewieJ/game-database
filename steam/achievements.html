@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/gdb-mark.svg">
+    <title>Steam Achievement Leaderboards – Top Achievers | gdb.gg</title><!-- Theme Color -->
+    <meta name="theme-color" content="#1b2838">
+    <meta name="msapplication-TileColor" content="#1b2838">
+    
+    <link rel="stylesheet" href="/assets/global.css">
+    <link rel="stylesheet" href="css/steam.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--steam-darker) 0%, var(--steam-dark) 100%);
+        }
+
+        body::before {
+            display: none;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--gold), #ffed4a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Stats Overview */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid rgba(102, 192, 244, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--steam-blue);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .stat-value.gold { color: var(--gold); }
+        .stat-card .stat-value.success { color: var(--success); }
+
+        .stat-card .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Sort Tabs */
+        .sort-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .sort-btn {
+            padding: 10px 20px;
+            background: rgba(102, 192, 244, 0.1);
+            border: 1px solid rgba(102, 192, 244, 0.2);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sort-btn:hover {
+            background: rgba(102, 192, 244, 0.15);
+            color: var(--text-primary);
+        }
+
+        .sort-btn.active {
+            background: var(--steam-blue);
+            border-color: var(--steam-blue);
+            color: white;
+        }
+
+        /* Leaderboard Table */
+        .leaderboard-section {
+            background: rgba(27, 40, 56, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .leaderboard-header h2 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table th {
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .leaderboard-table th:first-child { width: 60px; text-align: center; }
+
+        .leaderboard-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(102, 192, 244, 0.05);
+            color: var(--text-primary);
+        }
+
+        .leaderboard-table tr:hover {
+            background: rgba(102, 192, 244, 0.05);
+        }
+
+        /* Rank Badges */
+        .rank-cell {
+            text-align: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 0.9rem;
+        }
+
+        .rank-badge.gold {
+            background: linear-gradient(135deg, var(--gold), #b8860b);
+            color: #1a1a1a;
+        }
+
+        .rank-badge.silver {
+            background: linear-gradient(135deg, var(--silver), #a0a0a0);
+            color: #1a1a1a;
+        }
+
+        .rank-badge.bronze {
+            background: linear-gradient(135deg, var(--bronze), #8b4513);
+            color: white;
+        }
+
+        /* User Cell */
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-name a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .user-name a:hover {
+            color: var(--steam-blue);
+        }
+
+        .user-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Stats Cells */
+        .stat-primary {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--steam-blue);
+        }
+
+        .stat-secondary {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Perfect Badge */
+        .perfect-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--gold);
+        }
+
+        /* Rarest Achievement */
+        .rarest-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rarity-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .rarity-badge.ultra-rare {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .rarity-badge.rare {
+            background: rgba(255, 217, 61, 0.2);
+            color: #ffd93d;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            margin-bottom: 20px;
+        }
+
+        .empty-state .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--steam-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* Game Selector for per-game leaderboards */
+        .game-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .game-search {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .game-search::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Tracking Section */
+        .tracking-section {
+            margin-top: 40px;
+            padding: 24px;
+            background: rgba(102, 192, 244, 0.05);
+            border: 1px dashed rgba(102, 192, 244, 0.3);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .tracking-section h3 {
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .tracking-section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .tracking-form {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tracking-input {
+            padding: 12px 16px;
+            background: rgba(27, 40, 56, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            min-width: 300px;
+        }
+
+        .tracking-btn {
+            padding: 12px 24px;
+            background: var(--steam-blue);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .tracking-btn:hover {
+            background: #7dcff8;
+        }
+
+        .tracking-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .tracking-message {
+            margin-top: 12px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .tracking-message.success {
+            background: rgba(95, 186, 70, 0.15);
+            color: var(--success);
+        }
+
+        .tracking-message.error {
+            background: rgba(220, 53, 69, 0.15);
+            color: var(--danger);
+        }
+
+        /* Loading Container */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading-container .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(102, 192, 244, 0.2);
+            border-top-color: var(--steam-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Warning Banner */
+        .warning-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 193, 7, 0.05));
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+        }
+
+        .warning-banner svg {
+            width: 24px;
+            height: 24px;
+            fill: #ffc107;
+            flex-shrink: 0;
+        }
+
+        .warning-banner p {
+            flex: 1;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .warning-banner p a {
+            color: var(--steam-blue);
+            text-decoration: none;
+        }
+
+        .warning-banner p a:hover {
+            text-decoration: underline;
+        }
+
+        .warning-banner .dismiss-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 8px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .warning-banner .dismiss-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .warning-banner.hidden {
+            display: none;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--steam-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 32px;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .modal-content h3 {
+            font-size: 1.1rem;
+            color: var(--steam-blue);
+            margin: 20px 0 12px;
+        }
+
+        .modal-content p,
+        .modal-content li {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .modal-content ul {
+            margin-left: 20px;
+            margin-bottom: 16px;
+        }
+
+        .modal-content li {
+            margin-bottom: 8px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Utility Classes */
+        .text-muted {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Auto-track notification */
+        .auto-track-notice {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(95, 186, 70, 0.1);
+            border: 1px solid rgba(95, 186, 70, 0.2);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--success);
+            margin-top: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .leaderboard-table th:nth-child(4),
+            .leaderboard-table td:nth-child(4),
+            .leaderboard-table th:nth-child(5),
+            .leaderboard-table td:nth-child(5) {
+                display: none;
+            }
+
+            .user-cell {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .user-avatar {
+                width: 36px;
+                height: 36px;
+            }
+
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sort-tabs {
+                justify-content: center;
+            }
+
+            .tracking-input {
+                min-width: 100%;
+            }
+
+            .tracking-form {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="global-nav"></div>
+    <script src="/assets/global.js"></script>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Info Banner -->
+        <div class="warning-banner" id="warningBanner">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <p><strong>Auto-Tracking Enabled:</strong> Profiles are automatically added to leaderboards when searched. <a href="#tracking-section">You can also add a profile manually below.</a></p>
+            <button class="dismiss-btn" onclick="dismissWarning()">×</button>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>🏆 Achievement Leaderboards</h1>
+            <p>Compete with other achievement hunters across Steam</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-overview" id="statsOverview">
+            <div class="stat-card">
+                <div class="stat-value" id="totalTracked">-</div>
+                <div class="stat-label">Tracked Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value gold" id="topAchievements">-</div>
+                <div class="stat-label">Top Player Achievements</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value success" id="totalPerfect">-</div>
+                <div class="stat-label">Perfect Games (Total)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="rarestUnlock">-</div>
+                <div class="stat-label">Rarest Unlock</div>
+            </div>
+        </div>
+
+        <!-- Sort Tabs -->
+        <div class="sort-tabs">
+            <button class="sort-btn active" data-sort="total" onclick="changeSort('total', this)">
+                🏆 Total Achievements
+            </button>
+            <button class="sort-btn" data-sort="perfect" onclick="changeSort('perfect', this)">
+                ⭐ Perfect Games
+            </button>
+            <button class="sort-btn" data-sort="completion" onclick="changeSort('completion', this)">
+                📊 Completion Rate
+            </button>
+            <button class="sort-btn" data-sort="rarest" onclick="changeSort('rarest', this)">
+                💎 Rarest Unlocks
+            </button>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div class="leaderboard-section">
+            <div class="leaderboard-header">
+                <h2 id="leaderboardTitle">🏆 Total Achievements</h2>
+                <span class="text-muted" id="lastUpdate"></span>
+            </div>
+            
+            <div id="leaderboardContent">
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Loading leaderboard...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tracking Section -->
+        <div class="tracking-section" id="tracking-section">
+            <h3>📝 Add a Profile to Leaderboard</h3>
+            <p>Profiles are automatically tracked when searched, but you can also manually add any Steam profile below</p>
+            <div class="auto-track-notice">
+                ✓ Auto-tracking is enabled for all profile searches
+            </div>
+            <div class="tracking-form" style="margin-top: 16px;">
+                <input type="text" class="tracking-input" id="steamIdInput" 
+                       placeholder="Steam ID (76561198...) or Profile URL">
+                <button class="tracking-btn" id="trackBtn" onclick="trackUser()">
+                    Add to Leaderboard
+                </button>
+            </div>
+            <div id="trackingMessage"></div>
+        </div>
+    </main>
+
+    <!-- Info Modal -->
+    <div class="modal-overlay" id="infoModal" onclick="closeInfoModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeInfoModal()">&times;</button>
+            <h2>🏆 Achievement Tracking</h2>
+            <p>gdb.gg tracks achievement progress for Steam users, creating competitive leaderboards across the platform.</p>
+            <h3>How It Works</h3>
+            <ul>
+                <li><strong>Automatic:</strong> Profiles are automatically added when searched</li>
+                <li>Your achievements are scanned every hour</li>
+                <li>Compete for rankings in total achievements, perfect games, and more</li>
+                <li>Your profile must be public for tracking to work</li>
+            </ul>
+            <h3>Leaderboard Categories</h3>
+            <ul>
+                <li><strong>Total Achievements:</strong> Most achievements unlocked across all games</li>
+                <li><strong>Perfect Games:</strong> Most games with 100% completion</li>
+                <li><strong>Completion Rate:</strong> Highest average completion percentage</li>
+                <li><strong>Rarest Unlocks:</strong> Users with the rarest achievements (lowest global %)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="js/steam.js"></script>
+    <script>
+        const API_BASE = 'https://steam.gdb.gg/steam/api';
+        let currentSort = 'total';
+
+        // Sort titles
+        const sortTitles = {
+            total: '🏆 Total Achievements',
+            perfect: '⭐ Perfect Games',
+            completion: '📊 Completion Rate',
+            rarest: '💎 Rarest Unlocks'
+        };
+
+        async function loadLeaderboard() {
+            const content = document.getElementById('leaderboardContent');
+            content.innerHTML = `
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Loading leaderboard...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${API_BASE}/leaderboards/achievements?sort=${currentSort}&limit=50`);
+                const data = await response.json();
+
+                if (!data.success || !data.data?.leaderboard?.length) {
+                    content.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No Users Tracked Yet</h3>
+                            <p>Be the first to join the achievement leaderboard!</p>
+                            <a href="#tracking-section" class="cta-btn">
+                                📝 Add Your Steam ID
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const leaderboard = data.data.leaderboard;
+                
+                // Update stats
+                updateStats(leaderboard, data.data.total_entries);
+
+                // Render table
+                content.innerHTML = `
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Player</th>
+                                <th>${currentSort === 'total' ? 'Achievements' : currentSort === 'perfect' ? 'Perfect Games' : currentSort === 'completion' ? 'Avg Completion' : 'Rarest'}</th>
+                                <th>Perfect Games</th>
+                                <th>Completion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${leaderboard.map((user, index) => renderUserRow(user, index + 1)).join('')}
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById('lastUpdate').textContent = `Updated ${new Date().toLocaleTimeString()}`;
+
+            } catch (error) {
+                console.error('Failed to load leaderboard:', error);
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Failed to Load Leaderboard</h3>
+                        <p>Please try again later.</p>
+                        <button class="cta-btn" onclick="loadLeaderboard()">
+                            🔄 Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats(leaderboard, totalEntries) {
+            document.getElementById('totalTracked').textContent = formatNumber(totalEntries || leaderboard.length);
+            
+            if (leaderboard.length > 0) {
+                const top = leaderboard[0];
+                document.getElementById('topAchievements').textContent = formatNumber(top.stats?.total_achievements || 0);
+                
+                // Calculate total perfect games
+                const totalPerfect = leaderboard.reduce((sum, u) => sum + (u.stats?.perfect_games || 0), 0);
+                document.getElementById('totalPerfect').textContent = formatNumber(totalPerfect);
+                
+                // Find rarest unlock
+                const rarest = leaderboard.reduce((min, u) => {
+                    const rare = u.stats?.rarest_achievement || 100;
+                    return rare < min ? rare : min;
+                }, 100);
+                document.getElementById('rarestUnlock').textContent = rarest < 100 ? `${rarest.toFixed(2)}%` : '-';
+            }
+        }
+
+        function renderUserRow(user, rank) {
+            const stats = user.stats || {};
+            const rankBadge = rank <= 3 ? 
+                `<span class="rank-badge ${rank === 1 ? 'gold' : rank === 2 ? 'silver' : 'bronze'}">${rank}</span>` : 
+                rank;
+
+            // Primary stat based on sort
+            let primaryStat = '';
+            switch (currentSort) {
+                case 'total':
+                    primaryStat = `<span class="stat-primary">${formatNumber(stats.total_achievements || 0)}</span>`;
+                    break;
+                case 'perfect':
+                    primaryStat = `<span class="stat-primary">${stats.perfect_games || 0}</span>
+                                   <span class="stat-secondary">games</span>`;
+                    break;
+                case 'completion':
+                    primaryStat = `<span class="stat-primary">${(stats.average_completion || 0).toFixed(1)}%</span>`;
+                    break;
+                case 'rarest':
+                    const rarePercent = stats.rarest_achievement || 100;
+                    const rarityClass = rarePercent < 1 ? 'ultra-rare' : 'rare';
+                    primaryStat = `<span class="rarity-badge ${rarityClass}">${rarePercent.toFixed(2)}%</span>`;
+                    break;
+            }
+
+            return `
+                <tr>
+                    <td class="rank-cell">${rankBadge}</td>
+                    <td>
+                        <div class="user-cell">
+                            <img src="${user.avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg'}" 
+                                 alt="${user.name}" 
+                                 class="user-avatar"
+                                 onerror="this.src='https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg'">
+                            <div class="user-info">
+                                <div class="user-name">
+                                    <a href="profile.html?id=${user.steamid}" target="_blank">${user.name || 'Unknown'}</a>
+                                </div>
+                                <div class="user-meta">
+                                    Last updated: ${user.last_updated ? new Date(user.last_updated).toLocaleDateString() : 'Never'}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${primaryStat}</td>
+                    <td>
+                        ${stats.perfect_games > 0 ? 
+                            `<span class="perfect-badge">⭐ ${stats.perfect_games}</span>` : 
+                            '<span class="text-muted">0</span>'}
+                    </td>
+                    <td>
+                        <span class="stat-secondary">${(stats.average_completion || 0).toFixed(1)}%</span>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function changeSort(sort, btn) {
+            currentSort = sort;
+            
+            // Update active button
+            document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Update title
+            document.getElementById('leaderboardTitle').textContent = sortTitles[sort];
+            
+            // Reload leaderboard
+            loadLeaderboard();
+        }
+
+        async function trackUser() {
+            const input = document.getElementById('steamIdInput');
+            const btn = document.getElementById('trackBtn');
+            const messageDiv = document.getElementById('trackingMessage');
+            
+            let steamId = input.value.trim();
+            
+            if (!steamId) {
+                messageDiv.innerHTML = '<div class="tracking-message error">Please enter a Steam ID or profile URL</div>';
+                return;
+            }
+
+            // Extract Steam ID from URL if provided
+            const urlMatch = steamId.match(/steamcommunity\.com\/(id|profiles)\/([^\/]+)/);
+            if (urlMatch) {
+                steamId = urlMatch[2];
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Adding...';
+            messageDiv.innerHTML = '';
+
+            try {
+                // If it's a vanity URL, resolve it first
+                if (!/^\d{17}$/.test(steamId)) {
+                    const resolveRes = await fetch(`${API_BASE}/user/resolve/${encodeURIComponent(steamId)}`);
+                    const resolveData = await resolveRes.json();
+                    
+                    if (resolveData.success && resolveData.data?.steamid) {
+                        steamId = resolveData.data.steamid;
+                    } else {
+                        throw new Error('Could not resolve Steam ID. Make sure your profile URL is correct.');
+                    }
+                }
+
+                // Add to tracking
+                const response = await fetch(`${API_BASE}/tracked/users`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ steamid: steamId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    messageDiv.innerHTML = `
+                        <div class="tracking-message success">
+                            ✓ ${data.data?.name || 'User'} added to tracking! Your stats will appear on the next update.
+                        </div>
+                    `;
+                    input.value = '';
+                    
+                    // Reload leaderboard after short delay
+                    setTimeout(() => loadLeaderboard(), 2000);
+                } else {
+                    throw new Error(data.message || 'Failed to add user');
+                }
+
+            } catch (error) {
+                console.error('Track error:', error);
+                messageDiv.innerHTML = `
+                    <div class="tracking-message error">
+                        ✗ ${error.message || 'Failed to add user. Please try again.'}
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Start Tracking';
+            }
+        }
+
+        function closeInfoModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('infoModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLeaderboard();
+            checkWarningBanner();
+        });
+
+        // Enter key for tracking input
+        document.getElementById('steamIdInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') trackUser();
+        });
+    </script>
+
+    <footer style="text-align: center; padding: 2rem; color: var(--steam-text-dim); font-size: 0.8rem; border-top: 1px solid rgba(102, 192, 244, 0.1); margin-top: 3rem;">
+        <p>&copy; 2025 gdb.gg — Built with <span>♥</span> by a non-dev</p>
+    </footer>
+</body>
+</html>

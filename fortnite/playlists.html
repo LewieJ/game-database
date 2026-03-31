@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/gdb-mark.svg">
+  <link rel="stylesheet" href="/assets/global.css">
+  <link rel="stylesheet" href="/fortnite/css/fortnite.css">
+  <link rel="stylesheet" href="/fortnite/css/fortnite-nav.css">
+  <title>Fortnite Playlist Health - gdb.gg | Live Player Counts by Mode</title><!-- Theme Color -->
+  <meta name="theme-color" content="#f7c948">
+  <meta name="msapplication-TileColor" content="#0d1117">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+  <style>
+    :root {
+      --bg-base: #0d1117;
+      --bg-elevated: #161b22;
+      --bg-surface: #1c2128;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --bg-card-hover: rgba(255, 255, 255, 0.06);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.8);
+      --text-tertiary: rgba(255, 255, 255, 0.5);
+      --text-muted: rgba(255, 255, 255, 0.3);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      
+      /* Classic Fortnite Colors */
+      --fn-yellow: #f7c948;
+      --fn-blue: #00d4ff;
+      --fn-green: #34d399;
+      --fn-red: #ef4444;
+      --fn-purple: #a855f7;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Bungee', cursive;
+      font-size: 1.75rem;
+      font-weight: 400;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header h1 span {
+      color: var(--fn-yellow);
+    }
+
+    .subtitle {
+      color: var(--text-tertiary);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    /* Status Badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      color: var(--fn-green);
+    }
+
+    .status-badge.stale {
+      background: rgba(247, 201, 72, 0.1);
+      border-color: rgba(247, 201, 72, 0.3);
+      color: var(--fn-yellow);
+    }
+
+    .status-badge.error {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--fn-red);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .status-badge.error .status-dot {
+      animation: none;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      padding: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .stat-value {
+      font-family: 'Bungee', cursive;
+      font-size: 1.5rem;
+      color: var(--fn-blue);
+    }
+
+    .stat-value.large {
+      font-size: 2rem;
+      color: var(--fn-yellow);
+    }
+
+    .stat-label {
+      color: var(--text-tertiary);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-delta {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .stat-delta.positive {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--fn-green);
+    }
+
+    .stat-delta.negative {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--fn-red);
+    }
+
+    .stat-change {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Loading */
+    .loading-pulse {
+      animation: loadPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes loadPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Section Cards */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .section-title {
+      font-family: 'Bungee', cursive;
+      font-size: 1rem;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Breakdown Cards */
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .breakdown-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .breakdown-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .breakdown-stats {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .breakdown-stat {
+      flex: 1;
+    }
+
+    .breakdown-percent {
+      font-family: 'Bungee', cursive;
+      font-size: 1.5rem;
+    }
+
+    .breakdown-label {
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+    }
+
+    .breakdown-count {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .breakdown-bar {
+      height: 6px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 3px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .breakdown-bar-fill {
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    /* Chart Section */
+    .chart-container {
+      position: relative;
+      height: 300px;
+      width: 100%;
+    }
+
+    .time-selector {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .time-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .time-btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text-secondary);
+    }
+
+    .time-btn.active {
+      background: var(--fn-yellow);
+      border-color: var(--fn-yellow);
+      color: #000;
+    }
+
+    .chart-disclaimer {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      background: rgba(247, 201, 72, 0.08);
+      border: 1px solid rgba(247, 201, 72, 0.15);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      margin-top: 0.75rem;
+      width: 100%;
+    }
+
+    .chart-disclaimer span {
+      font-size: 0.85rem;
+    }
+
+    /* Tables Section */
+    .tables-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .table-section h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .table-section h4.official {
+      color: var(--fn-blue);
+    }
+
+    .table-section h4.creative {
+      color: var(--fn-purple);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 0.6rem 0.5rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table th:not(:first-child) {
+      text-align: right;
+    }
+
+    .data-table td {
+      padding: 0.6rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .data-table td:not(:first-child) {
+      text-align: right;
+    }
+
+    .data-table tbody tr {
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .data-table tbody tr:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .rank-badge {
+      font-weight: 700;
+      margin-right: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .rank-1 { color: #ffc107; }
+    .rank-2 { color: #9aa0a6; }
+    .rank-3 { color: #cd7f32; }
+    .rank-default { color: var(--text-muted); }
+
+    .mode-name {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .island-creator {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .island-code {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-family: 'Courier New', monospace;
+    }
+
+    .player-count {
+      font-family: 'Bungee', cursive;
+      font-size: 0.85rem;
+      color: var(--fn-green);
+    }
+
+    .peak-count {
+      color: var(--text-tertiary);
+      font-size: 0.8rem;
+    }
+
+    /* Search */
+    .search-container {
+      position: relative;
+    }
+
+    .search-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.75rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-tertiary);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .search-toggle:hover {
+      border-color: var(--border-hover);
+      color: var(--text-secondary);
+    }
+
+    .search-toggle.active {
+      border-color: var(--fn-yellow);
+      color: var(--fn-yellow);
+    }
+
+    .search-input-wrapper {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.5rem;
+      width: 280px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      z-index: 100;
+      display: none;
+    }
+
+    .search-input-wrapper.show {
+      display: block;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-family: 'Outfit', sans-serif;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--fn-yellow);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-results {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 0.5rem;
+    }
+
+    .search-result {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .search-result:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .search-result-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .search-result-title {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .search-result-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .search-result-ccu {
+      font-family: 'Bungee', cursive;
+      font-size: 0.8rem;
+      color: var(--fn-green);
+      margin-left: 0.75rem;
+    }
+
+    .search-empty {
+      text-align: center;
+      padding: 1rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .search-loading {
+      text-align: center;
+      padding: 1rem;
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem 2rem;
+      color: var(--text-tertiary);
+      font-size: 0.75rem;
+      border-top: 1px solid var(--border);
+      margin-top: 4rem;
+      background: var(--bg-elevated);
+    }
+
+    footer p {
+      margin: 0.25rem 0;
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: var(--fn-yellow);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    footer a:hover {
+      color: #ffe066;
+      text-decoration: underline;
+    }
+
+    .footer-disclaimer {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      main {
+        padding: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.4rem;
+      }
+
+      .stats-bar {
+        gap: 1rem;
+      }
+
+      .stat-value.large {
+        font-size: 1.5rem;
+      }
+
+      .breakdown-grid,
+      .tables-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-container {
+        height: 250px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-bar {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="global-nav"></div>
+  <script src="/assets/global.js"></script>
+  <div id="fortnite-sub-nav"></div>
+  <script src="/fortnite/js/fortnite-nav.js"></script>
+
+  <main>
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>Playlist <span>Health</span></h1>
+      <p class="subtitle">
+        Live player counts across all game modes
+        <span class="status-badge" id="lastUpdated">
+          <span class="status-dot"></span>
+          Loading...
+        </span>
+      </p>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-value large loading-pulse" id="totalCCU">—</span>
+        <span class="stat-label">Players Online</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value loading-pulse" id="peakToday">—</span>
+        <span class="stat-label">24h Peak</span>
+        <span class="stat-change" id="peakChange"></span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value loading-pulse" id="minToday">—</span>
+        <span class="stat-label">24h Low</span>
+        <span class="stat-change" id="minChange"></span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-delta" id="ccuDelta">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Breakdown Cards -->
+    <div class="breakdown-grid">
+      <!-- Epic vs UGC -->
+      <div class="breakdown-card">
+        <div class="breakdown-title">
+          <span>🎮</span> Epic vs UGC
+        </div>
+        <div class="breakdown-stats">
+          <div class="breakdown-stat">
+            <div class="breakdown-percent" style="color: var(--fn-blue);" id="epicPercent">--</div>
+            <div class="breakdown-label">Epic Official</div>
+            <div class="breakdown-count" id="epicCount">-- players</div>
+          </div>
+          <div class="breakdown-stat">
+            <div class="breakdown-percent" style="color: var(--fn-purple);" id="ugcPercent">--</div>
+            <div class="breakdown-label">User-Generated</div>
+            <div class="breakdown-count" id="ugcCount">-- players</div>
+          </div>
+        </div>
+        <div class="breakdown-bar">
+          <div class="breakdown-bar-fill" id="epicBar" style="background: var(--fn-blue); width: 50%;"></div>
+          <div class="breakdown-bar-fill" id="ugcBar" style="background: var(--fn-purple); width: 50%;"></div>
+        </div>
+      </div>
+
+      <!-- Build vs Zero Build -->
+      <div class="breakdown-card">
+        <div class="breakdown-title">
+          <span>🏗️</span> Build vs Zero Build
+        </div>
+        <div class="breakdown-stats">
+          <div class="breakdown-stat">
+            <div class="breakdown-percent" style="color: var(--fn-yellow);" id="buildPercent">--</div>
+            <div class="breakdown-label">Build</div>
+            <div class="breakdown-count" id="buildCount">-- players</div>
+          </div>
+          <div class="breakdown-stat">
+            <div class="breakdown-percent" style="color: var(--fn-purple);" id="zeroBuildPercent">--</div>
+            <div class="breakdown-label">Zero Build</div>
+            <div class="breakdown-count" id="zeroBuildCount">-- players</div>
+          </div>
+        </div>
+        <div class="breakdown-bar">
+          <div class="breakdown-bar-fill" id="buildBar" style="background: var(--fn-yellow); width: 50%;"></div>
+          <div class="breakdown-bar-fill" id="zeroBuildBar" style="background: var(--fn-purple); width: 50%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CCU History Chart -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title">📊 Player Count History</div>
+        <div class="time-selector">
+          <button class="time-btn active" data-days="7">7 Days</button>
+          <button class="time-btn" data-days="30">30 Days</button>
+          <button class="time-btn" data-days="0">All Time</button>
+        </div>
+      </div>
+      <div class="chart-disclaimer" id="chartDisclaimer" style="display: none;">
+        <span>ℹ️</span> All-time data is collected by gdb.gg. Some historical periods may be incomplete.
+      </div>
+      <div class="chart-container">
+        <canvas id="ccuChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Most Played Maps -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title">🏆 Most Played</div>
+        <div class="search-container">
+          <button class="search-toggle" id="searchToggle">
+            <span>🔍</span> Search Islands
+          </button>
+          <div class="search-input-wrapper" id="searchDropdown">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search by name, creator, or code..." autocomplete="off">
+            <div class="search-results" id="searchResults"></div>
+          </div>
+        </div>
+      </div>
+      <div class="tables-grid">
+        <!-- Official Modes -->
+        <div class="table-section">
+          <h4 class="official"><span>⚔️</span> Official Modes</h4>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mode</th>
+                <th>Players</th>
+              </tr>
+            </thead>
+            <tbody id="officialTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Creative Islands -->
+        <div class="table-section">
+          <h4 class="creative"><span>🎨</span> Creative Islands</h4>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Island</th>
+                <th>Players</th>
+                <th>Peak</th>
+              </tr>
+            </thead>
+            <tbody id="creativeTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ==================== CONSTANTS ====================
+    const API_BASE = 'https://fortniteccu.gdb.gg';
+    const REFRESH_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+    const CREATIVE_ISLANDS_LIMIT = 50;
+    const TOP_MAPS_COUNT = 15;
+
+    // Chart colors - using CSS variable values
+    const COLORS = {
+      total: '#34d399',
+      official: '#00d4ff',
+      creative: '#a855f7',
+      build: '#f7c948',
+      zeroBuild: '#a855f7'
+    };
+
+    // State
+    let ccuChart = null;
+    let chartDays = 7;
+
+    // ==================== UTILITY FUNCTIONS ====================
+    function formatNumber(num) {
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+      return num.toLocaleString();
+    }
+
+    function formatFullNumber(num) {
+      return num.toLocaleString();
+    }
+
+    function timeAgo(date) {
+      const now = new Date();
+      const diff = now - new Date(date);
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'Just now';
+      if (mins < 60) return `${mins}m ago`;
+      const hours = Math.floor(mins / 60);
+      if (hours < 24) return `${hours}h ago`;
+      return `${Math.floor(hours / 24)}d ago`;
+    }
+
+    function smoothData(data, windowSize = 3) {
+      if (!data || data.length === 0) return data;
+      const smoothed = [];
+      for (let i = 0; i < data.length; i++) {
+        const start = Math.max(0, i - Math.floor(windowSize / 2));
+        const end = Math.min(data.length, i + Math.ceil(windowSize / 2));
+        const window = data.slice(start, end);
+        const avg = window.reduce((sum, val) => sum + (val || 0), 0) / window.length;
+        smoothed.push(Math.round(avg));
+      }
+      return smoothed;
+    }
+
+    function downsampleData(historyData, maxPointsPerDay = 24) {
+      if (!historyData || historyData.length === 0) return historyData;
+      
+      const totalDays = (new Date(historyData[historyData.length - 1].timestamp) - new Date(historyData[0].timestamp)) / (1000 * 60 * 60 * 24);
+      const maxPoints = Math.ceil(totalDays * maxPointsPerDay);
+      
+      if (historyData.length <= maxPoints) return historyData;
+      
+      const step = Math.ceil(historyData.length / maxPoints);
+      const downsampled = [];
+      
+      for (let i = 0; i < historyData.length; i += step) {
+        const chunk = historyData.slice(i, i + step);
+        const avgPoint = {
+          timestamp: chunk[Math.floor(chunk.length / 2)].timestamp,
+          total: Math.round(chunk.reduce((sum, d) => sum + (d.total || 0), 0) / chunk.length),
+          official: chunk[0].official !== null ? Math.round(chunk.reduce((sum, d) => sum + (d.official || 0), 0) / chunk.length) : null,
+          creative: chunk[0].creative !== null ? Math.round(chunk.reduce((sum, d) => sum + (d.creative || 0), 0) / chunk.length) : null
+        };
+        downsampled.push(avgPoint);
+      }
+      
+      return downsampled;
+    }
+
+    // ==================== API FUNCTIONS ====================
+    async function fetchOverview() {
+      try {
+        const response = await fetch(`${API_BASE}/ccu/overview`);
+        return await response.json();
+      } catch (error) {
+        console.error('Failed to fetch overview:', error);
+        return null;
+      }
+    }
+
+    async function fetchComprehensiveCCU() {
+      try {
+        const response = await fetch(`${API_BASE}/ccu/comprehensive`);
+        if (!response.ok) {
+          console.error('Comprehensive CCU API returned:', response.status);
+          return null;
+        }
+        return await response.json();
+      } catch (error) {
+        console.error('Failed to fetch comprehensive CCU:', error);
+        return null;
+      }
+    }
+
+    async function fetchDailySummaries(days = 30) {
+      try {
+        const response = await fetch(`${API_BASE}/ccu/daily?days=${days}`);
+        return await response.json();
+      } catch (error) {
+        console.error('Failed to fetch daily summaries:', error);
+        return null;
+      }
+    }
+
+    async function fetchCreativeIslands(limit = CREATIVE_ISLANDS_LIMIT) {
+      try {
+        const response = await fetch(`${API_BASE}/ccu/creative?limit=${limit}`);
+        return await response.json();
+      } catch (error) {
+        console.error('Failed to fetch creative islands:', error);
+        return null;
+      }
+    }
+
+    // ==================== RENDER FUNCTIONS ====================
+    function updateHeroStats(overviewData) {
+      if (!overviewData || !overviewData.success) {
+        showErrorState();
+        return;
+      }
+      
+      // Last updated
+      const lastUpdatedEl = document.getElementById('lastUpdated');
+      const timestamp = overviewData.last_updated;
+      const updateTime = new Date(timestamp);
+      const formattedTime = updateTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      lastUpdatedEl.innerHTML = `<span class="status-dot"></span> ${timeAgo(timestamp)} (${formattedTime})`;
+      lastUpdatedEl.classList.remove('error', 'stale');
+
+      const totalEl = document.getElementById('totalCCU');
+      const peakEl = document.getElementById('peakToday');
+      const minEl = document.getElementById('minToday');
+      const currentCCU = overviewData.players_online;
+      const peak = overviewData.peak_24h;
+      const min = overviewData.stats_24h.min;
+      
+      totalEl.textContent = formatFullNumber(currentCCU);
+      totalEl.classList.remove('loading-pulse');
+      
+      peakEl.textContent = formatNumber(peak);
+      peakEl.classList.remove('loading-pulse');
+      
+      minEl.textContent = formatNumber(min);
+      minEl.classList.remove('loading-pulse');
+
+      // Percentage changes
+      const peakChangeEl = document.getElementById('peakChange');
+      const minChangeEl = document.getElementById('minChange');
+      
+      const peakDiff = ((currentCCU - peak) / peak * 100);
+      const minDiff = ((currentCCU - min) / min * 100);
+      
+      peakChangeEl.textContent = `${peakDiff >= 0 ? '+' : ''}${peakDiff.toFixed(1)}% from peak`;
+      peakChangeEl.style.color = peakDiff >= 0 ? COLORS.total : '#ef4444';
+      
+      minChangeEl.textContent = `${minDiff >= 0 ? '+' : ''}${minDiff.toFixed(1)}% from low`;
+      minChangeEl.style.color = minDiff >= 0 ? COLORS.total : '#ef4444';
+
+      // Delta from average
+      const deltaEl = document.getElementById('ccuDelta');
+      const diff = overviewData.players_online - overviewData.stats_24h.avg;
+      const percent = overviewData.stats_24h.avg > 0 ? ((diff / overviewData.stats_24h.avg) * 100).toFixed(1) : 0;
+      
+      if (diff > 0) {
+        deltaEl.textContent = `+${formatNumber(Math.abs(diff))} from avg (+${percent}%)`;
+        deltaEl.classList.remove('negative');
+        deltaEl.classList.add('positive');
+      } else if (diff < 0) {
+        deltaEl.textContent = `${formatNumber(Math.abs(diff))} below avg (${percent}%)`;
+        deltaEl.classList.remove('positive');
+        deltaEl.classList.add('negative');
+      } else {
+        deltaEl.textContent = 'At average';
+        deltaEl.classList.remove('positive', 'negative');
+      }
+    }
+
+    function showErrorState() {
+      document.getElementById('totalCCU').textContent = '—';
+      document.getElementById('totalCCU').classList.remove('loading-pulse');
+      document.getElementById('peakToday').textContent = '—';
+      document.getElementById('peakToday').classList.remove('loading-pulse');
+      document.getElementById('minToday').textContent = '—';
+      document.getElementById('minToday').classList.remove('loading-pulse');
+      document.getElementById('ccuDelta').textContent = 'Unable to load';
+      document.getElementById('ccuDelta').classList.add('negative');
+      
+      const lastUpdatedEl = document.getElementById('lastUpdated');
+      lastUpdatedEl.innerHTML = '<span class="status-dot"></span> Connection error';
+      lastUpdatedEl.classList.add('error');
+    }
+
+    function updateBreakdowns(overviewData, comprehensiveData) {
+      // Epic vs UGC
+      if (overviewData && overviewData.success && overviewData.breakdown) {
+        const epicCCU = overviewData.breakdown.official || 0;
+        const ugcCCU = overviewData.breakdown.creative || 0;
+        const total = epicCCU + ugcCCU;
+
+        if (total > 0) {
+          const epicPercent = ((epicCCU / total) * 100).toFixed(1);
+          const ugcPercent = ((ugcCCU / total) * 100).toFixed(1);
+
+          document.getElementById('epicPercent').textContent = `${epicPercent}%`;
+          document.getElementById('epicCount').textContent = `${formatFullNumber(epicCCU)} players`;
+          document.getElementById('ugcPercent').textContent = `${ugcPercent}%`;
+          document.getElementById('ugcCount').textContent = `${formatFullNumber(ugcCCU)} players`;
+          document.getElementById('epicBar').style.width = `${epicPercent}%`;
+          document.getElementById('ugcBar').style.width = `${ugcPercent}%`;
+        }
+      }
+
+      // Build vs Zero Build
+      if (comprehensiveData && comprehensiveData.success && comprehensiveData.official) {
+        let buildCCU = 0;
+        let zeroBuildCCU = 0;
+
+        for (const [code, mode] of Object.entries(comprehensiveData.official)) {
+          const modeName = (mode.name || '').toLowerCase();
+          const modeCode = code.toLowerCase();
+          
+          if (modeName.includes('zero build') || modeName.includes('nobuild') || 
+              modeCode.includes('nobuild') || modeCode.includes('_zb')) {
+            zeroBuildCCU += mode.ccu || 0;
+          } else if (mode.ccu > 0) {
+            buildCCU += mode.ccu || 0;
+          }
+        }
+
+        const buildTotal = buildCCU + zeroBuildCCU;
+
+        if (buildTotal > 0) {
+          const buildPercent = ((buildCCU / buildTotal) * 100).toFixed(1);
+          const zeroBuildPercent = ((zeroBuildCCU / buildTotal) * 100).toFixed(1);
+
+          document.getElementById('buildPercent').textContent = `${buildPercent}%`;
+          document.getElementById('buildCount').textContent = `${formatFullNumber(buildCCU)} players`;
+          document.getElementById('zeroBuildPercent').textContent = `${zeroBuildPercent}%`;
+          document.getElementById('zeroBuildCount').textContent = `${formatFullNumber(zeroBuildCCU)} players`;
+          document.getElementById('buildBar').style.width = `${buildPercent}%`;
+          document.getElementById('zeroBuildBar').style.width = `${zeroBuildPercent}%`;
+        }
+      }
+    }
+
+    function updateMostPlayedMaps(comprehensiveData, creativeData) {
+      const officialTbody = document.getElementById('officialTableBody');
+      const creativeTbody = document.getElementById('creativeTableBody');
+      
+      if (!comprehensiveData || !comprehensiveData.success) {
+        officialTbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 1rem;">Failed to load</td></tr>';
+        creativeTbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1rem;">Failed to load</td></tr>';
+        return;
+      }
+
+      const officialModes = [];
+      const creativeIslands = [];
+
+      // Official modes - include all modes, even if CCU is 0 or null
+      if (comprehensiveData.official) {
+        for (const [code, mode] of Object.entries(comprehensiveData.official)) {
+          officialModes.push({
+            code,
+            title: mode.name,
+            currentCCU: mode.ccu || 0,
+            isOfficial: true
+          });
+        }
+      }
+
+      // Creative islands
+      if (creativeData && creativeData.islands) {
+        for (const island of creativeData.islands) {
+          const isEpicCreated = island.creator && island.creator.toLowerCase().includes('epic');
+          if (island.ccu > 0 && !isEpicCreated) {
+            creativeIslands.push({
+              code: island.code,
+              title: island.title || island.name || `Island ${island.code}`,
+              creator: island.creator,
+              currentCCU: island.ccu,
+              peakCCU: island.peak_ccu,
+              isOfficial: false
+            });
+          }
+        }
+      }
+
+      // Sort and slice
+      officialModes.sort((a, b) => b.currentCCU - a.currentCCU);
+      creativeIslands.sort((a, b) => b.currentCCU - a.currentCCU);
+      
+      const topOfficial = officialModes.slice(0, TOP_MAPS_COUNT);
+      const topCreative = creativeIslands.slice(0, TOP_MAPS_COUNT);
+
+      // Populate official table
+      if (topOfficial.length === 0) {
+        officialTbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 1rem;">No data</td></tr>';
+      } else {
+        officialTbody.innerHTML = topOfficial.map((mode, index) => {
+          const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-default';
+          return `
+            <tr class="playlist-row" data-type="official" data-code="${mode.code}" data-title="${mode.title}">
+              <td>
+                <span class="rank-badge ${rankClass}">#${index + 1}</span>
+                <span class="mode-name">${mode.title}</span>
+              </td>
+              <td><span class="player-count">${formatFullNumber(mode.currentCCU)}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Populate creative table
+      if (topCreative.length === 0) {
+        creativeTbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1rem;">No data</td></tr>';
+      } else {
+        creativeTbody.innerHTML = topCreative.map((island, index) => {
+          const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-default';
+          return `
+            <tr class="playlist-row" data-type="creative" data-code="${island.code}" data-title="${island.title}" data-creator="${island.creator || ''}">
+              <td>
+                <span class="rank-badge ${rankClass}">#${index + 1}</span>
+                <div style="display: inline-block; vertical-align: middle;">
+                  <span class="mode-name">${island.title}</span>
+                  ${island.creator ? `<div class="island-creator">by ${island.creator}</div>` : ''}
+                  <div class="island-code">${island.code}</div>
+                </div>
+              </td>
+              <td><span class="player-count">${formatFullNumber(island.currentCCU)}</span></td>
+              <td><span class="peak-count">${island.peakCCU ? formatFullNumber(island.peakCCU) : '-'}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Click handlers
+      document.querySelectorAll('.playlist-row').forEach(row => {
+        row.addEventListener('click', () => showPlaylistDetails(row));
+      });
+    }
+
+    function showPlaylistDetails(row) {
+      const type = row.dataset.type;
+      const code = row.dataset.code;
+      const playlistTitle = encodeURIComponent(row.dataset.title);
+      const creator = row.dataset.creator ? encodeURIComponent(row.dataset.creator) : '';
+      window.location.href = `/fortnite/playlist.html?code=${code}&type=${type}&title=${playlistTitle}&creator=${creator}`;
+    }
+
+    async function renderChart(days = 7) {
+      const ctx = document.getElementById('ccuChart').getContext('2d');
+      
+      if (ccuChart) {
+        ccuChart.destroy();
+      }
+
+      let historyData;
+      if (days === 7) {
+        const overviewData = await fetchOverview();
+        if (!overviewData || !overviewData.history_7d || overviewData.history_7d.length === 0) {
+          showChartError(ctx);
+          return;
+        }
+        historyData = overviewData.history_7d.map(d => ({
+          timestamp: d.timestamp,
+          total: d.total,
+          official: d.official,
+          creative: d.creative
+        }));
+      } else {
+        // 30 days or all time (0 = all available data)
+        const fetchDays = days === 0 ? 365 : days;
+        const dailyData = await fetchDailySummaries(fetchDays);
+        if (!dailyData || !dailyData.data || dailyData.data.length === 0) {
+          showChartError(ctx);
+          return;
+        }
+        historyData = dailyData.data
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .map(d => ({
+            timestamp: d.date + 'T12:00:00.000Z',
+            total: d.avgCCU,
+            official: d.avgOfficial || d.avg_official || null,
+            creative: d.avgCreative || d.avg_creative || null
+          }));
+      }
+
+      // Show/hide disclaimer for all-time data
+      const disclaimer = document.getElementById('chartDisclaimer');
+      if (disclaimer) {
+        disclaimer.style.display = days === 0 ? 'flex' : 'none';
+      }
+
+      historyData = downsampleData(historyData, 24);
+
+      const labels = historyData.map(d => new Date(d.timestamp));
+      
+      const rawTotalValues = historyData.map(d => d.total);
+      const rawOfficialValues = historyData.map(d => d.official);
+      const rawCreativeValues = historyData.map(d => d.creative);
+      
+      const totalValues = smoothData(rawTotalValues, 3);
+      const officialValues = rawOfficialValues[0] !== null ? smoothData(rawOfficialValues, 3) : rawOfficialValues;
+      const creativeValues = rawCreativeValues[0] !== null ? smoothData(rawCreativeValues, 3) : rawCreativeValues;
+
+      const datasets = [
+        {
+          label: 'Total Players',
+          data: totalValues,
+          borderColor: COLORS.total,
+          backgroundColor: 'rgba(52, 211, 153, 0.1)',
+          borderWidth: 2.5,
+          fill: false,
+          tension: 0.4,
+          pointRadius: 2,
+          pointHoverRadius: 6,
+          pointBackgroundColor: COLORS.total,
+          pointBorderColor: '#0d1117',
+          pointBorderWidth: 2
+        }
+      ];
+
+      // Add official/creative datasets if data is available (any time period)
+      if (officialValues.some(v => v !== null)) {
+        datasets.push(
+          {
+            label: 'Epic Official',
+            data: officialValues,
+            borderColor: COLORS.official,
+            backgroundColor: 'rgba(0, 212, 255, 0.15)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 2,
+            pointHoverRadius: 6,
+            pointBackgroundColor: COLORS.official,
+            pointBorderColor: '#0d1117',
+            pointBorderWidth: 2
+          },
+          {
+            label: 'User-Generated',
+            data: creativeValues,
+            borderColor: COLORS.creative,
+            backgroundColor: 'rgba(168, 85, 247, 0.15)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 2,
+            pointHoverRadius: 6,
+            pointBackgroundColor: COLORS.creative,
+            pointBorderColor: '#0d1117',
+            pointBorderWidth: 2
+          }
+        );
+      }
+
+      ccuChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { 
+              display: true,
+              position: 'top',
+              labels: {
+                color: '#ffffff',
+                padding: 15,
+                font: { size: 11, family: 'Outfit' },
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(13, 17, 23, 0.95)',
+              titleColor: '#ffffff',
+              bodyColor: '#00d4ff',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              padding: 12,
+              titleFont: { family: 'Outfit' },
+              bodyFont: { family: 'Outfit' },
+              displayColors: false,
+              callbacks: {
+                title: (items) => {
+                  const date = new Date(items[0].parsed.x);
+                  return date.toLocaleString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                  });
+                },
+                label: (context) => `${formatFullNumber(context.parsed.y)} players`
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day',
+                displayFormats: { day: 'MMM d' }
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.05)',
+                drawBorder: false
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.5)',
+                font: { size: 11, family: 'Outfit' }
+              }
+            },
+            y: {
+              beginAtZero: false,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.05)',
+                drawBorder: false
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.5)',
+                font: { size: 11, family: 'Outfit' },
+                callback: (value) => formatNumber(value)
+              }
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          }
+        }
+      });
+    }
+
+    function showChartError(ctx) {
+      ctx.font = '14px Outfit, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.textAlign = 'center';
+      ctx.fillText('No historical data available', ctx.canvas.width / 2, ctx.canvas.height / 2);
+    }
+
+    // ==================== DATA REFRESH ====================
+    async function refreshAllData() {
+      try {
+        const [overviewData, comprehensiveData, creativeData] = await Promise.all([
+          fetchOverview(),
+          fetchComprehensiveCCU(),
+          fetchCreativeIslands()
+        ]);
+
+        if (overviewData && overviewData.success) {
+          updateHeroStats(overviewData);
+          updateBreakdowns(overviewData, comprehensiveData);
+        } else {
+          showErrorState();
+        }
+
+        if (comprehensiveData && comprehensiveData.success) {
+          updateMostPlayedMaps(comprehensiveData, creativeData);
+        }
+
+        await renderChart(chartDays);
+      } catch (error) {
+        console.error('Failed to refresh data:', error);
+        showErrorState();
+      }
+    }
+
+    // ==================== INITIALIZATION ====================
+    async function init() {
+      await refreshAllData();
+      
+      document.querySelectorAll('.time-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          chartDays = parseInt(this.dataset.days);
+          // Handle "All Time" which uses 0
+          await renderChart(chartDays);
+        });
+      });
+
+      // Initialize search
+      initSearch();
+
+      setInterval(refreshAllData, REFRESH_INTERVAL_MS);
+    }
+
+    // ==================== SEARCH ====================
+    let searchTimeout = null;
+
+    function initSearch() {
+      const searchToggle = document.getElementById('searchToggle');
+      const searchDropdown = document.getElementById('searchDropdown');
+      const searchInput = document.getElementById('searchInput');
+      const searchResults = document.getElementById('searchResults');
+
+      // Toggle dropdown
+      searchToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isActive = searchDropdown.classList.toggle('show');
+        searchToggle.classList.toggle('active', isActive);
+        if (isActive) {
+          searchInput.focus();
+        }
+      });
+
+      // Close on outside click
+      document.addEventListener('click', (e) => {
+        if (!searchDropdown.contains(e.target) && e.target !== searchToggle) {
+          searchDropdown.classList.remove('show');
+          searchToggle.classList.remove('active');
+        }
+      });
+
+      // Debounced search
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+        
+        if (searchTimeout) clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+          searchResults.innerHTML = '<div class="search-empty">Type at least 2 characters...</div>';
+          return;
+        }
+
+        searchResults.innerHTML = '<div class="search-loading">Searching...</div>';
+        
+        searchTimeout = setTimeout(async () => {
+          await performSearch(query);
+        }, 300);
+      });
+
+      // Keyboard navigation
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          searchDropdown.classList.remove('show');
+          searchToggle.classList.remove('active');
+        }
+      });
+    }
+
+    async function performSearch(query) {
+      const searchResults = document.getElementById('searchResults');
+      
+      try {
+        const response = await fetch(
+          `${API_BASE}/ccu/search?q=${encodeURIComponent(query)}&limit=15`
+        );
+        const data = await response.json();
+        
+        if (!data.success || !data.islands || data.islands.length === 0) {
+          searchResults.innerHTML = '<div class="search-empty">No islands found</div>';
+          return;
+        }
+
+        searchResults.innerHTML = data.islands.map(island => `
+          <div class="search-result" data-code="${island.code}" data-title="${island.title}" data-creator="${island.creator || ''}">
+            <div class="search-result-info">
+              <div class="search-result-title">${escapeHtml(island.title)}</div>
+              <div class="search-result-meta">${escapeHtml(island.creator || 'Unknown')} • ${island.code}</div>
+            </div>
+            <div class="search-result-ccu">${formatNumber(island.ccu)}</div>
+          </div>
+        `).join('');
+
+        // Add click handlers
+        searchResults.querySelectorAll('.search-result').forEach(result => {
+          result.addEventListener('click', () => {
+            const code = result.dataset.code;
+            const title = encodeURIComponent(result.dataset.title);
+            const creator = encodeURIComponent(result.dataset.creator);
+            window.location.href = `/fortnite/playlist.html?code=${code}&type=creative&title=${title}&creator=${creator}`;
+          });
+        });
+
+      } catch (error) {
+        console.error('Search failed:', error);
+        searchResults.innerHTML = '<div class="search-empty">Search failed. Try again.</div>';
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    }
+
+    init();
+  </script>
+
+  <footer>
+    <p>Powered by <a href="https://gdb.gg" target="_blank">gdb.gg</a></p>
+    <div class="footer-disclaimer">
+      <p>© 2025 gdb.gg. All game assets belong to their respective owners.</p>
+      <p>Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+    </div>
+  </footer>
+</body>
+</html>

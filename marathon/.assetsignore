@@ -1,0 +1,6 @@
+.git
+.wrangler
+.vscode
+node_modules
+*.xlsx
+notes.txt

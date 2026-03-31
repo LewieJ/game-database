@@ -1,6 +1,12 @@
 # Game Database (gdb.gg)
 
-Placeholder landing page for **gdb.gg** — dark, glass-style static site (HTML/CSS/JS).
+Static site for **gdb.gg**: loading-style home (`index.html`), optional games hub (`hub.html`), and subsites copied from the prior RNK stack (Marathon hub, Steam, Twitch, Xbox, PlayStation, Fortnite placeholders, shared `assets/`).
+
+## Layout
+
+- **`/`** — Coming-soon landing (unchanged hero) + master nav + footer.
+- **`/hub.html`** — Full “explore” page (games grid, features, about) with the same nav.
+- **`/marathon/`** — Marathon subsite (weapons, skins, SSG build scripts under `marathon/build/`).
 
 ## GitHub Pages + custom domain
 

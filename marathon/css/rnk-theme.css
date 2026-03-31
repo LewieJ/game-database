@@ -1,0 +1,380 @@
+/* gdb.gg overlay — Marathon section (loaded after site CSS) */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+@import url("/assets/global.css");
+
+:root {
+  /* Muted “frost” accent — less saturated than prior vivid purple */
+  --rnk-neon: var(--rnk-accent-mid, #aea6bf);
+  --rnk-neon-dim: #8e8899;
+  --rnk-neon-glow: rgba(174, 166, 191, 0.12);
+  --rnk-neon-glow-strong: rgba(120, 112, 138, 0.22);
+  --rnk-accent-start: #b5aec4;
+  --rnk-accent-end: #7a7488;
+  --rnk-accent-pink: #c0a0b0;
+  --rnk-bg: #0d0d0d;
+  --rnk-card: #161616;
+  /* Glass-tint panels (Marathon lime replacements in pages.css) */
+  --rnk-mods-bg: rgba(255, 255, 255, 0.06);
+  --rnk-mods-bg-hover: rgba(255, 255, 255, 0.1);
+  --rnk-mods-border: rgba(255, 255, 255, 0.12);
+  --rnk-mods-border-hover: rgba(255, 255, 255, 0.2);
+  --rnk-compare-glow: rgba(0, 0, 0, 0.4);
+}
+
+/* Map Marathon neon variables to RNK frost accent (muted; pages.css still reads --neon) */
+body {
+  --neon: var(--rnk-neon);
+  --neon-dim: var(--rnk-neon-dim);
+  --neon-glow: var(--rnk-neon-glow);
+  --neon-glow-strong: var(--rnk-neon-glow-strong);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  /* All-caps UI; readable prose exempted below */
+  text-transform: uppercase;
+}
+
+/* ── Ambient gradient — cool neutral haze (matches glass chrome) ── */
+body {
+  background-color: #09090b !important;
+  background-image:
+    radial-gradient(ellipse 88% 52% at 8% -8%, rgba(200, 195, 220, 0.035), transparent 55%),
+    radial-gradient(ellipse 80% 48% at 94% 6%, rgba(160, 158, 178, 0.04), transparent 52%),
+    radial-gradient(ellipse 72% 45% at 50% 100%, rgba(110, 108, 125, 0.035), transparent 58%),
+    radial-gradient(ellipse 55% 42% at 72% 52%, rgba(255, 255, 255, 0.02), transparent 62%) !important;
+  background-attachment: fixed;
+}
+
+/* ── Glass navbar + rail (aligned with main gdb.gg shell) ── */
+.rnk-site-rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 clamp(16px, 3vw, 40px);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: rgba(10, 10, 12, 0.82) !important;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgba(240, 240, 245, 0.55);
+}
+
+.navbar {
+  top: 28px !important;
+  background: rgba(10, 10, 12, 0.74) !important;
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.navbar--scrolled {
+  background: rgba(8, 8, 10, 0.9) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* Brand row: weight + spacing like main site */
+.navbar .nav-logo {
+  font-size: 1.28rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.45px !important;
+  text-transform: none !important;
+  color: rgba(240, 240, 245, 0.98) !important;
+}
+
+.navbar .nav-logo .logo-accent {
+  background: linear-gradient(135deg, var(--rnk-accent-pink), var(--rnk-accent-end)) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  text-shadow: none !important;
+}
+
+.navbar .logo-icon {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.08)) !important;
+}
+
+/* Primary nav: uppercase + pill hover (site-wide caps) */
+.navbar .nav-center .nav-link {
+  text-transform: uppercase !important;
+  letter-spacing: 0.07em !important;
+  font-weight: 600 !important;
+  font-size: 0.82rem !important;
+  border-radius: 10px !important;
+  color: rgba(240, 240, 245, 0.62) !important;
+}
+
+.navbar .nav-center .nav-link:hover {
+  color: rgba(240, 240, 245, 0.98) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  text-shadow: none !important;
+}
+
+.navbar .nav-center .nav-link.active {
+  color: #f0f0f5 !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+}
+
+.navbar .nav-link::after,
+.navbar .nav-dropdown-toggle::after {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.35), rgba(180, 175, 195, 0.5)) !important;
+  box-shadow: none !important;
+}
+
+.navbar .nav-dropdown-toggle {
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  color: rgba(240, 240, 245, 0.62) !important;
+}
+
+.navbar .nav-dropdown-toggle:hover {
+  color: rgba(240, 240, 245, 0.95) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  text-shadow: none !important;
+}
+
+.nav-dropdown-menu {
+  background: rgba(16, 16, 20, 0.94) !important;
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset !important;
+}
+
+.nav-dropdown-item:hover,
+button.nav-dropdown-item--btn:hover {
+  color: rgba(245, 245, 248, 0.98) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+}
+
+/* Accent text (non-nav): subtle cool tint via --rnk-accent-* */
+.hero-title-accent,
+.db-icon,
+.footer-logo,
+.home-view-all {
+  color: var(--rnk-accent-start) !important;
+  text-shadow: none;
+}
+
+/* Database grid cards — strip hardcoded Marathon lime from style.css ::before/::after */
+.db-card::before {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 60%) !important;
+}
+.db-card::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent) !important;
+}
+.db-card:hover {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.48) !important;
+}
+.db-card:hover .db-icon {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.12)) !important;
+}
+
+/* Live pulse strip — left accent was hardcoded lime in pages.css */
+.pulse-bar {
+  border-left-color: rgba(255, 255, 255, 0.14) !important;
+}
+.pulse-bar:hover {
+  border-left-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.38) !important;
+}
+
+/* Latest news row — remove mint/teal hover fill from style.css */
+.home-news-card:hover {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.db-count {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: rgba(245, 245, 248, 0.95) !important;
+}
+
+.hero-title-accent {
+  background: linear-gradient(135deg, var(--rnk-accent-pink), var(--rnk-accent-start));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none !important;
+}
+
+.hero-subtitle .hero-title-accent {
+  text-transform: none;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+}
+
+/* Safety: inline SVGs stay icon-sized if a stylesheet fails to load */
+.db-card .db-icon {
+  width: 24px !important;
+  height: 24px !important;
+  max-width: 24px !important;
+  flex-shrink: 0;
+}
+
+.rnk-site-rail__brand {
+  color: #f0f0f5 !important;
+  text-decoration: none !important;
+  background: linear-gradient(135deg, var(--rnk-accent-pink), var(--rnk-accent-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.rnk-site-rail__brand:hover {
+  opacity: 0.9;
+}
+
+.rnk-site-rail__sep {
+  opacity: 0.35;
+}
+
+.rnk-site-rail__here {
+  color: rgba(240, 240, 245, 0.75);
+}
+
+main.container,
+.main-content {
+  padding-top: calc(var(--nav-height) + 28px + 12px) !important;
+}
+
+@media (max-width: 900px) {
+  .navbar {
+    top: 28px !important;
+  }
+  main.container {
+    padding-top: calc(48px + 28px + 16px) !important;
+  }
+}
+
+/* ── Toolbar / CTA buttons: kill hardcoded lime (#d4ff00) glow ── */
+.weapon-mods-btn {
+  background: var(--rnk-mods-bg) !important;
+  border: 1px solid var(--rnk-mods-border) !important;
+  color: #e8d4ff !important;
+  border-radius: 10px !important;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.weapon-mods-btn:hover {
+  background: var(--rnk-mods-bg-hover) !important;
+  border-color: var(--rnk-mods-border-hover) !important;
+  box-shadow: 0 0 20px var(--rnk-neon-glow) !important;
+}
+
+.weapon-mods-btn svg {
+  color: inherit !important;
+  opacity: 0.85 !important;
+}
+
+.compare-toggle-btn {
+  border-radius: 10px !important;
+  border-width: 1px !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: rgba(235, 234, 242, 0.9) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.compare-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 22px var(--rnk-compare-glow) !important;
+}
+
+.compare-toggle-btn.active {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ── Readable prose / forms (not forced caps) ── */
+.article-main,
+.article-main *,
+.qn-welcome,
+.qn-welcome *,
+.site-faq__answer,
+.site-faq__answer *,
+.footer-legal,
+.footer-legal *,
+.footer-disclaimer,
+.seo-intro,
+.seo-intro *,
+details[class*="seo-intro"] *,
+.weapon-detail-grid,
+.weapon-detail-grid *,
+.weapon-hero,
+.weapon-hero *,
+.detail-container,
+.detail-container *,
+.modal-overlay .modal-content,
+.modal-overlay .modal-content *,
+.news-article-body,
+.news-article-body * {
+  text-transform: none;
+}
+
+input,
+textarea,
+select,
+.nav-search-input,
+[class*="search-wrap"] input {
+  text-transform: none !important;
+}
+
+/* ── Ad slots stay square / publisher-owned (no rounding) ── */
+.ad-container,
+.ad-container *,
+.ad-safe-zone,
+.ad-safe-zone *,
+.ad-siderail-fixed,
+.ad-siderail-fixed *,
+.ad-mobile-anchor,
+.ad-mobile-sticky-top,
+.ad-mobile-anchor *,
+.ad-label,
+ins.adsbygoogle,
+iframe[src*="doubleclick"],
+iframe[src*="googlesyndication"] {
+  border-radius: 0 !important;
+}
+
+/* Optional utility class for long prose blocks */
+.rnk-prose,
+.rnk-prose * {
+  text-transform: none;
+}
+
+/* ── Unified gdb.gg slim bar above Marathon navbar (see /assets/global.css) ── */
+body:has(#global-nav .master-nav) .rnk-site-rail {
+  display: none !important;
+}
+
+body:has(#global-nav .master-nav) .navbar {
+  top: var(--master-nav-height, 36px) !important;
+}
+
+body:has(#global-nav .master-nav) main.container {
+  padding-top: calc(var(--master-nav-height, 36px) + var(--nav-height) + 12px);
+}
+
+body:has(#global-nav .master-nav) .main-content {
+  padding-top: calc(var(--master-nav-height, 36px) + var(--nav-height));
+}

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <url>
+    <loc>https://marathondb.gg/news/cryo-archive-goes-live-march-20/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-03-19T00:00:00+00:00</news:publication_date>
+      <news:title>Cryo Archive Goes Live Friday, March 20</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/cryo-archive-goes-live.jpg</image:loc>
+      <image:title>Cryo Archive Goes Live Friday, March 20</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/marathon-update-1-0-5-patch-notes/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-03-17T00:00:00+00:00</news:publication_date>
+      <news:title>Marathon Update 1.0.5 Patch Notes</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/marathon-update-105-patch-notes.jpg</image:loc>
+      <image:title>Marathon Update 1.0.5 Patch Notes</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/marathon-duos-mode-coming-to-perimeter/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-03-16T00:00:00+00:00</news:publication_date>
+      <news:title>Marathon Duos Mode Is Coming — Limited-Time Test Starts March 18 on Perimeter</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/marathon-duos-mode.webp</image:loc>
+      <image:title>Marathon Duos Mode Announcement</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/marathon-update-1-0-0-4-patch-notes/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-03-11T00:00:00+00:00</news:publication_date>
+      <news:title>Marathon Update 1.0.0.4 Patch Notes</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/marathon-update-1004-patch-notes.jpg</image:loc>
+      <image:title>Marathon Update 1.0.0.4 Patch Notes</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/marathon-rewards-pass-s1-update/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-03-10T00:00:00+00:00</news:publication_date>
+      <news:title>Marathon Rewards Pass Gets Major S1 Update — New Skins, Arachne Earnable Styles &amp; More</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/rewards-pass-s1-premium-track.jpg</image:loc>
+      <image:title>Marathon Season 1 Rewards Pass — New Premium Track Shell Styles</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/marathon-100k-concurrent-users-steam/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-03-05T00:00:00+00:00</news:publication_date>
+      <news:title>Marathon Quickly Pushes Past 100,000 Users on Steam</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/marathon-100k-steam.jpg</image:loc>
+      <image:title>Marathon Surpasses 100,000 Concurrent Users on Steam</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/marathon-launch-times/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-03-04T00:00:00+00:00</news:publication_date>
+      <news:title>Marathon Launch Times — When Does Marathon Go Live?</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/marathon-launch-times.png</image:loc>
+      <image:title>Marathon Worldwide Launch Times — March 5, 2026 at 10AM PT</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/marathon-server-slam-go-live-times/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-02-25T00:00:00+00:00</news:publication_date>
+      <news:title>Here Is When Marathon's Server Slam Goes Live</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/server-slam-banner.jpg</image:loc>
+      <image:title>Marathon Server Slam — Open Preview Weekend, February 26 to March 2</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/steam-exclusive-crowbar-marathon-weapon-charm/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-02-25T00:00:00+00:00</news:publication_date>
+      <news:title>Steam Exclusive Crowbar Weapon Charm Revealed for Marathon</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/steam-exclusive-crowbar-charm.jpg</image:loc>
+      <image:title>Marathon Steam Exclusive Crowbar Weapon Charm</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/xbox-exclusive-minecraft-marathon-weapon-charms/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-02-24T00:00:00+00:00</news:publication_date>
+      <news:title>Marathon Receives Xbox Exclusive Minecraft-Inspired Cosmetics</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/xbox-minecraft-marathon-charms.jpg</image:loc>
+      <image:title>Marathon Xbox Exclusive Minecraft Weapon Charms — Emerald Catch and Emerald Clutch</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/marathon-networking-and-security/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-02-24T00:00:00+00:00</news:publication_date>
+      <news:title>Marathon Anti-Cheat &amp; Networking Explained — Dedicated Servers, Fog of War &amp; More</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://img.youtube.com/vi/7ScRKFm56Vk/maxresdefault.jpg</image:loc>
+      <image:title>Marathon Networking and Security — Dedicated Servers, Anti-Cheat, Fog of War</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/playstation-plus-exclusive-marathon-weapon-charms/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-02-13T00:00:00+00:00</news:publication_date>
+      <news:title>PlayStation Plus Exclusive Marathon Weapon Charms Revealed</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/ps-plus-marathon-charms.png</image:loc>
+      <image:title>PlayStation Plus Exclusive Marathon Weapon Charms — Battle Guitar, For Freedom, Onryō</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://marathondb.gg/news/marathon-shadow-index-runner-skin-collection-revealed/</loc>
+    <news:news>
+      <news:publication>
+        <news:name>MarathonDB</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>2026-02-26T00:00:00+00:00</news:publication_date>
+      <news:title>Marathon's Shadow Index Runner Skin Collection Revealed</news:title>
+    </news:news>
+    <image:image>
+      <image:loc>https://marathondb.gg/assets/news/shadow-index-skins-revealed.jpg</image:loc>
+      <image:title>Shadow Index Runner Skin Collection — Vandal, Assassin, Destroyer, Recon, Thief, Triage</image:title>
+    </image:image>
+  </url>
+
+</urlset>

@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/gdb-mark.svg">
+  <link rel="stylesheet" href="/assets/global.css">
+  <link rel="stylesheet" href="/fortnite/css/fortnite.css">
+  <link rel="stylesheet" href="/fortnite/css/fortnite-nav.css">
+  <title>Fortnite Leaderboards | gdb.gg</title><!-- Theme Color -->
+  <meta name="theme-color" content="#f7c948">
+  <meta name="msapplication-TileColor" content="#0d1117"><!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-base: #0d1117;
+      --bg-elevated: #161b22;
+      --bg-surface: #1c2128;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --bg-card-hover: rgba(255, 255, 255, 0.06);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.8);
+      --text-tertiary: rgba(255, 255, 255, 0.5);
+      --text-muted: rgba(255, 255, 255, 0.3);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      
+      /* Classic Fortnite Colors */
+      --fn-yellow: #f7c948;
+      --fn-blue: #00d4ff;
+      --fn-green: #34d399;
+      --fn-red: #ef4444;
+      --fn-purple: #a855f7;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Bungee', cursive;
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .page-header h1 span {
+      color: var(--fn-yellow);
+    }
+
+    .page-subtitle {
+      color: var(--text-tertiary);
+      font-size: 0.9rem;
+    }
+
+    /* Category Toggle */
+    .category-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      padding: 0.35rem;
+      background: var(--bg-card);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .category-btn {
+      padding: 0.6rem 1.25rem;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .category-btn:hover {
+      color: var(--text-secondary);
+      background: var(--bg-card-hover);
+    }
+
+    .category-btn.active {
+      color: #000;
+      background: var(--fn-yellow);
+    }
+
+    /* Mode Tabs */
+    .mode-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .mode-tab {
+      padding: 0.6rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .mode-tab:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      color: var(--text-secondary);
+    }
+
+    .mode-tab.active {
+      background: rgba(0, 212, 255, 0.1);
+      border-color: var(--fn-blue);
+      color: var(--fn-blue);
+    }
+
+    /* Mode Dropdown Container */
+    .mode-dropdown-container {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .selector-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .selector-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .mode-dropdown,
+    .stat-dropdown {
+      min-width: 180px;
+      padding: 0.7rem 2.5rem 0.7rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Outfit', sans-serif;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f7c948' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+    }
+
+    .mode-dropdown:hover,
+    .stat-dropdown:hover {
+      border-color: var(--border-hover);
+    }
+
+    .mode-dropdown:focus,
+    .stat-dropdown:focus {
+      outline: none;
+      border-color: var(--fn-yellow);
+    }
+
+    .mode-dropdown option,
+    .stat-dropdown option {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    /* Loading State */
+    .loading-container {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--fn-yellow);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: var(--text-tertiary);
+      font-size: 0.9rem;
+    }
+
+    /* Error State */
+    .error-container {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px dashed rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+    }
+
+    .error-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .error-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--fn-red);
+      margin-bottom: 0.35rem;
+    }
+
+    .error-text {
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+    }
+
+    /* Leaderboard Table */
+    .leaderboard-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .leaderboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      background: rgba(0, 212, 255, 0.05);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .leaderboard-title {
+      font-family: 'Bungee', cursive;
+      font-size: 1rem;
+      color: var(--fn-blue);
+      text-transform: uppercase;
+    }
+
+    .leaderboard-count {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .leaderboard-table thead {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .leaderboard-table th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .leaderboard-table th.center {
+      text-align: center;
+    }
+
+    .leaderboard-table th.right {
+      text-align: right;
+    }
+
+    .leaderboard-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s ease;
+    }
+
+    .leaderboard-table tbody tr:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .leaderboard-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .leaderboard-table td {
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    /* Rank Column */
+    .rank-cell {
+      font-weight: 700;
+      width: 60px;
+    }
+
+    .rank-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      padding: 0 0.4rem;
+      border-radius: 6px;
+      background: var(--bg-card);
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+      font-family: 'Bungee', cursive;
+    }
+
+    .rank-number.top-1 {
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      color: #1a1f2e;
+      box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    }
+
+    .rank-number.top-2 {
+      background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+      color: #1a1f2e;
+    }
+
+    .rank-number.top-3 {
+      background: linear-gradient(135deg, #cd7f32 0%, #d4af37 100%);
+      color: #fff;
+    }
+
+    /* Player Column */
+    .player-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .player-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: color 0.2s ease;
+      text-decoration: none;
+    }
+
+    .player-name:hover {
+      color: var(--fn-blue);
+    }
+
+    /* Division Column */
+    .division-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .division-icon {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+    }
+
+    .division-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+    }
+
+    /* Progress Column */
+    .progress-cell {
+      text-align: center;
+    }
+
+    .progress-value {
+      font-family: 'Bungee', cursive;
+      font-size: 0.9rem;
+      color: var(--fn-green);
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+    }
+
+    .pagination-info {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .pagination-btn {
+      padding: 0.5rem 0.9rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--fn-blue);
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      transition: all 0.15s ease;
+    }
+
+    .pagination-btn:hover {
+      border-color: var(--fn-blue);
+      background: rgba(0, 212, 255, 0.1);
+    }
+
+    .page-indicator {
+      padding: 0.5rem 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      font-size: 1rem;
+      margin-bottom: 0.35rem;
+      color: var(--text-tertiary);
+    }
+
+    .empty-text {
+      font-size: 0.85rem;
+    }
+
+    /* Info Banner */
+    .info-banner {
+      margin-top: 1.5rem;
+      padding: 0.85rem 1rem;
+      background: rgba(0, 212, 255, 0.08);
+      border-left: 3px solid var(--fn-blue);
+      border-radius: 4px;
+    }
+
+    .info-banner p {
+      color: var(--fn-blue);
+      font-size: 0.8rem;
+      margin: 0;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem 2rem;
+      color: var(--text-tertiary);
+      font-size: 0.75rem;
+      border-top: 1px solid var(--border);
+      margin-top: 4rem;
+      background: var(--bg-elevated);
+    }
+
+    footer p {
+      margin: 0.25rem 0;
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: var(--fn-yellow);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    footer a:hover {
+      color: #ffe066;
+      text-decoration: underline;
+    }
+
+    .footer-disclaimer {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      main {
+        padding: 1rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.2rem;
+      }
+
+      .page-subtitle {
+        font-size: 0.8rem;
+      }
+
+      .category-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+
+      .mode-tabs {
+        gap: 0.4rem;
+      }
+
+      .mode-tab {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.75rem;
+      }
+
+      .mode-dropdown-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .mode-dropdown,
+      .stat-dropdown {
+        width: 100%;
+        min-width: auto;
+      }
+
+      .leaderboard-header {
+        padding: 0.75rem 1rem;
+      }
+
+      .leaderboard-title {
+        font-size: 0.9rem;
+      }
+
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 0.6rem 0.5rem;
+        font-size: 0.75rem;
+      }
+
+      .leaderboard-table th {
+        font-size: 0.6rem;
+      }
+
+      .rank-cell {
+        width: 45px;
+      }
+
+      .rank-number {
+        min-width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+      }
+
+      .player-name {
+        font-size: 0.8rem;
+      }
+
+      .division-icon {
+        width: 28px;
+        height: 28px;
+      }
+
+      .division-name {
+        font-size: 0.75rem;
+      }
+
+      .progress-value {
+        font-size: 0.8rem;
+      }
+
+      .pagination {
+        padding: 0.75rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .pagination-btn {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="global-nav"></div>
+  <script src="/assets/global.js"></script>
+  <div id="fortnite-sub-nav"></div>
+  <script src="/fortnite/js/fortnite-nav.js"></script>
+
+  <main>
+    <div class="page-header">
+      <h1 id="pageTitle">Ranked <span>Leaderboards</span></h1>
+      <p class="page-subtitle" id="pageSubtitle">Top players across all ranked modes</p>
+    </div>
+
+    <!-- Category Toggle -->
+    <div class="category-toggle">
+      <button class="category-btn active" data-category="ranked" onclick="selectCategory('ranked')">Ranked</button>
+      <button class="category-btn" data-category="general" onclick="selectCategory('general')">General</button>
+    </div>
+
+    <!-- Mode Selection -->
+    <div class="mode-tabs" id="modeTabs">
+      <!-- Tabs will be dynamically generated -->
+    </div>
+
+    <!-- Leaderboard Content -->
+    <div id="leaderboardContent">
+      <!-- Content will be dynamically loaded -->
+    </div>
+
+    <!-- Info Banner -->
+    <div class="info-banner">
+      <p>📊 Leaderboards update automatically when players check their ranks</p>
+    </div>
+  </main>
+
+  <script>
+    // Available ranked modes
+    const RANKED_MODES = [
+      { key: 'ranked-br', name: 'Battle Royale', shortName: 'BR' },
+      { key: 'ranked-zb', name: 'Zero Build', shortName: 'ZB' },
+      { key: 'ranked_blastberry_build', name: 'Reload Build', shortName: 'Reload' },
+      { key: 'ranked_blastberry_nobuild', name: 'Reload Zero Build', shortName: 'Reload ZB' },
+      { key: 'ranked-feral', name: 'Ballistic', shortName: 'Ballistic' }
+    ];
+
+    // Available general modes
+    const GENERAL_MODES = [
+      { key: 'overall', name: 'Overall', shortName: 'Overall', type: 'global' },
+      { key: 'overall-solo', name: 'Overall Solo', shortName: 'Solo', type: 'playlist', playlist: 'overall', mode: 'solo' },
+      { key: 'overall-duo', name: 'Overall Duo', shortName: 'Duo', type: 'playlist', playlist: 'overall', mode: 'duo' },
+      { key: 'overall-trio', name: 'Overall Trio', shortName: 'Trio', type: 'playlist', playlist: 'overall', mode: 'trio' },
+      { key: 'overall-squad', name: 'Overall Squad', shortName: 'Squad', type: 'playlist', playlist: 'overall', mode: 'squad' },
+      { key: 'blitz-solo', name: 'Blitz Solo', shortName: 'Blitz Solo', type: 'playlist', playlist: 'blitz', mode: 'solo' }
+    ];
+
+    // Available stat categories
+    const STAT_CATEGORIES = {
+      global: [
+        { key: 'wins', name: 'Total Wins' },
+        { key: 'kills', name: 'Total Kills' }
+      ],
+      playlist: [
+        { key: 'wins', name: 'Wins' },
+        { key: 'kills', name: 'Kills' }
+      ]
+    };
+
+    // Division to rank name mapping
+    const DIVISION_NAMES = {
+      0: 'Unranked',
+      1: 'Bronze 1', 2: 'Bronze 2', 3: 'Bronze 3',
+      4: 'Silver 1', 5: 'Silver 2', 6: 'Silver 3',
+      7: 'Gold 1', 8: 'Gold 2', 9: 'Gold 3',
+      10: 'Platinum 1', 11: 'Platinum 2', 12: 'Platinum 3',
+      13: 'Diamond 1', 14: 'Diamond 2', 15: 'Diamond 3',
+      16: 'Elite', 17: 'Champion', 18: 'Unreal'
+    };
+
+    // Get rank icon URL
+    function getRankIcon(rankName) {
+      const basePath = '/assets/fortnite/rank-icons/';
+      const icons = {
+        'Bronze 1': '8204-bronze-i.png',
+        'Bronze 2': '8851-bronze-ii.png',
+        'Bronze 3': '7462-bronze-iii.png',
+        'Silver 1': '7462-silver-i.png',
+        'Silver 2': '9556-silver-ii.png',
+        'Silver 3': '8001-silver-iii.png',
+        'Gold 1': '5775-gold-i.png',
+        'Gold 2': '3957-gold-ii.png',
+        'Gold 3': '7648-gold-iii.png',
+        'Platinum 1': '1898-platinum-i.png',
+        'Platinum 2': '1898-platinum-ii.png',
+        'Platinum 3': '1432-platinum-iii.png',
+        'Diamond 1': '4867-diamond-i.png',
+        'Diamond 2': '5671-diamond-ii.png',
+        'Diamond 3': '5025-diamond-iii.png',
+        'Elite': '4746-elite.png',
+        'Champion': '1283-champion.png',
+        'Unreal': '6440-unreal.png'
+      };
+      return basePath + (icons[rankName] || '6071-unknown.png');
+    }
+
+    // State
+    let currentSeason = 'ch7s1';
+    let currentMode = 'ranked-br';
+    let currentCategory = 'ranked';
+    let currentPlaylist = 'all';
+    let currentStat = 'wins';
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 25;
+
+    function init() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const seasonParam = urlParams.get('season');
+      const modeParam = urlParams.get('mode');
+      const categoryParam = urlParams.get('category');
+      const pageParam = urlParams.get('page');
+      
+      if (seasonParam) currentSeason = seasonParam;
+      if (pageParam) currentPage = parseInt(pageParam) || 1;
+
+      if (categoryParam === 'general') {
+        currentCategory = 'general';
+        currentMode = modeParam || 'overall';
+        currentStat = urlParams.get('stat') || 'wins';
+        currentPlaylist = 'all';
+      } else {
+        currentCategory = 'ranked';
+        currentMode = modeParam && RANKED_MODES.find(m => m.key === modeParam) ? modeParam : 'ranked-br';
+      }
+
+      updatePageHeader();
+      updateCategoryButtons();
+      renderModeTabs();
+      loadLeaderboard(currentSeason, currentMode, currentCategory);
+    }
+
+    function selectCategory(category) {
+      if (category === currentCategory) return;
+      
+      currentCategory = category;
+      currentMode = category === 'ranked' ? 'ranked-br' : 'overall';
+      currentPage = 1;
+      
+      const url = new URL(window.location);
+      url.searchParams.set('category', category);
+      url.searchParams.set('mode', currentMode);
+      url.searchParams.delete('page');
+      
+      if (category === 'ranked') {
+        url.searchParams.set('season', currentSeason);
+        url.searchParams.delete('stat');
+      } else {
+        url.searchParams.delete('season');
+      }
+      
+      window.history.pushState({}, '', url);
+      
+      updatePageHeader();
+      updateCategoryButtons();
+      renderModeTabs();
+      loadLeaderboard(currentSeason, currentMode, currentCategory);
+    }
+
+    function updateCategoryButtons() {
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === currentCategory);
+      });
+    }
+
+    function updatePageHeader() {
+      const titleEl = document.getElementById('pageTitle');
+      const subtitleEl = document.getElementById('pageSubtitle');
+      
+      if (currentCategory === 'ranked') {
+        titleEl.innerHTML = 'Ranked <span>Leaderboards</span>';
+        subtitleEl.textContent = 'Chapter 7 Season 1 • Top players across all ranked modes';
+      } else {
+        titleEl.innerHTML = 'General <span>Leaderboards</span>';
+        subtitleEl.textContent = 'All-time stats • Top players by wins, kills, and performance';
+      }
+    }
+
+    function renderModeTabs() {
+      const tabsContainer = document.getElementById('modeTabs');
+      
+      if (currentCategory === 'ranked') {
+        tabsContainer.className = 'mode-tabs';
+        tabsContainer.innerHTML = RANKED_MODES.map(mode => `
+          <a href="?category=${currentCategory}&season=${currentSeason}&mode=${mode.key}" 
+             class="mode-tab ${mode.key === currentMode ? 'active' : ''}" 
+             onclick="selectMode('${mode.key}', event)">
+            ${mode.shortName}
+          </a>
+        `).join('');
+      } else {
+        const currentModeObj = GENERAL_MODES.find(m => m.key === currentMode);
+        const availableStats = STAT_CATEGORIES[currentModeObj.type];
+        
+        tabsContainer.className = 'mode-dropdown-container';
+        tabsContainer.innerHTML = `
+          <div class="selector-wrapper">
+            <label class="selector-label">Mode / Playlist</label>
+            <select class="mode-dropdown" onchange="selectModeFromDropdown(event)">
+              ${GENERAL_MODES.map(mode => `
+                <option value="${mode.key}" ${mode.key === currentMode ? 'selected' : ''}>
+                  ${mode.name}
+                </option>
+              `).join('')}
+            </select>
+          </div>
+          <div class="selector-wrapper">
+            <label class="selector-label">Stat Type</label>
+            <select class="stat-dropdown" onchange="selectStatFromDropdown(event)">
+              ${availableStats.map(stat => `
+                <option value="${stat.key}" ${stat.key === currentStat ? 'selected' : ''}>
+                  ${stat.name}
+                </option>
+              `).join('')}
+            </select>
+          </div>
+        `;
+      }
+    }
+
+    function selectMode(modeKey, event) {
+      event.preventDefault();
+      currentMode = modeKey;
+      currentPage = 1;
+      
+      const url = new URL(window.location);
+      url.searchParams.set('category', currentCategory);
+      url.searchParams.set('mode', modeKey);
+      url.searchParams.delete('page');
+      
+      if (currentCategory === 'ranked') {
+        url.searchParams.set('season', currentSeason);
+      }
+      
+      window.history.pushState({}, '', url);
+      
+      renderModeTabs();
+      loadLeaderboard(currentSeason, modeKey, currentCategory);
+    }
+
+    function selectModeFromDropdown(event) {
+      const modeKey = event.target.value;
+      currentMode = modeKey;
+      currentPage = 1;
+      
+      const modeObj = GENERAL_MODES.find(m => m.key === modeKey);
+      const availableStats = STAT_CATEGORIES[modeObj.type];
+      if (!availableStats.find(s => s.key === currentStat)) {
+        currentStat = 'wins';
+      }
+      
+      const url = new URL(window.location);
+      url.searchParams.set('category', currentCategory);
+      url.searchParams.set('mode', modeKey);
+      url.searchParams.delete('page');
+      
+      if (currentStat !== 'wins') {
+        url.searchParams.set('stat', currentStat);
+      } else {
+        url.searchParams.delete('stat');
+      }
+      
+      window.history.pushState({}, '', url);
+      
+      renderModeTabs();
+      loadLeaderboard(currentSeason, modeKey, currentCategory);
+    }
+
+    function selectStatFromDropdown(event) {
+      const statKey = event.target.value;
+      currentStat = statKey;
+      currentPage = 1;
+      
+      const url = new URL(window.location);
+      url.searchParams.set('category', currentCategory);
+      url.searchParams.set('mode', currentMode);
+      url.searchParams.delete('page');
+      
+      if (statKey !== 'wins') {
+        url.searchParams.set('stat', statKey);
+      } else {
+        url.searchParams.delete('stat');
+      }
+      
+      window.history.pushState({}, '', url);
+      
+      loadLeaderboard(currentSeason, currentMode, currentCategory);
+    }
+
+    async function loadLeaderboard(season, modeKey, category) {
+      const contentDiv = document.getElementById('leaderboardContent');
+      const modes = category === 'ranked' ? RANKED_MODES : GENERAL_MODES;
+      const mode = modes.find(m => m.key === modeKey);
+      
+      contentDiv.innerHTML = `
+        <div class="loading-container">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Loading ${mode.name} leaderboard...</p>
+        </div>
+      `;
+
+      try {
+        let response;
+        
+        if (category === 'ranked') {
+          response = await fetch(`https://fortnite.gdb.gg/ranked/${season}/leaderboard/${modeKey}?limit=100`);
+        } else {
+          const limit = ITEMS_PER_PAGE;
+          const currentModeObj = GENERAL_MODES.find(m => m.key === modeKey);
+          
+          let endpoint;
+          if (currentModeObj.type === 'playlist') {
+            endpoint = `https://fortnite.gdb.gg/leaderboard/${currentModeObj.playlist}/${currentModeObj.mode}/${currentStat}?limit=${limit}&page=${currentPage}`;
+          } else {
+            endpoint = `https://fortnite.gdb.gg/leaderboard?category=${currentStat}&limit=${limit}&page=${currentPage}`;
+          }
+          
+          response = await fetch(endpoint);
+        }
+        
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        
+        if (!data.leaderboard || data.leaderboard.length === 0) {
+          renderEmptyState(mode, category);
+          return;
+        }
+
+        renderLeaderboard(data, mode, category);
+      } catch (error) {
+        console.error('Failed to load leaderboard:', error);
+        renderError(mode, error.message);
+      }
+    }
+
+    function renderLeaderboard(data, mode, category) {
+      const contentDiv = document.getElementById('leaderboardContent');
+      
+      // Deduplicate by account_id
+      const uniqueEntries = [];
+      const seenPlayers = new Map();
+      
+      data.leaderboard.forEach((entry) => {
+        const accountId = entry.account_id;
+        if (!seenPlayers.has(accountId)) {
+          seenPlayers.set(accountId, true);
+          uniqueEntries.push(entry);
+        }
+      });
+      
+      const rows = uniqueEntries.map((entry, index) => {
+        const rank = entry.position ?? (category === 'general' 
+          ? (currentPage - 1) * ITEMS_PER_PAGE + index + 1
+          : index + 1);
+        
+        let rankClass = '';
+        if (rank === 1) rankClass = 'top-1';
+        else if (rank === 2) rankClass = 'top-2';
+        else if (rank === 3) rankClass = 'top-3';
+
+        const playerProfileUrl = `/fortnite/profile.html?id=${entry.account_id}`;
+        const displayName = entry.display_name || entry.account_id.substring(0, 8) + '...';
+        
+        if (category === 'ranked') {
+          const divisionName = entry.current_rank_name || DIVISION_NAMES[entry.current_division] || 'Unknown';
+          const iconUrl = getRankIcon(divisionName);
+          const progressPercent = Math.round((entry.promotion_progress || 0) * 100);
+          
+          return `
+            <tr>
+              <td class="rank-cell"><span class="rank-number ${rankClass}">${rank}</span></td>
+              <td><div class="player-cell"><a href="${playerProfileUrl}" class="player-name">${displayName}</a></div></td>
+              <td>
+                <div class="division-cell">
+                  <img src="${iconUrl}" alt="${divisionName}" class="division-icon">
+                  <span class="division-name">${divisionName}</span>
+                </div>
+              </td>
+              <td class="progress-cell"><span class="progress-value">${progressPercent}%</span></td>
+            </tr>
+          `;
+        } else {
+          const winsValue = entry.wins ?? entry.total_wins ?? 0;
+          const killsValue = entry.kills ?? entry.total_kills ?? 0;
+          const statValue = currentStat === 'kills' ? killsValue : winsValue;
+          
+          return `
+            <tr>
+              <td class="rank-cell"><span class="rank-number ${rankClass}">${rank}</span></td>
+              <td><div class="player-cell"><a href="${playerProfileUrl}" class="player-name">${displayName}</a></div></td>
+              <td class="progress-cell"><span class="progress-value">${statValue.toLocaleString()}</span></td>
+            </tr>
+          `;
+        }
+      }).join('');
+
+      const tableHeaders = category === 'ranked' 
+        ? '<th>Rank</th><th>Player</th><th>Division</th><th class="center">Progress</th>'
+        : currentStat === 'kills'
+          ? '<th>Rank</th><th>Player</th><th class="center">Kills</th>'
+          : '<th>Rank</th><th>Player</th><th class="center">Wins</th>';
+
+      // Pagination for general leaderboards
+      let paginationHtml = '';
+      if (category === 'general') {
+        const startRank = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+        const endRank = startRank + uniqueEntries.length - 1;
+        const hasMore = data.leaderboard.length === ITEMS_PER_PAGE;
+        
+        paginationHtml = `
+          <div class="pagination">
+            <div class="pagination-info">
+              Showing ranks ${startRank}–${endRank}
+            </div>
+            <div class="pagination-controls">
+              ${currentPage > 1 ? `<button class="pagination-btn" onclick="changePage(${currentPage - 1})">← Previous</button>` : ''}
+              <span class="page-indicator">Page ${currentPage}</span>
+              ${hasMore ? `<button class="pagination-btn" onclick="changePage(${currentPage + 1})">Next →</button>` : ''}
+            </div>
+          </div>
+        `;
+      }
+
+      contentDiv.innerHTML = `
+        <div class="leaderboard-container">
+          <div class="leaderboard-header">
+            <h2 class="leaderboard-title">${mode.name}</h2>
+            <span class="leaderboard-count">${uniqueEntries.length} players</span>
+          </div>
+          <table class="leaderboard-table">
+            <thead><tr>${tableHeaders}</tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+          ${paginationHtml}
+        </div>
+      `;
+    }
+
+    function changePage(newPage) {
+      currentPage = newPage;
+      
+      const url = new URL(window.location);
+      if (newPage > 1) {
+        url.searchParams.set('page', newPage);
+      } else {
+        url.searchParams.delete('page');
+      }
+      window.history.pushState({}, '', url);
+      
+      loadLeaderboard(currentSeason, currentMode, currentCategory);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderEmptyState(mode, category) {
+      const contentDiv = document.getElementById('leaderboardContent');
+      const text = category === 'ranked' ? 'ranked yet' : 'tracked yet';
+      
+      contentDiv.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <h3 class="empty-title">No Leaderboard Data</h3>
+          <p class="empty-text">No players have been ${text} for ${mode.name}.</p>
+        </div>
+      `;
+    }
+
+    function renderError(mode, errorMsg) {
+      const contentDiv = document.getElementById('leaderboardContent');
+      
+      contentDiv.innerHTML = `
+        <div class="error-container">
+          <div class="error-icon">⚠️</div>
+          <h3 class="error-title">Failed to Load</h3>
+          <p class="error-text">Could not load ${mode.name} leaderboard.</p>
+          <p class="error-text" style="margin-top: 0.25rem; font-size: 0.75rem;">${errorMsg}</p>
+        </div>
+      `;
+    }
+
+    init();
+  </script>
+
+  <footer>
+    <p>Powered by <a href="https://gdb.gg" target="_blank">gdb.gg</a></p>
+    <div class="footer-disclaimer">
+      <p>© 2025 gdb.gg. All game assets belong to their respective owners.</p>
+      <p>Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+    </div>
+  </footer>
+</body>
+</html>

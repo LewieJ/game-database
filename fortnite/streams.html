@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/gdb-mark.svg">
+  <link rel="stylesheet" href="/assets/global.css">
+  <link rel="stylesheet" href="/fortnite/css/fortnite.css">
+  <link rel="stylesheet" href="/fortnite/css/fortnite-nav.css">
+  <title>Live Fortnite Streams - Twitch Stats & Viewers | gdb.gg</title><!-- Theme Color -->
+  <meta name="theme-color" content="#f7c948">
+  <meta name="msapplication-TileColor" content="#0d1117">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-base: #0d1117;
+      --bg-elevated: #161b22;
+      --bg-surface: #1c2128;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --bg-card-hover: rgba(255, 255, 255, 0.06);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.8);
+      --text-tertiary: rgba(255, 255, 255, 0.5);
+      --text-muted: rgba(255, 255, 255, 0.3);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      
+      /* Classic Fortnite Colors */
+      --fn-yellow: #f7c948;
+      --fn-blue: #00d4ff;
+      --fn-green: #34d399;
+      --fn-red: #ef4444;
+      --fn-purple: #a855f7;
+      --fn-twitch: #9146ff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Bungee', cursive;
+      font-size: 2rem;
+      color: var(--fn-yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .page-header h1 span {
+      color: var(--text-primary);
+    }
+
+    .page-header h1 .twitch-icon {
+      width: 36px;
+      height: 36px;
+      fill: var(--fn-twitch);
+    }
+
+    /* Live Stats Banner */
+    .live-stats-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+      padding: 1.5rem 2rem;
+      background: linear-gradient(135deg, rgba(145, 70, 255, 0.15) 0%, rgba(0, 212, 255, 0.1) 100%);
+      border: 1px solid rgba(145, 70, 255, 0.3);
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+
+    .live-stat {
+      text-align: center;
+    }
+
+    .live-stat .value {
+      font-family: 'Bungee', cursive;
+      font-size: 2rem;
+      color: var(--fn-twitch);
+      display: block;
+    }
+
+    .live-stat .label {
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--fn-red);
+      font-weight: 600;
+    }
+
+    .live-indicator::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: var(--fn-red);
+      border-radius: 50%;
+      animation: pulse-live 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-live {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+
+    /* Range Toggle */
+    .range-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .range-btn {
+      padding: 0.5rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-tertiary);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .range-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      color: var(--text-secondary);
+    }
+
+    .range-btn.active {
+      background: rgba(247, 201, 72, 0.15);
+      border-color: var(--fn-yellow);
+      color: var(--fn-yellow);
+    }
+
+    .toggle-charts-btn {
+      margin-left: auto;
+      padding: 0.5rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-tertiary);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-charts-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-secondary);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    .stat-card .category {
+      font-size: 0.7rem;
+      color: var(--fn-yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card .value {
+      font-family: 'Bungee', cursive;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-card .label {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+    }
+
+    .stat-card .change {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    .stat-card .change.positive { color: var(--fn-green); }
+    .stat-card .change.negative { color: var(--fn-red); }
+
+    /* Charts Section */
+    .charts-section {
+      margin-bottom: 2rem;
+    }
+
+    .data-info {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .chart-card h3 {
+      font-family: 'Bungee', cursive;
+      font-size: 0.9rem;
+      color: var(--fn-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chart-wrapper {
+      height: 200px;
+      position: relative;
+    }
+
+    /* Top Streamers Section */
+    .streamers-section {
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .section-header h2 {
+      font-family: 'Bungee', cursive;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toggle-streamers-btn {
+      padding: 0.5rem 1.25rem;
+      background: linear-gradient(135deg, rgba(145, 70, 255, 0.2) 0%, rgba(145, 70, 255, 0.1) 100%);
+      border: 1px solid rgba(145, 70, 255, 0.4);
+      border-radius: 8px;
+      color: var(--fn-twitch);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-streamers-btn:hover {
+      background: linear-gradient(135deg, rgba(145, 70, 255, 0.3) 0%, rgba(145, 70, 255, 0.2) 100%);
+      border-color: rgba(145, 70, 255, 0.6);
+    }
+
+    .streamers-list {
+      display: none;
+    }
+
+    .streamers-list.visible {
+      display: block;
+    }
+
+    .streamers-table {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .streamers-header {
+      display: grid;
+      grid-template-columns: 50px 1fr 180px 120px;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(247, 201, 72, 0.08);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--fn-yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .streamer-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 180px 120px;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .streamer-row:last-child {
+      border-bottom: none;
+    }
+
+    .streamer-row:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .streamer-rank {
+      font-family: 'Bungee', cursive;
+      font-size: 0.9rem;
+      color: var(--text-tertiary);
+    }
+
+    .streamer-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .streamer-name .live-badge {
+      font-size: 0.65rem;
+      padding: 0.15rem 0.4rem;
+      background: var(--fn-red);
+      color: white;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .streamer-game {
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .streamer-viewers {
+      font-family: 'Bungee', cursive;
+      font-size: 0.9rem;
+      color: var(--fn-twitch);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Loading / Error States */
+    .loading-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-tertiary);
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--fn-yellow);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--fn-red);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-tertiary);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem 2rem;
+      color: var(--text-tertiary);
+      font-size: 0.75rem;
+      border-top: 1px solid var(--border);
+      margin-top: 4rem;
+      background: var(--bg-elevated);
+    }
+
+    footer p {
+      margin: 0.25rem 0;
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: var(--fn-yellow);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    footer a:hover {
+      color: #ffe066;
+      text-decoration: underline;
+    }
+
+    .footer-disclaimer {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      main {
+        padding: 1.5rem 1rem 3rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .live-stats-banner {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1.25rem;
+      }
+
+      .live-stat .value {
+        font-size: 1.5rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .range-toggle {
+        flex-wrap: wrap;
+      }
+
+      .toggle-charts-btn {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        width: 100%;
+      }
+
+      .streamers-header,
+      .streamer-row {
+        grid-template-columns: 40px 1fr 100px;
+        font-size: 0.8rem;
+      }
+
+      .streamer-game {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="global-nav"></div>
+  <script src="/assets/global.js"></script>
+  <div id="fortnite-sub-nav"></div>
+  <script src="/fortnite/js/fortnite-nav.js"></script>
+
+  <main>
+    <div class="page-header">
+      <h1>
+        <svg class="twitch-icon" viewBox="0 0 24 24">
+          <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
+        </svg>
+        Fortnite <span>Streams</span>
+      </h1>
+    </div>
+
+    <!-- Live Stats Banner -->
+    <div class="live-stats-banner" id="liveStatsBanner">
+      <div class="live-indicator">LIVE</div>
+      <div class="live-stat">
+        <span class="value" id="liveViewers">--</span>
+        <span class="label">Viewers</span>
+      </div>
+      <div class="live-stat">
+        <span class="value" id="liveChannels">--</span>
+        <span class="label">Channels</span>
+      </div>
+    </div>
+
+    <!-- Range Toggle -->
+    <div class="range-toggle">
+      <button class="range-btn" data-range="1d">24 Hours</button>
+      <button class="range-btn active" data-range="7d">7 Days</button>
+      <button class="range-btn" data-range="30d">30 Days</button>
+      <button class="toggle-charts-btn" id="toggleChartsBtn">📉 Hide Charts</button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="category">Current</div>
+        <div class="value" id="statViewers">--</div>
+        <div class="label">viewers</div>
+      </div>
+      <div class="stat-card">
+        <div class="category">Averages</div>
+        <div class="value" id="statAvgViewers">--</div>
+        <div class="label">avg viewers</div>
+      </div>
+      <div class="stat-card">
+        <div class="category">Peak</div>
+        <div class="value" id="statPeakViewers">--</div>
+        <div class="label">peak viewers</div>
+      </div>
+      <div class="stat-card">
+        <div class="category">Growth</div>
+        <div class="value" id="statGrowthViewers">--</div>
+        <div class="label">viewers</div>
+        <div class="change" id="statGrowthPercent"></div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section" id="chartsSection">
+      <div class="data-info" id="dataInfo">Loading data...</div>
+      <div class="charts-grid" id="chartsGrid">
+        <div class="chart-card">
+          <h3>👁️ Viewers Over Time</h3>
+          <div class="chart-wrapper">
+            <canvas id="viewersChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>📺 Live Channels Over Time</h3>
+          <div class="chart-wrapper">
+            <canvas id="channelsChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Streamers Section -->
+    <div class="streamers-section">
+      <div class="section-header">
+        <h2>🎮 Top Fortnite Streamers</h2>
+        <button class="toggle-streamers-btn" id="toggleStreamersBtn">Show Streamers</button>
+      </div>
+      <div class="streamers-list" id="streamersList">
+        <div class="streamers-table">
+          <div class="streamers-header">
+            <div>#</div>
+            <div>Streamer</div>
+            <div>Title</div>
+            <div>Viewers</div>
+          </div>
+          <div id="streamersContent">
+            <div class="loading-state">Loading streamers...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Powered by <a href="https://gdb.gg" target="_blank">gdb.gg</a></p>
+    <div class="footer-disclaimer">
+      <p>© 2025 gdb.gg. All game assets belong to their respective owners.</p>
+      <p>Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ==================== CONFIG ====================
+    const FORTNITE_CATEGORY_ID = '33214';
+    
+    // ==================== STATE ====================
+    let historyData = { '1d': null, '7d': null, '30d': null };
+    let currentRange = '7d';
+    let chartInstances = {};
+    let chartsVisible = true;
+    let streamersLoaded = false;
+
+    // ==================== INIT ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAllData();
+      setupEventListeners();
+    });
+
+    function setupEventListeners() {
+      // Range buttons
+      document.querySelectorAll('.range-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentRange = btn.dataset.range;
+          document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          updateStatsDisplay();
+          updateCharts();
+        });
+      });
+
+      // Toggle charts
+      document.getElementById('toggleChartsBtn').addEventListener('click', toggleCharts);
+
+      // Toggle streamers
+      document.getElementById('toggleStreamersBtn').addEventListener('click', toggleStreamers);
+    }
+
+    // ==================== DATA LOADING ====================
+    async function loadAllData() {
+      try {
+        // Fetch all data in parallel
+        const [currentRes, history1d, history7d, history30d] = await Promise.all([
+          fetch(`https://twitch.gdb.gg/api/v2/categories/${FORTNITE_CATEGORY_ID}/current-v2`),
+          fetch(`https://twitch.gdb.gg/api/v2/categories/${FORTNITE_CATEGORY_ID}/history-v2?range=1d`).then(r => r.ok ? r.json() : null),
+          fetch(`https://twitch.gdb.gg/api/v2/categories/${FORTNITE_CATEGORY_ID}/history-v2?range=7d`).then(r => r.ok ? r.json() : null),
+          fetch(`https://twitch.gdb.gg/api/v2/categories/${FORTNITE_CATEGORY_ID}/history-v2?range=30d`).then(r => r.ok ? r.json() : null)
+        ]);
+
+        // Process current data
+        if (currentRes.ok) {
+          const current = await currentRes.json();
+          updateLiveBanner(current);
+        }
+
+        // Store history data
+        historyData['1d'] = history1d;
+        historyData['7d'] = history7d;
+        historyData['30d'] = history30d;
+
+        // Update display
+        updateStatsDisplay();
+        updateCharts();
+
+      } catch (error) {
+        console.error('Failed to load data:', error);
+        document.getElementById('statsGrid').innerHTML = `
+          <div class="error-state" style="grid-column: span 4;">
+            Failed to load stream data. Please try again later.
+          </div>
+        `;
+      }
+    }
+
+    // ==================== LIVE BANNER ====================
+    function updateLiveBanner(data) {
+      const viewers = data.live_viewers || data.current?.live_viewers || 0;
+      const channels = data.live_channels || data.current?.live_channels || 0;
+
+      document.getElementById('liveViewers').textContent = viewers.toLocaleString();
+      document.getElementById('liveChannels').textContent = channels.toLocaleString();
+    }
+
+    // ==================== STATS DISPLAY ====================
+    function updateStatsDisplay() {
+      const data = historyData[currentRange];
+      
+      if (!data || !data.summary) {
+        document.getElementById('statViewers').textContent = '--';
+        document.getElementById('statAvgViewers').textContent = '--';
+        document.getElementById('statPeakViewers').textContent = '--';
+        document.getElementById('statGrowthViewers').textContent = '--';
+        document.getElementById('statGrowthPercent').textContent = '';
+        document.getElementById('dataInfo').textContent = 'No data available for this period';
+        return;
+      }
+
+      const { summary, timeseries } = data;
+      const current = summary.current || {};
+      const averages = summary.averages || {};
+      const peaks = summary.peaks || {};
+      const change = summary.change || {};
+
+      // Update stat cards
+      document.getElementById('statViewers').textContent = (current.live_viewers || 0).toLocaleString();
+      document.getElementById('statAvgViewers').textContent = (averages.avg_viewers || 0).toLocaleString();
+      document.getElementById('statPeakViewers').textContent = (peaks.max_viewers || 0).toLocaleString();
+      
+      const viewerChange = change.viewer_change || 0;
+      const viewerPercent = change.viewer_percent || 0;
+      const isPositive = viewerChange >= 0;
+      
+      document.getElementById('statGrowthViewers').textContent = 
+        (isPositive ? '+' : '') + viewerChange.toLocaleString();
+      
+      const percentEl = document.getElementById('statGrowthPercent');
+      if (viewerPercent) {
+        percentEl.textContent = `(${isPositive ? '+' : ''}${viewerPercent.toFixed(1)}%)`;
+        percentEl.className = `change ${isPositive ? 'positive' : 'negative'}`;
+      } else {
+        percentEl.textContent = '';
+      }
+
+      // Update data info
+      if (timeseries && timeseries.length > 0) {
+        const startDate = new Date(timeseries[0].timestamp);
+        const endDate = new Date(timeseries[timeseries.length - 1].timestamp);
+        document.getElementById('dataInfo').textContent = 
+          `Based on ${timeseries.length} data points from ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`;
+      }
+    }
+
+    // ==================== CHARTS ====================
+    function updateCharts() {
+      const data = historyData[currentRange];
+      
+      if (!data || !data.timeseries || data.timeseries.length < 2) {
+        document.getElementById('chartsGrid').innerHTML = `
+          <div class="empty-state" style="grid-column: span 2;">
+            Not enough data points for charts in this period
+          </div>
+        `;
+        return;
+      }
+
+      // Restore chart containers
+      document.getElementById('chartsGrid').innerHTML = `
+        <div class="chart-card">
+          <h3>👁️ Viewers Over Time</h3>
+          <div class="chart-wrapper">
+            <canvas id="viewersChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>📺 Live Channels Over Time</h3>
+          <div class="chart-wrapper">
+            <canvas id="channelsChart"></canvas>
+          </div>
+        </div>
+      `;
+
+      createCharts(data.timeseries);
+    }
+
+    function createCharts(timeseries) {
+      // Destroy existing charts
+      if (chartInstances.viewers) chartInstances.viewers.destroy();
+      if (chartInstances.channels) chartInstances.channels.destroy();
+
+      const labels = timeseries.map(s => {
+        const date = new Date(s.timestamp);
+        if (currentRange === '1d') {
+          return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        } else if (currentRange === '7d') {
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit' });
+        } else {
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+      });
+
+      const viewersData = timeseries.map(s => s.live_viewers);
+      const channelsData = timeseries.map(s => s.live_channels);
+
+      const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(13, 17, 23, 0.95)',
+            titleColor: '#f7c948',
+            bodyColor: '#fff',
+            borderColor: 'rgba(247, 201, 72, 0.3)',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: 'rgba(255,255,255,0.5)',
+              font: { family: 'Outfit' },
+              callback: v => v.toLocaleString()
+            },
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          },
+          x: {
+            ticks: {
+              color: 'rgba(255,255,255,0.5)',
+              font: { family: 'Outfit', size: 10 },
+              maxRotation: 45,
+              minRotation: 45
+            },
+            grid: { color: 'rgba(255,255,255,0.02)' }
+          }
+        }
+      };
+
+      // Viewers Chart
+      const viewersCtx = document.getElementById('viewersChart');
+      if (viewersCtx) {
+        chartInstances.viewers = new Chart(viewersCtx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Viewers',
+              data: viewersData,
+              borderColor: '#00d4ff',
+              backgroundColor: 'rgba(0, 212, 255, 0.1)',
+              borderWidth: 2,
+              tension: 0.4,
+              fill: true,
+              pointBackgroundColor: '#00d4ff',
+              pointBorderColor: '#0d1117',
+              pointBorderWidth: 2,
+              pointRadius: 3,
+              pointHoverRadius: 5
+            }]
+          },
+          options: {
+            ...chartOptions,
+            plugins: {
+              ...chartOptions.plugins,
+              tooltip: {
+                ...chartOptions.plugins.tooltip,
+                callbacks: {
+                  label: ctx => ctx.parsed.y.toLocaleString() + ' viewers'
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Channels Chart
+      const channelsCtx = document.getElementById('channelsChart');
+      if (channelsCtx) {
+        chartInstances.channels = new Chart(channelsCtx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Channels',
+              data: channelsData,
+              borderColor: '#34d399',
+              backgroundColor: 'rgba(52, 211, 153, 0.1)',
+              borderWidth: 2,
+              tension: 0.4,
+              fill: true,
+              pointBackgroundColor: '#34d399',
+              pointBorderColor: '#0d1117',
+              pointBorderWidth: 2,
+              pointRadius: 3,
+              pointHoverRadius: 5
+            }]
+          },
+          options: {
+            ...chartOptions,
+            plugins: {
+              ...chartOptions.plugins,
+              tooltip: {
+                ...chartOptions.plugins.tooltip,
+                callbacks: {
+                  label: ctx => ctx.parsed.y.toLocaleString() + ' channels'
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function toggleCharts() {
+      chartsVisible = !chartsVisible;
+      const section = document.getElementById('chartsGrid');
+      const btn = document.getElementById('toggleChartsBtn');
+      
+      section.style.display = chartsVisible ? 'grid' : 'none';
+      btn.textContent = chartsVisible ? '📉 Hide Charts' : '📈 Show Charts';
+    }
+
+    // ==================== TOP STREAMERS ====================
+    async function toggleStreamers() {
+      const list = document.getElementById('streamersList');
+      const btn = document.getElementById('toggleStreamersBtn');
+
+      if (list.classList.contains('visible')) {
+        list.classList.remove('visible');
+        btn.textContent = 'Show Streamers';
+        return;
+      }
+
+      list.classList.add('visible');
+      btn.textContent = 'Hide Streamers';
+
+      if (streamersLoaded) return;
+
+      try {
+        const res = await fetch(`https://twitch.gdb.gg/api/v2/categories/${FORTNITE_CATEGORY_ID}?max_pages=1&top=10`);
+        if (!res.ok) throw new Error('Failed to load');
+        
+        const data = await res.json();
+        const streams = data.streams || data.top || data.creators || data.top_streams || [];
+
+        if (!Array.isArray(streams) || streams.length === 0) {
+          document.getElementById('streamersContent').innerHTML = `
+            <div class="empty-state">No live streamers found right now</div>
+          `;
+          return;
+        }
+
+        document.getElementById('streamersContent').innerHTML = streams.map((s, i) => {
+          const login = s.login || s.user_login || s.user?.login || '';
+          const name = s.display_name || s.user_name || s.user?.display_name || login;
+          const title = s.title || s.stream_title || '';
+          const viewers = (s.viewer_count || 0).toLocaleString();
+
+          return `
+            <a href="/twitch/profile?username=${encodeURIComponent(login)}" class="streamer-row">
+              <div class="streamer-rank">#${i + 1}</div>
+              <div class="streamer-name">
+                ${escapeHtml(name)}
+                <span class="live-badge">LIVE</span>
+              </div>
+              <div class="streamer-game" title="${escapeHtml(title)}">${escapeHtml(title) || '-'}</div>
+              <div class="streamer-viewers">👁️ ${viewers}</div>
+            </a>
+          `;
+        }).join('');
+
+        streamersLoaded = true;
+
+      } catch (error) {
+        console.error('Failed to load streamers:', error);
+        document.getElementById('streamersContent').innerHTML = `
+          <div class="error-state">Failed to load streamers</div>
+        `;
+      }
+    }
+
+    // ==================== HELPERS ====================
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

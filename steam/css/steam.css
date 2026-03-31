@@ -1,0 +1,633 @@
+/* ============================================
+   Steam Tracker - Shared Styles
+   gdb.gg Steam Theme
+   ============================================ */
+
+/* CSS Variables - Steam Theme */
+:root {
+    /* Core Steam Colors */
+    --steam-blue: #66c0f4;
+    --steam-blue-light: #a4d7f5;
+    --steam-dark: #1b2838;
+    --steam-darker: #171a21;
+    --steam-light: #2a475e;
+    
+    /* Extended Steam Colors */
+    --steam-green: #4fa94d;
+    --steam-red: #c43c35;
+    --steam-gold: #d4af37;
+    --steam-silver: #c0c0c0;
+    --steam-bronze: #cd7f32;
+    --steam-text: #c7d5e0;
+    --steam-text-dim: #8f98a0;
+    
+    /* Gradients */
+    --steam-gradient-start: #1a4d6d;
+    --steam-gradient-end: #1b2838;
+    
+    /* Text Colors */
+    --text-primary: #c7d5e0;
+    --text-secondary: #8f98a0;
+    --text-muted: #556772;
+    
+    /* Status Colors */
+    --success: #5fba46;
+    --warning: #f3a712;
+    --danger: #c94c4c;
+    
+    /* Chart Colors */
+    --chart-line: #66c0f4;
+    --chart-area: rgba(102, 192, 244, 0.15);
+    --chart-grid: rgba(102, 192, 244, 0.1);
+    
+    /* Borders & Effects */
+    --border-color: rgba(102, 192, 244, 0.2);
+    --glass-bg: rgba(27, 40, 56, 0.6);
+    --glass-border: rgba(102, 192, 244, 0.1);
+}
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base Body Styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, var(--steam-gradient-start) 0%, var(--steam-gradient-end) 100%);
+    min-height: 100vh;
+    color: var(--text-primary);
+    position: relative;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* Grid Pattern Overlay */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(102, 192, 244, 0.03) 2px, rgba(102, 192, 244, 0.03) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(102, 192, 244, 0.03) 2px, rgba(102, 192, 244, 0.03) 4px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ============================================
+   Navigation
+   ============================================ */
+
+/* Standard Navigation (profile, game, metrics pages) */
+/* Using specific class to avoid conflict with master-nav */
+nav.steam-sub-nav,
+nav:not(.master-nav):not(.mobile-bottom-nav) {
+    background: rgba(27, 40, 56, 0.6);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    margin-bottom: 2rem;
+    position: sticky;
+    top: var(--master-nav-height, 36px);
+    z-index: 100;
+}
+
+.nav-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-left {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-logo {
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--steam-blue), #66d4f4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--steam-blue);
+}
+
+.back-button {
+    background: rgba(102, 192, 244, 0.1);
+    color: var(--steam-blue);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.back-button:hover {
+    background: rgba(102, 192, 244, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Alternative Navigation (leaderboards, market pages) */
+.nav-container {
+    background: rgba(23, 26, 33, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-container .nav-content {
+    padding: 0 24px;
+    height: 64px;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text-primary);
+}
+
+.nav-brand svg {
+    width: 32px;
+    height: 32px;
+    fill: var(--steam-blue);
+}
+
+.nav-brand span {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* ============================================
+   Main Container
+   ============================================ */
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+/* ============================================
+   Warning Banner
+   ============================================ */
+
+.warning-banner {
+    background: linear-gradient(135deg, rgba(243, 167, 18, 0.15), rgba(243, 167, 18, 0.05));
+    border: 1px solid rgba(243, 167, 18, 0.3);
+    border-left: 4px solid var(--warning);
+    backdrop-filter: blur(20px);
+    padding: 1rem 1.5rem;
+    margin: 0 2rem 2rem 2rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.warning-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.warning-icon {
+    font-size: 1.5rem;
+}
+
+.warning-text {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.dismiss-button {
+    background: rgba(243, 167, 18, 0.2);
+    border: 1px solid rgba(243, 167, 18, 0.3);
+    color: var(--warning);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.dismiss-button:hover {
+    background: rgba(243, 167, 18, 0.3);
+}
+
+.warning-banner.hidden {
+    display: none;
+}
+
+/* ============================================
+   Loading States
+   ============================================ */
+
+.loading {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(102, 192, 244, 0.2);
+    border-top-color: var(--steam-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* ============================================
+   Skeleton Loading
+   ============================================ */
+
+.skeleton {
+    background: linear-gradient(90deg, rgba(102, 192, 244, 0.1) 25%, rgba(102, 192, 244, 0.2) 50%, rgba(102, 192, 244, 0.1) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton-text {
+    height: 16px;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-text.short { width: 40%; }
+.skeleton-text.medium { width: 60%; }
+.skeleton-text.long { width: 85%; }
+
+/* ============================================
+   Glass Cards & Panels
+   ============================================ */
+
+.glass-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    backdrop-filter: blur(20px);
+}
+
+.card {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.stat-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--steam-blue);
+    margin-bottom: 8px;
+}
+
+.stat-card .stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--steam-blue);
+    color: var(--steam-darker);
+}
+
+.btn-primary:hover {
+    background: var(--steam-blue-light);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: rgba(102, 192, 244, 0.1);
+    color: var(--steam-blue);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: rgba(102, 192, 244, 0.2);
+}
+
+/* ============================================
+   Tab Navigation
+   ============================================ */
+
+.tab-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    background: rgba(102, 192, 244, 0.1);
+    color: var(--text-primary);
+}
+
+.tab-btn.active {
+    background: var(--steam-blue);
+    color: var(--steam-dark);
+    border-color: var(--steam-blue);
+}
+
+/* ============================================
+   Page Headers
+   ============================================ */
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--steam-blue), var(--steam-blue-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* ============================================
+   Section Titles
+   ============================================ */
+
+.section-title {
+    color: var(--steam-blue);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ============================================
+   Error & Empty States
+   ============================================ */
+
+.error-state,
+.error-text {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--danger);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   Modal Base Styles
+   ============================================ */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+    z-index: 1001;
+    transition: transform 0.2s;
+}
+
+.modal-close:hover {
+    transform: scale(1.2);
+}
+
+/* ============================================
+   Badges & Tags
+   ============================================ */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.badge-success {
+    background: rgba(95, 186, 70, 0.2);
+    color: var(--success);
+}
+
+.badge-warning {
+    background: rgba(243, 167, 18, 0.2);
+    color: var(--warning);
+}
+
+.badge-danger {
+    background: rgba(201, 76, 76, 0.2);
+    color: var(--danger);
+}
+
+.badge-info {
+    background: rgba(102, 192, 244, 0.2);
+    color: var(--steam-blue);
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+
+footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    margin-top: 4rem;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 1200px) {
+    .container,
+    .main-container {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    nav {
+        padding: 0.75rem 1rem;
+    }
+    
+    .nav-left {
+        gap: 1rem;
+    }
+    
+    .nav-links {
+        gap: 1rem;
+    }
+    
+    .nav-link {
+        font-size: 0.85rem;
+    }
+    
+    .container,
+    .main-container {
+        padding: 1rem;
+    }
+    
+    .warning-banner {
+        margin: 0 1rem 1rem 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .page-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .tab-nav {
+        gap: 4px;
+    }
+    
+    .tab-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-logo {
+        font-size: 1rem;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+}

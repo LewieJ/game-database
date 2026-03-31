@@ -390,3 +390,79 @@ body {
     background: var(--accent);
   }
 }
+
+/* —— Home: master nav + full-bleed stage + footer (landing hero unchanged) —— */
+body.page-home-landing {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body.page-home-landing .stage {
+  flex: 1 1 auto;
+  min-height: min(100dvh, 900px);
+}
+
+.home-footer {
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1.25rem 1rem 1.5rem;
+}
+
+.home-footer-inner {
+  max-width: 42rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  font-family: var(--font);
+}
+
+.home-footer-brand {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.home-footer-logo,
+.home-footer-gg {
+  color: var(--text);
+}
+
+.home-footer-dot {
+  color: var(--accent);
+}
+
+.home-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  justify-content: center;
+}
+
+.home-footer-links a {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(240, 240, 248, 0.55);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.home-footer-links a:hover {
+  color: var(--accent);
+}
+
+.home-footer-copy {
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgba(240, 240, 248, 0.38);
+}

@@ -1,0 +1,7 @@
+# IndexNow key file — must be served as plain text with no extra headers
+/d86078e67f7c48eaaccd4c54ece9ab6b.txt
+  Content-Type: text/plain
+
+/*
+  X-Robots-Tag: index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1
+  Content-Security-Policy-Report-Only: frame-ancestors 'self'

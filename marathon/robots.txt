@@ -1,0 +1,23 @@
+# MarathonDB Robots.txt
+User-agent: *
+Allow: /
+
+# Explicitly allow Bing crawlers
+User-agent: bingbot
+Allow: /
+
+User-agent: msnbot
+Allow: /
+
+User-agent: msnbot-media
+Allow: /
+
+User-agent: adidxbot
+Allow: /
+
+# Sitemap location
+Sitemap: https://marathondb.gg/sitemap.xml
+Sitemap: https://marathondb.gg/news-sitemap.xml
+
+# IndexNow key: d86078e67f7c48eaaccd4c54ece9ab6b
+# Key file served at: https://marathondb.gg/d86078e67f7c48eaaccd4c54ece9ab6b.txt

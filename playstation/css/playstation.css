@@ -1,0 +1,675 @@
+:root {
+      /* PlayStation Blue Theme */
+      --ps-blue: #0070d1;
+      --ps-blue-dark: #00439c;
+      --ps-blue-soft: #00bfff;
+      --ps-blue-glow: rgba(0, 112, 209, 0.6);
+      --bg-dark: #000000;
+      --bg-panel: #0a0a0a;
+      --bg-card: #121212;
+      --text-main: #ffffff;
+      --text-muted: #8f8f8f;
+      --accent: #00bfff;
+      --success: #00d26a;
+      --danger: #ff3b30;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #000000;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* PS5-style subtle background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(ellipse at 20% 0%, rgba(0, 112, 209, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(0, 191, 255, 0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 3rem 1.5rem 4rem;
+      gap: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* PS5-style card container */
+    .checker-container {
+      max-width: 560px;
+      width: 100%;
+    }
+
+    /* Main card - PS5 minimalist style */
+    .checker-card {
+      background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .checker-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 112, 209, 0.5), transparent);
+    }
+
+    /* PlayStation logo-style header */
+    .checker-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .ps-icons {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
+      opacity: 0.6;
+    }
+
+    .ps-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ps-blue-soft);
+    }
+
+    .checker-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .checker-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* Form styling */
+    .form-group {
+      margin-top: 1.5rem;
+    }
+
+    .input-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    #psn-input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      padding-right: 120px;
+      border-radius: 50px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    #psn-input::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    #psn-input:focus {
+      border-color: var(--ps-blue);
+      background: rgba(0, 112, 209, 0.08);
+      box-shadow: 0 0 0 4px rgba(0, 112, 209, 0.15);
+    }
+
+    .submit-btn {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 0.7rem 1.5rem;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, var(--ps-blue) 0%, var(--ps-blue-soft) 100%);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(0, 112, 209, 0.4);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-50%) scale(1.02);
+      box-shadow: 0 6px 20px rgba(0, 112, 209, 0.5);
+    }
+
+    .submit-btn:active {
+      transform: translateY(-50%) scale(0.98);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+      transform: translateY(-50%);
+      box-shadow: none;
+    }
+
+    .helper-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      text-align: center;
+    }
+
+    /* Result card */
+    .result-card {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: none;
+    }
+
+    .result-card.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .result-card.available {
+      border-color: var(--success);
+      background: rgba(0, 210, 106, 0.08);
+      box-shadow: 0 0 20px rgba(0, 210, 106, 0.2);
+    }
+
+    .result-card.unavailable {
+      border-color: var(--danger);
+      background: rgba(255, 59, 48, 0.08);
+      box-shadow: 0 0 20px rgba(255, 59, 48, 0.2);
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .result-icon {
+      font-size: 1.5rem;
+    }
+
+    .result-content {
+      flex: 1;
+    }
+
+    .result-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .result-card.available .result-title {
+      color: var(--success);
+    }
+
+    .result-card.unavailable .result-title {
+      color: var(--danger);
+    }
+
+    .result-message {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .result-badge {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .result-card.available .result-badge {
+      background: rgba(0, 210, 106, 0.2);
+      color: var(--success);
+    }
+
+    .result-card.unavailable .result-badge {
+      background: rgba(255, 59, 48, 0.2);
+      color: var(--danger);
+    }
+
+    /* Recent searches */
+    .history-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: none;
+    }
+
+    .history-section.show {
+      display: block;
+    }
+
+    .history-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .history-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .history-pill {
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .history-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .history-pill.available {
+      border-color: rgba(0, 210, 106, 0.5);
+      background: rgba(0, 210, 106, 0.1);
+    }
+
+    .history-pill.unavailable {
+      border-color: rgba(255, 59, 48, 0.5);
+      background: rgba(255, 59, 48, 0.1);
+    }
+
+    /* Tips section */
+    .tips-card {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      border-radius: var(--radius-lg);
+      background: rgba(0, 112, 209, 0.06);
+      border: 1px solid rgba(0, 112, 209, 0.15);
+    }
+
+    .tips-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ps-blue-soft);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tips-list {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      padding-left: 1rem;
+    }
+
+    .tips-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    .tips-list strong {
+      color: var(--text-main);
+    }
+
+    /* PlayStation symbols footer */
+    .ps-footer {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .ps-symbols {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      font-size: 1.25rem;
+      opacity: 0.3;
+    }
+
+    .ps-symbol {
+      color: var(--ps-blue-soft);
+      transition: all 0.2s ease;
+    }
+
+    .ps-symbol:hover {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+
+    /* Status indicator */
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px rgba(0, 210, 106, 0.6);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Responsive - Tablet */
+    @media (max-width: 768px) {
+      main {
+        padding: 2.5rem 1.25rem 3rem;
+      }
+
+      .checker-card {
+        padding: 2rem 1.75rem;
+        border-radius: var(--radius-lg);
+      }
+
+      .checker-title {
+        font-size: 1.6rem;
+      }
+
+      .checker-subtitle {
+        font-size: 0.9rem;
+      }
+
+      .ps-icons {
+        gap: 0.9rem;
+        font-size: 1.1rem;
+      }
+
+      .tips-card {
+        padding: 1rem;
+      }
+
+      .tips-list {
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Responsive - Mobile */
+    @media (max-width: 600px) {
+      main {
+        padding: 1.5rem 1rem 3rem;
+      }
+
+      .checker-card {
+        padding: 1.75rem 1.25rem;
+        border-radius: 14px;
+      }
+
+      .checker-header {
+        margin-bottom: 1.5rem;
+      }
+
+      .ps-icons {
+        gap: 0.75rem;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .checker-title {
+        font-size: 1.4rem;
+      }
+
+      .checker-subtitle {
+        font-size: 0.85rem;
+      }
+
+      .input-label {
+        font-size: 0.7rem;
+      }
+
+      #psn-input {
+        padding: 0.9rem 1rem;
+        padding-right: 1rem;
+        font-size: 1rem;
+        border-radius: 12px;
+      }
+
+      .input-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .submit-btn {
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.9rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1rem;
+      }
+
+      .submit-btn:hover,
+      .submit-btn:active {
+        transform: none;
+      }
+
+      .submit-btn:disabled {
+        transform: none;
+      }
+
+      .helper-text {
+        font-size: 0.75rem;
+        margin-top: 0.6rem;
+      }
+
+      /* Result card mobile */
+      .result-card {
+        padding: 1rem;
+        margin-top: 1.25rem;
+        border-radius: 12px;
+      }
+
+      .result-header {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .result-icon {
+        font-size: 1.25rem;
+      }
+
+      .result-title {
+        font-size: 0.9rem;
+      }
+
+      .result-message {
+        font-size: 0.8rem;
+      }
+
+      .result-badge {
+        font-size: 0.6rem;
+        padding: 0.25rem 0.5rem;
+      }
+
+      /* History mobile */
+      .history-section {
+        margin-top: 1.25rem;
+        padding-top: 1.25rem;
+      }
+
+      .history-title {
+        font-size: 0.65rem;
+      }
+
+      .history-list {
+        gap: 0.4rem;
+      }
+
+      .history-pill {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.65rem;
+      }
+
+      /* Tips mobile */
+      .tips-card {
+        margin-top: 1.25rem;
+        padding: 1rem;
+        border-radius: 12px;
+      }
+
+      .tips-title {
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .tips-list {
+        font-size: 0.8rem;
+        line-height: 1.5;
+        padding-left: 0.75rem;
+      }
+
+      .tips-list li {
+        margin-bottom: 0.25rem;
+      }
+
+      /* Footer mobile */
+      .ps-footer {
+        margin-top: 1.5rem;
+      }
+
+      .ps-symbols {
+        gap: 1rem;
+        font-size: 1rem;
+      }
+
+      .status-indicator {
+        margin-top: 1rem;
+        font-size: 0.7rem;
+        gap: 0.4rem;
+      }
+
+      .status-dot {
+        width: 5px;
+        height: 5px;
+      }
+    }
+
+    /* Responsive - Small Mobile */
+    @media (max-width: 380px) {
+      main {
+        padding: 1rem 0.75rem 2.5rem;
+      }
+
+      .checker-card {
+        padding: 1.5rem 1rem;
+      }
+
+      .checker-title {
+        font-size: 1.25rem;
+      }
+
+      .ps-icons {
+        gap: 0.6rem;
+        font-size: 0.9rem;
+      }
+
+      #psn-input {
+        padding: 0.8rem 0.9rem;
+        font-size: 0.95rem;
+      }
+
+      .submit-btn {
+        padding: 0.8rem 1.25rem;
+        font-size: 0.95rem;
+      }
+
+      .tips-list {
+        font-size: 0.75rem;
+      }
+    }
+
+    /* Screen reader only */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }

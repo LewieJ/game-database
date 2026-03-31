@@ -1,0 +1,113 @@
+/**
+ * gdb.gg — shared “shell” for non-Marathon pages only.
+ * Activated when <html data-rnk-platform="…"> is set (see global.js).
+ * Marathon never sets this attribute — Marathon styling stays on rnk-theme.css alone.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+/* ── Per-platform RGB pairs (primary + secondary glow) ── */
+html[data-rnk-platform="home"] {
+    --rnk-a-r: 196;
+    --rnk-a-g: 113;
+    --rnk-a-b: 237;
+    --rnk-b-r: 108;
+    --rnk-b-g: 92;
+    --rnk-b-b: 231;
+}
+
+html[data-rnk-platform="fortnite"] {
+    --rnk-a-r: 0;
+    --rnk-a-g: 212;
+    --rnk-a-b: 255;
+    --rnk-b-r: 247;
+    --rnk-b-g: 201;
+    --rnk-b-b: 72;
+}
+
+html[data-rnk-platform="twitch"] {
+    --rnk-a-r: 145;
+    --rnk-a-g: 70;
+    --rnk-a-b: 255;
+    --rnk-b-r: 177;
+    --rnk-b-g: 151;
+    --rnk-b-b: 252;
+}
+
+html[data-rnk-platform="steam"] {
+    --rnk-a-r: 102;
+    --rnk-a-g: 192;
+    --rnk-a-b: 244;
+    --rnk-b-r: 74;
+    --rnk-b-g: 125;
+    --rnk-b-b: 168;
+}
+
+html[data-rnk-platform="xbox"] {
+    --rnk-a-r: 91;
+    --rnk-a-g: 191;
+    --rnk-a-b: 33;
+    --rnk-b-r: 0;
+    --rnk-b-g: 180;
+    --rnk-b-b: 255;
+}
+
+html[data-rnk-platform="playstation"] {
+    --rnk-a-r: 0;
+    --rnk-a-g: 112;
+    --rnk-a-b: 209;
+    --rnk-b-r: 0;
+    --rnk-b-g: 191;
+    --rnk-b-b: 255;
+}
+
+/* Shared semantic tokens (pages can reference these) */
+html[data-rnk-platform] {
+    --rnk-shell-bg: #09090b;
+    --rnk-shell-surface: rgba(255, 255, 255, 0.045);
+    --rnk-shell-border: rgba(255, 255, 255, 0.09);
+    --rnk-shell-radius-sm: 10px;
+    --rnk-shell-radius-md: 14px;
+    --rnk-shell-radius-lg: 16px;
+    --rnk-shell-accent-soft: rgba(var(--rnk-a-r), var(--rnk-a-g), var(--rnk-a-b), 0.14);
+    --rnk-shell-accent-line: rgba(var(--rnk-a-r), var(--rnk-a-g), var(--rnk-a-b), 0.35);
+}
+
+/* Ambient page background (Marathon-adjacent: cool dark + soft accent hazes) */
+html[data-rnk-platform] body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--rnk-shell-bg) !important;
+    background-image:
+        radial-gradient(ellipse 88% 52% at 8% -8%, rgba(var(--rnk-a-r), var(--rnk-a-g), var(--rnk-a-b), 0.1), transparent 55%),
+        radial-gradient(ellipse 80% 48% at 94% 6%, rgba(var(--rnk-b-r), var(--rnk-b-g), var(--rnk-b-b), 0.08), transparent 52%),
+        radial-gradient(ellipse 72% 45% at 50% 100%, rgba(var(--rnk-a-r), var(--rnk-a-g), var(--rnk-a-b), 0.05), transparent 58%),
+        radial-gradient(ellipse 55% 42% at 72% 52%, rgba(255, 255, 255, 0.02), transparent 62%) !important;
+    background-attachment: fixed;
+}
+
+/* Unified top bar: subtle platform tint */
+html[data-rnk-platform] .master-nav {
+    border-bottom-color: rgba(var(--rnk-a-r), var(--rnk-a-g), var(--rnk-a-b), 0.22);
+    box-shadow: 0 1px 0 rgba(var(--rnk-a-r), var(--rnk-a-g), var(--rnk-a-b), 0.06);
+}
+
+html[data-rnk-platform] .master-nav-brand .master-nav-dot {
+    color: rgb(var(--rnk-b-r), var(--rnk-b-g), var(--rnk-b-b));
+}
+
+/* Fortnite: let the shell gradient show through fixed backdrop layers */
+html[data-rnk-platform="fortnite"] .bg-gradient {
+    background: transparent !important;
+}
+
+/* Reusable glass panel (optional on any subsite) */
+html[data-rnk-platform] .rnk-glass-panel {
+    background: var(--rnk-shell-surface);
+    border: 1px solid var(--rnk-shell-border);
+    border-radius: var(--rnk-shell-radius-md);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}

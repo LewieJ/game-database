@@ -1,0 +1,3 @@
+# Netlify / Cloudflare Pages style — legacy top-level paths → Marathon hub
+/weapons/*  /marathon/weapons/:splat  301
+/runners/*  /marathon/runners/:splat  301

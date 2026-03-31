@@ -1,0 +1,612 @@
+@import url("gdb-subsite-shell.css");
+
+/* ============================================
+   gdb.gg — Global Styles
+   Master Navbar & Shared Components
+   ============================================ */
+
+/* CSS Variables - Global Theme */
+:root {
+    --bg-page: #0f1419;
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --text-primary: #e8eaed;
+    --text-secondary: #9aa0a6;
+    --text-muted: #6b7280;
+    --accent: #5f6368;
+    --accent-light: #8ab4f8;
+    --border: rgba(255, 255, 255, 0.1);
+    
+    /* Platform Colors */
+    --color-twitch: #9146ff;
+    --color-twitch-light: #b197fc;
+    --color-steam: #66c0f4;
+    --color-steam-light: #a8d8f7;
+    --color-xbox: #5bbf21;
+    --color-xbox-light: #8ee35a;
+    --color-playstation: #00bfff;
+    --color-playstation-light: #66d9ff;
+    --color-fortnite: #ffc107;
+    --color-fortnite-light: #ffd54f;
+    /* Slim unified top bar — subsite stickies use this offset */
+    --master-nav-height: 36px;
+}
+
+/* ============================================
+   Master Navbar
+   ============================================ */
+
+#global-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1200;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Tracker-style slim bar: dense icon + label row, flat black */
+.master-nav {
+    height: var(--master-nav-height);
+    min-height: var(--master-nav-height);
+    display: flex !important;
+    align-items: stretch;
+    background: #000000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-sizing: border-box;
+}
+
+.master-nav-inner {
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 0 10px 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: clamp(8px, 2vw, 20px);
+    height: 100%;
+    width: 100%;
+    flex-wrap: nowrap;
+}
+
+.master-nav-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #f5f5f5;
+    flex-shrink: 0;
+    padding: 4px 6px 4px 0;
+    border-radius: 4px;
+}
+
+.master-nav-brand:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.master-nav-brand-mark {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    display: block;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.master-nav-wordmark {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.master-nav-dot {
+    color: #e94560;
+}
+
+.master-nav-platforms {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.master-nav-platforms > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    height: var(--master-nav-height);
+    box-sizing: border-box;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: rgba(255, 255, 255, 0.62);
+    border: none;
+    border-radius: 0;
+    white-space: nowrap;
+    transition: color 0.12s ease, background 0.12s ease;
+}
+
+.master-nav-platforms > a:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.master-nav-platforms > a.active {
+    color: #ffffff;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.master-nav-platforms > a svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.88;
+}
+
+.master-nav-platforms > a img {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    display: block;
+    opacity: 0.88;
+}
+
+/* Home soft launch: non-Marathon platforms shown but not navigable */
+.master-nav-platforms > span.master-nav-platform--soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    height: var(--master-nav-height);
+    box-sizing: border-box;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: rgba(255, 255, 255, 0.35);
+    white-space: nowrap;
+    opacity: 0.55;
+    filter: grayscale(1);
+    cursor: not-allowed;
+    pointer-events: none;
+    user-select: none;
+}
+
+.master-nav-platforms > span.master-nav-platform--soon svg,
+.master-nav-platforms > span.master-nav-platform--soon img {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    display: block;
+    opacity: 0.65;
+}
+
+.master-nav-label {
+    line-height: 1;
+}
+
+.master-nav-trail {
+    flex-shrink: 0;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.master-nav-anchors {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.master-nav-anchors a {
+    color: rgba(255, 255, 255, 0.42);
+    text-decoration: none;
+    padding: 4px 0;
+}
+
+.master-nav-anchors a:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Platform accents when active (subtle left border / tint) */
+.master-nav-platforms > a.nav-marathon.active { box-shadow: inset 0 -2px 0 #d4ff00; background: rgba(212, 255, 0, 0.06); }
+.master-nav-platforms > a.nav-fortnite.active { box-shadow: inset 0 -2px 0 #ffc107; background: rgba(255, 193, 7, 0.08); }
+.master-nav-platforms > a.nav-twitch.active { box-shadow: inset 0 -2px 0 #9146ff; background: rgba(145, 70, 255, 0.08); }
+.master-nav-platforms > a.nav-steam.active { box-shadow: inset 0 -2px 0 #66c0f4; background: rgba(102, 192, 244, 0.08); }
+.master-nav-platforms > a.nav-xbox.active { box-shadow: inset 0 -2px 0 #5bbf21; background: rgba(91, 191, 33, 0.08); }
+.master-nav-platforms > a.nav-playstation.active { box-shadow: inset 0 -2px 0 #00bfff; background: rgba(0, 191, 255, 0.08); }
+
+@media (min-width: 769px) {
+    #global-nav,
+    .master-nav,
+    .master-nav-inner {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    .master-nav,
+    .master-nav-inner {
+        display: flex !important;
+    }
+}
+
+/* Legacy class names kept for About / promos (unused in slim bar) */
+.master-nav-brand-logo {
+    height: 18px;
+    width: auto;
+    border-radius: 4px;
+}
+
+.master-nav-brand-text {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+}
+
+.master-nav-about {
+    padding: 0.35rem 0.85rem;
+    background: linear-gradient(135deg, rgba(138, 180, 248, 0.15), rgba(138, 180, 248, 0.08));
+    border: 1px solid rgba(138, 180, 248, 0.3);
+    border-radius: 50px;
+    color: var(--accent-light);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 0 20px rgba(138, 180, 248, 0.1);
+    cursor: pointer;
+}
+
+.master-nav-about:hover {
+    background: linear-gradient(135deg, rgba(138, 180, 248, 0.25), rgba(138, 180, 248, 0.15));
+    border-color: rgba(138, 180, 248, 0.5);
+    box-shadow: 0 0 30px rgba(138, 180, 248, 0.2);
+    transform: translateY(-1px);
+}
+
+.master-nav-hey {
+    padding: 0.35rem 0.85rem;
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.25), rgba(255, 152, 0, 0.15));
+    border: 2px solid rgba(255, 152, 0, 0.6);
+    border-radius: 50px;
+    color: #ff9800;
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    cursor: pointer;
+    animation: glowPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(255, 152, 0, 0.3), inset 0 0 10px rgba(255, 152, 0, 0.1);
+}
+
+.master-nav-hey:hover {
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.35), rgba(255, 152, 0, 0.25));
+    border-color: rgba(255, 152, 0, 0.8);
+    box-shadow: 0 0 40px rgba(255, 152, 0, 0.5), inset 0 0 15px rgba(255, 152, 0, 0.2);
+    transform: translateY(-1px) scale(1.05);
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(255, 152, 0, 0.3), inset 0 0 10px rgba(255, 152, 0, 0.1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(255, 152, 0, 0.5), inset 0 0 15px rgba(255, 152, 0, 0.2);
+    }
+}
+
+/* ============================================
+   About Modal
+   ============================================ */
+
+.master-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.master-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.master-modal-content {
+    background: linear-gradient(145deg, #1a1f2e 0%, #0f1419 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 2rem;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.master-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.master-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+}
+
+.master-modal-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.master-modal-content p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.master-modal-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.master-modal-content li {
+    color: var(--text-secondary);
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.master-modal-content li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent-light);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 1100px) {
+    .master-nav-platforms > a {
+        padding: 0 6px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 900px) {
+    .master-nav-inner {
+        padding: 0 8px;
+    }
+
+    .master-nav-platforms > a .master-nav-label {
+        display: none;
+    }
+
+    .master-nav-platforms > a {
+        padding: 0 8px;
+    }
+
+    .master-nav-platforms > a svg,
+    .master-nav-platforms > a img {
+        width: 17px;
+        height: 17px;
+    }
+
+    .master-nav-anchors {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .master-nav-wordmark {
+        display: none;
+    }
+    
+    .master-nav-about {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.7rem;
+    }
+}
+
+/* ============================================
+   Mobile Hamburger Menu
+   ============================================ */
+
+.master-nav-hamburger {
+    display: none;
+}
+
+/* Mobile Bottom Navigation */
+@media (max-width: 768px) {
+    /* Hide the "What is Game Database?" button */
+    .master-nav-about {
+        display: none;
+    }
+    
+    /* Platform strip: icon-only row still visible; use bottom nav for thumb reach */
+    .master-nav-platforms > a .master-nav-label {
+        display: none;
+    }
+
+    .master-nav-platforms {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        mask-image: linear-gradient(90deg, #000 85%, transparent 100%);
+        -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent 100%);
+    }
+    
+    /* Create bottom navigation bar */
+    #global-nav::after {
+        content: '';
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: linear-gradient(180deg, rgba(15, 20, 25, 0.98) 0%, rgba(10, 14, 20, 1) 100%);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+        z-index: 999;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    
+    /* Add bottom padding to body so content isn't hidden behind fixed nav */
+    body {
+        padding-bottom: 80px !important;
+    }
+}
+
+/* Mobile bottom nav - injected via JS */
+.mobile-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        min-height: 64px;
+        background: linear-gradient(180deg, rgba(15, 20, 25, 0.98) 0%, rgba(10, 14, 20, 1) 100%);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        padding: 0.4rem 0.5rem;
+        padding-bottom: calc(0.4rem + env(safe-area-inset-bottom, 0px));
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.15rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .mobile-bottom-nav::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .mobile-bottom-nav a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 0.55rem;
+        font-weight: 500;
+        padding: 0.35rem 0.4rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        gap: 0.2rem;
+        min-width: 48px;
+        flex-shrink: 0;
+    }
+
+    .mobile-bottom-nav span.master-nav-platform--soon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.28);
+        font-size: 0.55rem;
+        font-weight: 500;
+        padding: 0.35rem 0.4rem;
+        border-radius: 8px;
+        gap: 0.2rem;
+        min-width: 48px;
+        flex-shrink: 0;
+        opacity: 0.55;
+        filter: grayscale(1);
+        cursor: not-allowed;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .mobile-bottom-nav span.master-nav-platform--soon svg,
+    .mobile-bottom-nav span.master-nav-platform--soon img {
+        width: 22px;
+        height: 22px;
+        opacity: 0.65;
+    }
+    
+    .mobile-bottom-nav a svg {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .mobile-bottom-nav a:hover,
+    .mobile-bottom-nav a.active {
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.08);
+    }
+    
+    /* Platform colors for active states */
+    .mobile-bottom-nav a.nav-home.active { color: var(--accent-light); }
+    .mobile-bottom-nav a.nav-twitch.active { color: var(--color-twitch-light); }
+    .mobile-bottom-nav a.nav-steam.active { color: var(--color-steam); }
+    .mobile-bottom-nav a.nav-xbox.active { color: var(--color-xbox-light); }
+    .mobile-bottom-nav a.nav-playstation.active { color: var(--color-playstation); }
+    .mobile-bottom-nav a.nav-fortnite.active { color: var(--color-fortnite); }
+    .mobile-bottom-nav a.nav-marathon.active { color: #d4ff00; }
+    
+    /* Hide the ::after pseudo element since we're using real nav */
+    #global-nav::after {
+        display: none;
+    }
+}
+
+/* Mobile menu overlay - not needed for bottom nav */
+.master-nav-mobile-overlay {
+    display: none;
+}

@@ -1,0 +1,262 @@
+// Faction Upgrade Definitions — Static data for the upgrade checklist
+// Data sourced from user's verified Faction Upgrades spreadsheet (Mar 2026).
+// Capstones are NOT in the spreadsheet and remain as-is from prior data mining.
+
+const FACTION_UPGRADES = {
+  cyberacme: {
+    name: 'CyberAcme',
+    color: '#01d838',
+    agent: 'Oni',
+    materials: [
+      { slug: 'unstable-diode',    name: 'Unstable Diode',    icon: 'https://helpbot.marathondb.gg/assets/items/salvage/unstable-diode-64x64.png' },
+      { slug: 'unstable-gel',      name: 'Unstable Gel',      icon: 'https://helpbot.marathondb.gg/assets/items/salvage/unstable-gel-64x64.png' },
+      { slug: 'unstable-gunmetal', name: 'Unstable Gunmetal', icon: 'https://helpbot.marathondb.gg/assets/items/salvage/unstable-gunmetal-64x64.png' },
+      { slug: 'unstable-biomass',  name: 'Unstable Biomass',  icon: 'https://helpbot.marathondb.gg/assets/items/salvage/unstable-biomass-64x64.png' },
+      { slug: 'unstable-lead',     name: 'Unstable Lead',     icon: 'https://helpbot.marathondb.gg/assets/items/salvage/unstable-lead-64x64.png' },
+      { slug: 'stable-gel',        name: 'Stable Gel',        icon: 'https://helpbot.marathondb.gg/assets/items/salvage/stable-gel-64x64.png' },
+    ],
+    upgrades: [
+      // ── Inventory ──
+      {
+        slug: 'cyac-expansion',
+        name: 'Expansion',
+        category: 'inventory',
+        description: 'Gain additional rows of vault capacity for the rest of the current season.',
+        maxLevel: 5,
+        levels: [
+          { level: 1, rank: 3,  credits: 2500,  effect: 'Vault Size +8 Rows', salvage: [{ slug: 'unstable-diode', amount: 12 }] },
+          { level: 2, rank: 7,  credits: 4000,  effect: 'Vault Size +8 Rows', salvage: [{ slug: 'unstable-diode', amount: 22 }, { slug: 'unstable-gunmetal', amount: 12 }] },
+          { level: 3, rank: 12, credits: 5000,  effect: 'Vault Size +6 Rows', salvage: [{ slug: 'unstable-diode', amount: 27 }, { slug: 'unstable-gunmetal', amount: 15 }] },
+          { level: 4, rank: 18, credits: 7000,  effect: 'Vault Size +4 Rows', salvage: [{ slug: 'unstable-diode', amount: 30 }, { slug: 'unstable-gunmetal', amount: 18 }] },
+          { level: 5, rank: 28, credits: 10000, effect: 'Vault Size +4 Rows', salvage: [{ slug: 'unstable-diode', amount: 50 }, { slug: 'unstable-gunmetal', amount: 30 }] },
+        ],
+      },
+      {
+        slug: 'cyac-credit-limit',
+        name: 'Credit Limit',
+        category: 'inventory',
+        description: "Raises your credit wallet's capacity for the rest of the season.",
+        maxLevel: 5,
+        levels: [
+          { level: 1, rank: 4,  credits: 2500,  effect: 'Credit Wallet Capacity +20k',   salvage: [] },
+          { level: 2, rank: 8,  credits: 4000,  effect: 'Credit Wallet Capacity +50k',   salvage: [] },
+          { level: 3, rank: 12, credits: 7000,  effect: 'Credit Wallet Capacity +200k',  salvage: [] },
+          { level: 4, rank: 18, credits: 10000, effect: 'Credit Wallet Capacity +700k',  salvage: [] },
+          { level: 5, rank: 25, credits: 50000, effect: 'Credit Wallet Capacity +9,000k', salvage: [] },
+        ],
+      },
+
+      // ── Function ──
+      {
+        slug: 'cyac-informant',
+        name: 'Informant.exe',
+        category: 'function',
+        description: 'Increases data card credit rewards by 50%. This bonus additively stacks with other Informant upgrades.',
+        maxLevel: 2,
+        levels: [
+          { level: 1, rank: 2,  credits: 1500, effect: 'Data Card Credit Value +50%', salvage: [] },
+          { level: 2, rank: 15, credits: 2000, effect: 'Data Card Credit Value +50%', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-soundproof',
+        name: 'Soundproof.exe',
+        category: 'function',
+        description: 'You make less noise while looting.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 'VIP', credits: 5000, effect: 'Reduced looting noise', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-loose-change',
+        name: 'Loose Change.exe',
+        category: 'function',
+        description: 'Opening a container rewards you with 25 credits.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 'VIP', credits: 5000, effect: '+25 Credits per container', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-fixative',
+        name: 'Fixative.exe',
+        category: 'function',
+        description: 'ROOK gains an increased chance of finding Matter Fixatives when defeating UESC.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 25, credits: 3500, effect: 'Increased Matter Fixative drops', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-slider',
+        name: 'Slider.exe',
+        category: 'function',
+        description: 'Your sprint slide generates less heat.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 'VIP', credits: 7000, effect: 'Reduced slide heat', salvage: [] },
+        ],
+      },
+
+      // ── Armory ──
+      {
+        slug: 'cyac-carrier',
+        name: 'Carrier',
+        category: 'armory',
+        description: 'Unlocks Enhanced backpacks for purchase in the Armory.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 5, credits: 1500, effect: '8XS Base Pack', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-carrier-plus',
+        name: 'Carrier+',
+        category: 'armory',
+        description: 'Unlocks Deluxe backpacks for purchase in the Armory.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 15, credits: 4000, effect: '16XS Base Pack', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-enhanced-weaponry',
+        name: 'Enhanced Weaponry',
+        category: 'armory',
+        description: 'Unlocks Enhanced Overrun AR, V11 Punch, and CE Tactical Sidearm for purchase from CyberAcme.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 4, credits: 2500, effect: 'Unlock Enhanced weapons', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-deluxe-weaponry',
+        name: 'Deluxe Weaponry',
+        category: 'armory',
+        description: 'Unlocks Deluxe Overrun AR, V11 Punch, and CE Tactical Sidearm for purchase from CyberAcme.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 14, credits: 4000, effect: 'Unlock Deluxe weapons', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-locksmith',
+        name: 'Locksmith',
+        category: 'armory',
+        description: 'Unlocks lockbox key for purchase in the Armory.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 4, credits: 2500, effect: '"Lockbox Key" (Item)', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-keymaker',
+        name: 'Keymaker',
+        category: 'armory',
+        description: 'Unlocks Deluxe Key templates for purchase in the Armory.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 16, credits: 4000, effect: '"Deluxe Key Template" (Item)', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-keymaker-plus',
+        name: 'Keymaker+',
+        category: 'armory',
+        description: 'Unlocks Superior Key templates for purchase in the Armory.',
+        maxLevel: 1,
+        levels: [
+          { level: 1, rank: 28, credits: 7000, effect: '"Superior Key Template" (Item)', salvage: [] },
+        ],
+      },
+
+      // ── Stat ──
+      {
+        slug: 'cyac-heat-sink',
+        name: 'Heat Sink.exe',
+        category: 'stat',
+        description: 'Heat Capacity increases the number of movement actions (sprint, sliding) you can perform before overheating.',
+        maxLevel: 2,
+        levels: [
+          { level: 1, rank: 1,  credits: 2500, effect: 'Heat Capacity +20', salvage: [{ slug: 'unstable-biomass', amount: 12 }] },
+          { level: 2, rank: 12, credits: 3500, effect: 'Heat Capacity +20', salvage: [{ slug: 'unstable-biomass', amount: 24 }, { slug: 'unstable-lead', amount: 12 }] },
+        ],
+      },
+      {
+        slug: 'cyac-scavenger',
+        name: 'Scavenger.exe',
+        category: 'stat',
+        description: 'Loot Speed increases how quickly items are revealed when looting containers.',
+        maxLevel: 3,
+        levels: [
+          { level: 1, rank: 1,  credits: 750,  effect: 'Loot Speed +20', salvage: [] },
+          { level: 2, rank: 4,  credits: 2500, effect: 'Loot Speed +20', salvage: [] },
+          { level: 3, rank: 16, credits: 4000, effect: 'Loot Speed +20', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-quick-vent',
+        name: 'Quick Vent.exe',
+        category: 'stat',
+        description: 'Your heat recovery begins more quickly after actions that generate heat.',
+        maxLevel: 2,
+        levels: [
+          { level: 1, rank: 4,  credits: 2500, effect: 'Heat Recovery Speed −20%', salvage: [{ slug: 'unstable-gel', amount: 8 }] },
+          { level: 2, rank: 20, credits: 4000, effect: 'Heat Recovery Speed −20%', salvage: [{ slug: 'unstable-gel', amount: 16 }] },
+        ],
+      },
+      {
+        slug: 'cyac-active-cool',
+        name: 'Active Cool.exe',
+        category: 'stat',
+        description: 'Your generated heat recovers more quickly.',
+        maxLevel: 2,
+        levels: [
+          { level: 1, rank: 13, credits: 3500, effect: 'Heat Recovery Rate +15%', salvage: [{ slug: 'stable-gel', amount: 24 }] },
+          { level: 2, rank: 23, credits: 5000, effect: 'Heat Recovery Rate +15%', salvage: [{ slug: 'stable-gel', amount: 30 }] },
+        ],
+      },
+      {
+        slug: 'cyac-firm-stance',
+        name: 'Firm Stance.exe',
+        category: 'stat',
+        description: 'Fall Resistance reduces the amount of damage you take after falling.',
+        maxLevel: 3,
+        levels: [
+          { level: 1, rank: 1,  credits: 750,  effect: 'Fall Resistance +20', salvage: [] },
+          { level: 2, rank: 11, credits: 4000, effect: 'Fall Resistance +20', salvage: [] },
+          { level: 3, rank: 26, credits: 5000, effect: 'Fall Resistance +20', salvage: [] },
+        ],
+      },
+      {
+        slug: 'cyac-loot-siphon',
+        name: 'Loot Siphon.exe',
+        category: 'stat',
+        description: 'Grants bonus tactical ability energy when opening an unlooted container.',
+        maxLevel: 2,
+        levels: [
+          { level: 1, rank: 7,  credits: 1500, effect: 'Tactical Energy on Container Loot +5%', salvage: [] },
+          { level: 2, rank: 17, credits: 4000, effect: 'Tactical Energy on Container Loot +5%', salvage: [] },
+        ],
+      },
+    ],
+    capstones: [
+      { rank: 1, nodesRequired: 6,  name: 'Capstone I',  reward: 'Bonus Pay' },
+      { rank: 2, nodesRequired: 12, name: 'Capstone II', reward: 'TBD' },
+      { rank: 3, nodesRequired: 18, name: 'Capstone III', reward: 'TBD' },
+      { rank: 4, nodesRequired: 24, name: 'Capstone IV', reward: 'TBD' },
+      { rank: 5, nodesRequired: 30, name: 'Capstone V', reward: 'TBD' },
+      { rank: 6, nodesRequired: 38, name: 'Capstone VI', reward: '(Rook) Carrier — Start with Deluxe Backpack' },
+    ],
+  },
+  // Other factions will be added later
+  nucaloric:  null,
+  traxus:     null,
+  mida:       null,
+  arachne:    null,
+  sekiguchi:  null,
+};
+
+// Make available globally
+if (typeof window !== 'undefined') window.FACTION_UPGRADES = FACTION_UPGRADES;

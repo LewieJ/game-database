@@ -1,0 +1,5 @@
+# gdb.gg — update the Sitemap URL if your canonical domain differs (e.g. www).
+User-agent: *
+Allow: /
+
+Sitemap: https://gdb.gg/sitemap.xml

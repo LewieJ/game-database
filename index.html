@@ -11,9 +11,12 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="assets/global.css" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body class="page-home-landing">
+    <div id="global-nav"></div>
+
     <div class="stage">
       <div class="mesh" aria-hidden="true"></div>
       <div class="grid-drift" aria-hidden="true"></div>
@@ -49,6 +52,20 @@
       </main>
     </div>
 
-    <script src="script.js"></script>
+    <footer class="home-footer">
+      <div class="home-footer-inner">
+        <div class="home-footer-brand">
+          <span class="home-footer-logo">gdb</span><span class="home-footer-dot">.</span><span class="home-footer-gg">gg</span>
+        </div>
+        <div class="home-footer-links">
+          <a href="/marathon/">Marathon</a>
+          <a href="/hub.html">Explore</a>
+        </div>
+        <p class="home-footer-copy">&copy; 2026 Game Database · gdb.gg</p>
+      </div>
+    </footer>
+
+    <script src="assets/global.js" defer></script>
+    <script src="script.js" defer></script>
   </body>
 </html>

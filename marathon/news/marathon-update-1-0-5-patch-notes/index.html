@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="robots" content="noindex,nofollow">
+    
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marathon Update 1.0.5 Patch Notes — Cryo Archive, New Implant Perks, WSTR Nerfs & More — gdb.gg</title>
+    
+    
+    
+    
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/gdb-mark.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/gdb-mark.svg">
+    
+
+    <!-- Open Graph -->
+    
+    
+    
+    
+    
+    
+    
+    <meta property="article:published_time" content="2026-03-17T00:00:00.000Z">
+    <meta property="article:author" content="Chandler Bellgrave">
+    <meta property="article:section" content="Patch Notes">
+    <meta property="article:tag" content="patch-notes">
+    <meta property="article:tag" content="update">
+    <meta property="article:tag" content="balance">
+    <meta property="article:tag" content="bug-fixes">
+    <meta property="article:tag" content="cryo-archive">
+
+    <!-- Twitter Card -->
+    
+    
+    
+    
+    
+
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/news.css">
+
+    
+
+    <!-- Structured Data -->
+    
+    
+      <script src="/marathon/js/unified-site-nav.js" defer></script>
+<link rel="stylesheet" href="/marathon/css/rnk-theme.css">
+</head>
+<body>
+<div class="rnk-site-rail"><a href="/marathon/" class="rnk-site-rail__brand">gdb.gg</a><span class="rnk-site-rail__sep" aria-hidden="true">/</span><span class="rnk-site-rail__here">Marathon</span></div>
+
+
+
+    <!-- Navigation -->
+    <nav class="navbar navbar--edge">
+        <div class="nav-inner nav-inner--edge">
+            <!-- Left: Logo + Action buttons -->
+            <div class="nav-left">
+                <a href="/marathon/" class="nav-logo">
+                    <img src="/marathon/Icon.png" alt="" class="logo-icon" width="28" height="28">
+                    <span>gdb<span class="logo-accent">.</span>gg</span>
+                </a>
+            </div>
+
+            <!-- Center: Nav links -->
+            <div class="nav-center">
+                <a href="/marathon/weapons/" class="nav-link">Weapons</a>
+                <a href="/marathon/runners/" class="nav-link">Runners</a>
+                <span class="nav-divider"></span>
+
+                <!-- Database links (collapse to dropdown on narrow screens) -->
+                <a href="/marathon/cores/" class="nav-link nav-db-link">Cores</a>
+                <a href="/marathon/implants/" class="nav-link nav-db-link">Implants</a>
+                <a href="/marathon/mods/" class="nav-link nav-db-link">Mods</a>
+                <a href="/marathon/items/" class="nav-link nav-db-link">Items</a>
+                <div class="nav-dropdown nav-db-dropdown">
+                    <button class="nav-dropdown-toggle">
+                        Database
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <a href="/marathon/cores/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                            Cores
+                        </a>
+                        <a href="/marathon/implants/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            Implants
+                        </a>
+                        <a href="/marathon/mods/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 3v18"/><path d="M3 12h18"/></svg>
+                            Mods
+                        </a>
+                        <a href="/marathon/items/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                            Items
+                        </a>
+                    </div>
+                </div>
+
+                <span class="nav-divider"></span>
+
+                <!-- Cosmetics dropdown -->
+                <div class="nav-dropdown nav-dropdown--cosmetics">
+                    <button class="nav-dropdown-toggle nav-dropdown-toggle--cosmetics">
+                        Cosmetics
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <a href="/marathon/weapon-skins/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18.37 2.63 14 7l-1.59-1.59a2 2 0 0 0-2.82 0L8 7l9 9 1.59-1.59a2 2 0 0 0 0-2.82L17 10l4.37-4.37a2.12 2.12 0 1 0-3-3Z"/><path d="M9 8c-2 3-4 3.5-7 4l8 10c2-1 6-5 6-7"/></svg>
+                            Weapon Skins
+                        </a>
+                        <a href="/marathon/runner-skins/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Runner Skins
+                        </a>
+                        <div class="nav-dropdown-divider"></div>
+                        <a href="/marathon/stickers/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3Z"/><path d="M15 3v6h6"/></svg>
+                            Stickers
+                        </a>
+                        <a href="/marathon/backgrounds/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                            Backgrounds
+                        </a>
+                        <a href="/marathon/charms/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3l1 6h-9"/><path d="M13 3l-1 6h9"/></svg>
+                            Charms
+                        </a>
+                        <a href="/marathon/emblems/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                            Emblems
+                        </a>
+                        <div class="nav-dropdown-divider"></div>
+                        <span class="nav-dropdown-label">Cross-Promotion</span>
+                        <a href="/marathon/pages/cosmetics-destiny2" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                            Destiny 2 Items
+                        </a>
+                    </div>
+                </div>
+
+                <span class="nav-divider"></span>
+
+                <!-- More dropdown -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-toggle">
+                        More
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <a href="/marathon/factions/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            Factions
+                        </a>
+                        <div class="nav-dropdown-divider"></div>
+                        <a href="/marathon/loadout-builder/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                            Loadout Builder
+                        </a>
+                        <a href="/marathon/tier-lists/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M11 5h10"/><path d="M11 9h7"/><path d="M11 13h10"/><path d="M11 17h7"/><path d="M3 5l2 2 4-4"/><path d="M3 13l2 2 4-4"/></svg>
+                            Tier Lists
+                        </a>
+                        <div class="nav-dropdown-divider"></div>
+                        <a href="/marathon/news/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+                            News
+                        </a>
+                        <a href="/marathon/population/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                            Population
+                        </a>
+                        <a href="/marathon/servers/" class="nav-dropdown-item" style="font-size:0.82rem">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                            Down Detector
+                        </a>
+                        <div class="nav-dropdown-divider"></div>
+                        <a href="/marathon/marathon-pc-requirements/" class="nav-dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+                            PC Requirements
+                        </a>
+                        <div class="nav-dropdown-divider"></div>
+                        <button id="feedbackNavBtn" class="nav-dropdown-item nav-dropdown-item--btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Provide Feedback</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Search -->
+        </div>
+    </nav>
+
+    <aside class="ad-siderail-fixed ad-siderail-fixed--left">
+        <div class="ad-siderail-sticky">
+            <span class="ad-label">Ad</span>
+            <div class="ad-container">
+                
+            </div>
+        </div>
+    </aside>
+    <aside class="ad-siderail-fixed ad-siderail-fixed--right">
+        <div class="ad-siderail-sticky">
+            <span class="ad-label">Ad</span>
+            <div class="ad-container">
+                
+            </div>
+        </div>
+    </aside>
+
+    <main class="container article-page"><!-- Breadcrumb -->
+        <nav class="article-breadcrumb">
+            <a href="/marathon/">Home</a>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            <a href="/marathon/news/">News</a>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            <span>Marathon Update 1.0.5 Patch Notes</span>
+        </nav>
+
+        <div class="article-layout">
+            <!-- Main Content -->
+            <article class="article-main">
+                <!-- Article Header -->
+                <header class="article-header">
+                    <div class="article-meta-top">
+                        <span class="article-category-badge">Patch Notes</span>
+                        <span class="article-date">March 17, 2026</span>
+                    </div>
+                    <h1 class="article-title">Marathon Update 1.0.5 Patch Notes</h1>
+                    <p class="article-author">By <a href="/marathon/authors/chandler-bellgrave/"><strong>Chandler Bellgrave</strong></a></p>
+                </header>
+
+                <!-- Hero Image -->
+                <div class="article-hero-image">
+                    <img src="/marathon/assets/news/marathon-update-105-patch-notes.jpg" alt="Marathon Update 1.0.5 Patch Notes" loading="eager">
+                </div>
+
+                <!-- Article Body -->
+                <div class="article-body">
+
+<p>Marathon Update 1.0.5 is a massive patch — introducing the brand-new Cryo Archive zone, three new Cryo Archive-exclusive implant perks, three new weapon mods, major WSTR Combat Shotgun rebalancing, Rook's Runner Level requirement removal, the ability to activate exfil beacons while downed, and an enormous list of bug fixes spanning combat, runners, contracts, UI, weapon mods, and more. Here's everything that changed.</p>
+
+<h2 id="item-economy">Item Economy</h2>
+<p>Added three new random-rolled implant perks that can only be found on implants looted from Cryo Archive:</p>
+<ul>
+    <li><strong>Covert Recovery:</strong> While in smoke, your self-repair speed is increased and you use healing consumables faster.</li>
+    <li><strong>Freeloader:</strong> Defeating an enemy with a knife attack grants a small amount of tactical and prime ability energy.</li>
+    <li><strong>Panic Response:</strong> While at low health, using a healing consumable grants the effects of Cardio Kick for a short duration.</li>
+</ul>
+
+<p>Added three new mods that can only be looted from Cryo Archive:</p>
+<ul>
+    <li><strong>Punishment:</strong> This weapon deals significantly increased damage against [REDACTED] combatants.</li>
+    <li><strong>Testament:</strong> Aiming down sights for a short duration increases this weapon's range and aim assist by a massive amount.</li>
+    <li><strong>Hurricane:</strong> While airborne, this weapon has increased stability and greatly reduced accuracy penalties.</li>
+</ul>
+
+<ul>
+    <li><a href="/marathon/runners/rook/">Rook</a> no longer gets a surplus Sponsored Kit upon death.</li>
+</ul>
+
+<h2 id="combat">Combat</h2>
+<ul>
+    <li>Players can now activate exfil beacons while downed. Good luck.</li>
+    <li>Decreased camera shake intensity from incoming melee and knife attacks.</li>
+    <li>Increased post-run spectator camera timeout from 30 seconds to 120 seconds.</li>
+    <li>Fixed an issue where a player could have a finisher used on them right as they were completing a self-revive or being revived, immediately downing them again.</li>
+    <li>Fixed instances of revive timer lockout shaders appearing on enemy Runner's body bags.</li>
+    <li>Fixed instances where ability activations could become desynced with the server.</li>
+    <li>Adjusted the Hacked status screen effect to be lower intensity and have slower glitch crawl effect.</li>
+</ul>
+
+<h2 id="runners">Runners</h2>
+
+<h3 id="assassin">Assassin</h3>
+<ul>
+    <li>Fixed an issue where Assassin's smoke puck would not change appearance based on the equipped Runner shell style while activating Shadow Dive.</li>
+</ul>
+
+<h3 id="thief">Thief</h3>
+<ul>
+    <li>Pickpocket Drone can no longer loot players who are in the active exfil animation.</li>
+    <li>Fixed an issue where Pickpocket Drone's on-screen button prompt wouldn't update to match a player's changed keybind or controller button mapping.</li>
+    <li>Fixed an issue where high-speed grapples could affect network stability.</li>
+</ul>
+
+<h3 id="triage">Triage</h3>
+<ul>
+    <li>Fixed an issue where being close to max heat could prevent players from using the Battery Overcharge ability.</li>
+</ul>
+
+<h3 id="rook">Rook</h3>
+<ul>
+    <li>Removed <a href="/marathon/runners/rook/">Rook's</a> Runner Level requirement. Rook can now be used at Runner Level 0.</li>
+</ul>
+
+<h3 id="implants">Implants</h3>
+<ul>
+    <li>Fixed an issue where Graceful Landing V5's unique trait could be activated by Vandal's Microjets from flat ground.</li>
+    <li>Fixed an issue where Graceful Landing V5's unique trait was not scaling detonation damage correctly for longer falls.</li>
+</ul>
+
+<h2 id="uesc">UESC</h2>
+<ul>
+    <li>Fixed an issue where UESC would repeatedly use the same ladder.</li>
+    <li>Fixed a number of issues that could cause AI to freeze in place or become unresponsive.</li>
+</ul>
+
+<h2 id="contracts-and-events">Contracts and Events</h2>
+<ul>
+    <li>Improved the visual clarity of contract and activity waypoint icons.</li>
+    <li>Crews carrying both Coordinate Datapads must now bring both of them to the location of the cache before the loot is revealed. Previously, any crew member being present at the location would reveal the loot.</li>
+    <li>Fixed some scenarios where the MIDA Order/Chaos 1/1, Traxus Return on Investment 3/5, and Traxus Liaison could prevent players from completing the contract.</li>
+    <li>Fixed an issue where the UI could become out of sync between crew members on the same contract during a run.</li>
+    <li>Perimeter Intercept dropships should no longer clip through the environment in South Relay.</li>
+    <li>Tripwires placed in Overflow hallways should no longer be floating in mid-air.</li>
+    <li>Fixed an issue where DCON would not show up on the overhead map when on a contract that requires it.</li>
+</ul>
+
+<h3 id="dire-marsh">Dire Marsh</h3>
+<ul>
+    <li>UESC dropships that arrive during the Lockdown event in the northeast corner of Algae Ponds will no longer fly in through player space, killing players in their path.</li>
+    <li>Pinging the Stabilization Device and Anomalous Matter on the overhead map will now show a string in the crew feed, notifying your crewmates.</li>
+    <li>Fixed an issue for the Traxus Liaison Contract where the Commander would despawn if a crew didn't engage and kill it in time.</li>
+</ul>
+
+<h3 id="outpost">Outpost</h3>
+<ul>
+    <li>Encounters spawning on the roof of Flight Control have been improved and should now correctly engage players.</li>
+</ul>
+
+<h2 id="ui-and-experience">User Interface and Experience</h2>
+
+<h3 id="achievements">Achievements</h3>
+<ul>
+    <li>Fixed an issue where players would not get the "Welcome to Tau Ceti" achievement.</li>
+</ul>
+
+<h3 id="armory">Armory</h3>
+<ul>
+    <li>Item tooltips in the Armory now primarily show the purchase cost instead of the value the item sells for.</li>
+</ul>
+
+<h3 id="codex">Codex</h3>
+<ul>
+    <li>New Codex challenges added for Ranked and Cryo Archive. A "NEW" indicator will appear on Codex categories containing challenges added in Patch 1.0.5.</li>
+    <li>Fixed an issue where inspecting an item in the Codex could display flickering text.</li>
+    <li>Fixed an issue where "Acquired Items" challenges in the Codex indicated that the challenge could be completed by simply picking up the item. Challenges now accurately state that successful exfil with the item(s) is required.</li>
+    <li>Fixed an issue where the WSTR Shotgun Codex challenge incorrectly noted that it could be completed by downing a Runner. Updated the text to indicate that a full elimination is required.</li>
+    <li>Fixed an issue where the Thief Codex challenge "Shattered Hopes" incorrectly tracked combatants. This challenge has been updated to track Runners only.</li>
+    <li>Fixed an issue where the Thief Master Codex challenge "No Target too Great" was only tracking Wardens. This challenge will now track Wardens and Commanders.</li>
+    <li>Fixed an issue where the Destroyer Codex challenge "Close the Gap" would not complete when downing a Runner too close to the initial Thruster activation.</li>
+    <li>Fixed an issue where claiming Seasonal Level rewards from the Codex could displace items in the overflow, causing them to be lost. Challenges granting gear rewards will now check for items in overflow and prevent claiming until the overflow has been emptied.</li>
+    <li>Fixed an issue where inspecting non-weapon items in the Codex would display a "Compatible Weapons" string.</li>
+</ul>
+
+<h3 id="in-run">In-Run</h3>
+<ul>
+    <li>Improved the overall legibility of the Revive prompt.</li>
+    <li>Some waypoints will now fade when aiming down-sights (ADS).</li>
+</ul>
+
+<h3 id="items-ui">Items</h3>
+<ul>
+    <li>Exfilling with a Temporal Fragment will produce variable rewards depending on your seasonal Runner Level.</li>
+</ul>
+
+<h3 id="lobby">Lobby</h3>
+<ul>
+    <li>Loadout will now show a banner warning you that you have overflow items.</li>
+    <li>Added a shortcut for "i" or "start" to open the Loadout menu.</li>
+    <li>Added a shortcut for "tab" or "options" to open the Loadout menu while preparing for a run.</li>
+    <li>Updated Missing Equipment warning to clarify that players are missing Health or Shield consumables.</li>
+    <li>Fixed an issue preventing commonly found items from being shown when selecting map regions.</li>
+</ul>
+
+<h3 id="ping-system">Ping System</h3>
+<ul>
+    <li>Activity icons pinged from the overhead map will more reliably show their waypoints.</li>
+</ul>
+
+<h3 id="rewards-pass">Rewards Pass</h3>
+<ul>
+    <li>Premium Rewards Pass Voucher items should no longer appear in your inventory.</li>
+</ul>
+
+<h3 id="run-report">Run Report</h3>
+<ul>
+    <li>Fixed an issue where the Runner Level Up rewards screen was sometimes blank.</li>
+</ul>
+
+<h3 id="social">Social</h3>
+<ul>
+    <li>Added the Rated tab into the Runner Connections panel so that you can see how you stack up against your connections.</li>
+</ul>
+
+<h3 id="store">Store</h3>
+<ul>
+    <li>Updated incorrect item rarity for the Luxe Palace, Overdrive-TSL, and Cyber Red Runner Shells from Deluxe to Superior.</li>
+</ul>
+
+<h3 id="vault">Vault</h3>
+<ul>
+    <li>Consumables, Ammo, Salvage, and Grenades now have larger stack sizes in the Vault.</li>
+    <li>Added filter tabs for keys and backpacks.</li>
+</ul>
+
+<h3 id="voice-chat">Voice Chat</h3>
+<ul>
+    <li>Added an option for consoles and gamepads to support Crew Voice Push-To-Talk while in a run. This only applies to runs; the lobby will still utilize an open mic.</li>
+    <li>Added an additional Push-To-Talk option, "Tap". When set, tapping the Proximity or Crew Chat button(s) will open the mic until you're done speaking or tap the button(s) again.</li>
+    <li>Fixed a number of issues causing voice chat interruptions and inconsistencies.</li>
+</ul>
+
+<h3 id="weapon-customization">Weapon Customization</h3>
+<ul>
+    <li>Optimized sticker and charm placement on a handful of weapons.</li>
+</ul>
+
+<h2 id="stability">Stability</h2>
+<ul>
+    <li>Added AMD Anti-Lag 2 Low Latency to Video Settings.</li>
+</ul>
+
+<h2 id="weapons-and-equipment">Weapons and Equipment</h2>
+<ul>
+    <li>Fixed an issue where Ammo Crates could not be interacted with when placed close to walls or terrain.</li>
+    <li>Fixed an issue where normal and depleted versions of Cardio Kick's status icon appeared separately in the HUD.</li>
+    <li>Fixed an issue that prevented Claymores from taking splash damage when attached to other objects.</li>
+    <li>Knife cosmetics will no longer unequip after failing to exfil.</li>
+    <li>Fixed an issue with the <a href="/marathon/weapons/v75-scar/">V75-Scar</a> Ram-Page Mag that was causing bullets to ricochet off turrets, despite dealing damage.</li>
+</ul>
+
+<h3 id="wstr-combat-shotgun"><a href="/marathon/weapons/wstr-combat-shotgun/">WSTR Combat Shotgun</a></h3>
+<ul>
+    <li>Reduced leftward motion in firing recoil.</li>
+    <li>Increased duration of spin ready required before WSTR Combat Shotgun can be interrupted by weapon fire.</li>
+    <li>Redistributed damage falloff. It now retains near-max damage at point-blank range but falls off much more quickly.</li>
+    <li>Reduced aim assist cone size and reduced the influence of aim assist on pellet spread as they travel.</li>
+</ul>
+
+<h3 id="misriah-2442"><a href="/marathon/weapons/misriah-2442/">Misriah 2442</a></h3>
+<ul>
+    <li>Reduced leftward motion in firing recoil.</li>
+</ul>
+
+<ul>
+    <li>Fixed an issue with the Longshot gold mod resetting its counter incorrectly and disappearing from the buff tray display.</li>
+</ul>
+
+<h2 id="weapon-mods">Weapon Mods</h2>
+<ul>
+    <li>Drag &amp; Drop can now be used to remove weapon mods from weapons. Dragging a mod attached to a weapon into the backpack or Vault will now remove the mod and place it into that inventory rather than moving the entire weapon.</li>
+</ul>
+
+<h3 id="chips">Chips</h3>
+<ul>
+    <li>Fixed an issue with the Superior rarity version of Endless Runner having an incorrect string.</li>
+</ul>
+
+<h3 id="optics">Optics</h3>
+<ul>
+    <li><strong>Thermals:</strong> Fixed an issue where thermals were not highlighting invisible UESC combatants, ticks, and tick nests.</li>
+</ul>
+
+<h3 id="generators">Generators</h3>
+<ul>
+    <li>Fixed a tooltip display issue that incorrectly labeled the decreased charge time as increased charge time.</li>
+</ul>
+
+<h3 id="magazines">Magazines</h3>
+<ul>
+    <li>Cloudfeather Chamber was missing its Weight Reduction stat bonus, making it too similar to Turbo Chamber. It now correctly grants a bonus to Weight Reduction.</li>
+</ul>
+
+<h3 id="barrels">Barrels</h3>
+<ul>
+    <li>Removed the health display scramble and the 2D damage indicator effects that happened to victims shot by a weapon with a suppressor attachment.</li>
+</ul>
+
+<blockquote class="article-blockquote">
+    <p>"We may revisit this in the future but for now we believe this muddied the gameplay language too much and the benefit of a quieter weapon is attractive enough for these mods."</p>
+    <cite>— Developer Note</cite>
+</blockquote>
+
+<h2 id="zones">Zones</h2>
+<ul>
+    <li><strong>Cryo Archive has been added to the game.</strong> Good luck getting there.</li>
+</ul>
+
+<h2 id="audio">Audio</h2>
+<ul>
+    <li>UESC spawn-in animation will now play all of the associated audio.</li>
+    <li>Lowered the range that you can hear other players in combat.</li>
+</ul>
+
+<hr>
+<p><strong>Source:</strong> <a href="https://x.com/MarathonTheGame/status/2033911570003112185" target="_blank" rel="noopener noreferrer">@MarathonTheGame on X</a></p>
+<p><em>Browse all <a href="/marathon/weapons/">Weapons</a>, <a href="/marathon/runners/">Runners</a>, <a href="/marathon/mods/">Mods</a>, and <a href="/marathon/implants/">Implants</a> on MarathonDB. Follow us on <a href="https://x.com/MarathonDB" target="_blank" rel="noopener">X/Twitter</a> for more Marathon news.</em></p>
+
+                </div>
+
+                <!-- Tags -->
+                <div class="article-tags">
+                    <span class="article-tag">patch-notes</span>
+                    <span class="article-tag">update</span>
+                    <span class="article-tag">balance</span>
+                    <span class="article-tag">bug-fixes</span>
+                    <span class="article-tag">cryo-archive</span>
+                </div>
+
+            </article>
+
+            <!-- Sidebar -->
+            <aside class="article-sidebar">
+                <!-- Share -->
+                <div class="article-sidebar-section">
+                    <h3 class="article-sidebar-title">Share</h3>
+                    <div class="article-share-buttons">
+                        <button class="article-share-btn" onclick="copyArticleLink()" id="copyLinkBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                            Copy Link
+                        </button>
+                        <a href="https://twitter.com/intent/tweet?text=Marathon%20Update%201.0.5%20Patch%20Notes%20%7C%20MarathonDB&url=https%3A%2F%2Fmarathondb.gg%2Fnews%2Fmarathon-update-1-0-5-patch-notes%2F" target="_blank" class="article-share-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                            </svg>
+                            Share on X
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Back to News -->
+                <div class="article-sidebar-section">
+                    <a href="/marathon/news/" class="article-share-btn" style="justify-content: center; text-align: center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+                        </svg>
+                        All Articles
+                    </a>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Pre-footer Ad -->
+        <div class="ad-safe-zone ad-safe-zone--below-hero">
+            <span class="ad-label">Ad</span>
+            <div class="ad-container">
+                
+                
+            </div>
+        </div>
+    </main>
+
+
+    <!-- Pre-Footer Mobile Ad -->
+    <div class="ad-safe-zone ad-safe-zone--mobile-only">
+        <div class="ad-container">
+            
+            
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <span class="footer-logo">gdb.gg</span><span class="footer-logo-sub">Marathon</span>
+                </div>
+                <div class="footer-nav">
+                    <a href="/marathon/weapons/" class="footer-link">Weapons</a>
+                    <a href="/marathon/runners/" class="footer-link">Runners</a>
+                    <a href="/marathon/cores/" class="footer-link">Cores</a>
+                    <a href="/marathon/implants/" class="footer-link">Implants</a>
+                    <a href="/marathon/items/" class="footer-link">Items</a>
+                    <a href="/marathon/mods/" class="footer-link">Mods</a>
+                    <a href="/marathon/contracts/" class="footer-link">Contracts</a>
+                    <a href="/marathon/weapon-skins/" class="footer-link">Skins</a>
+                    <a href="/marathon/tier-lists/" class="footer-link">Tier Lists</a>
+                    <a href="/marathon/marathon-pc-requirements/" class="footer-link">PC Requirements</a>
+                    <a href="/marathon/news/" class="footer-link">News</a>
+                </div>
+                <div class="footer-social">
+                    <a href="https://x.com/MarathonDB" target="_blank" class="footer-social-link" title="X/Twitter">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </a>
+                    <a href="https://discord.gg/TPhQW2aPBC" target="_blank" class="footer-social-link" title="Discord">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                        </svg>
+                    </a>
+                    <a href="mailto:Heymarathondb@Gmail.com" class="footer-social-link" title="Email">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-legal">
+                <p class="footer-disclaimer">Marathon™ is a trademark of Bungie, Inc. This site is not affiliated with or endorsed by Bungie.</p>
+                <p class="footer-links"><a href="/marathon/pages/about">About</a> · <a href="/marathon/pages/contact">Contact</a> · <a href="/marathon/editorial-policy/">Editorial Policy</a> · <a href="/marathon/pages/privacy-policy">Privacy Policy</a> · <a href="/marathon/pages/terms-and-conditions">Terms</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
+    <script>
+        function copyArticleLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const btn = document.getElementById('copyLinkBtn');
+                const original = btn.innerHTML;
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+                setTimeout(() => { btn.innerHTML = original; }, 2000);
+            });
+        }
+    </script>
+    <script>
+    window.addEventListener('load', function() {
+        document.querySelectorAll('ins.adsbygoogle').forEach(function(ad) {
+            try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+        });
+    });
+    </script>
+
+    <!-- Mobile Anchor Ad -->
+    <div class="ad-mobile-anchor">
+        <div class="ad-container">
+            
+            
+        </div>
+    </div>
+
+    <!-- Mobile Sticky Top Ad -->
+    <div class="ad-mobile-sticky-top">
+        <div class="ad-container">
+            
+            
+        </div>
+    </div>
+
+</body>
+</html>

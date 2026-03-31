@@ -1,0 +1,2985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/gdb-mark.svg">
+  <link rel="stylesheet" href="/assets/global.css">
+  <link rel="stylesheet" href="/fortnite/css/fortnite.css">
+  <link rel="stylesheet" href="/fortnite/css/fortnite-nav.css">
+  <title>Event Details - Fortnite Competitive | gdb.gg</title><!-- Theme Color -->
+  <meta name="theme-color" content="#f7c948">
+  <meta name="msapplication-TileColor" content="#0d1117">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-base: #0d1117;
+      --bg-elevated: #161b22;
+      --bg-surface: #1c2128;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --bg-card-hover: rgba(255, 255, 255, 0.06);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.8);
+      --text-tertiary: rgba(255, 255, 255, 0.5);
+      --text-muted: rgba(255, 255, 255, 0.3);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      
+      /* Fortnite Colors */
+      --fn-yellow: #f7c948;
+      --fn-blue: #00d4ff;
+      --fn-green: #34d399;
+      --fn-red: #ef4444;
+      --fn-purple: #a855f7;
+      --fn-orange: #f97316;
+      
+      /* Dynamic event color (set via JS) */
+      --event-primary: #f7c948;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Main Layout */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem;
+    }
+
+    /* Back Link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-tertiary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: var(--fn-yellow);
+    }
+
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Hero Section */
+    .event-hero {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      background: #000;
+      min-height: 280px;
+    }
+
+    .event-hero-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.7;
+    }
+
+    .event-hero-gradient {
+      position: absolute;
+      inset: 0;
+      opacity: 0.4;
+    }
+
+    .event-hero-content {
+      position: relative;
+      padding: 2rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.3) 100%);
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .event-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      width: fit-content;
+    }
+
+    .event-status-badge.live {
+      background: var(--fn-red);
+      color: #fff;
+      animation: pulse-live 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-live {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      50% { opacity: 0.9; box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    }
+
+    /* ===========================================
+       LIVE MODE - Complete Page Transformation
+       =========================================== */
+    
+    /* When in live mode, body gets this class */
+    body.live-mode .back-link {
+      margin-bottom: 0.75rem;
+    }
+
+    body.live-mode .event-hero {
+      display: none;
+    }
+
+    body.live-mode #windowTabs {
+      display: none;
+    }
+
+    body.live-mode #eventInfoSection {
+      display: none;
+    }
+
+    body.live-mode #statsSummary {
+      margin-bottom: 0.75rem;
+    }
+
+    /* Compact Live Header Bar */
+    .live-header-bar {
+      display: none;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(249, 115, 22, 0.08));
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    body.live-mode .live-header-bar {
+      display: block;
+    }
+
+    .live-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .live-header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #ef4444;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+
+    .live-indicator .dot {
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+
+    .live-event-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .live-header-stats {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .live-header-stat {
+      text-align: center;
+    }
+
+    .live-header-stat-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .live-header-stat-label {
+      font-size: 0.6rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .live-header-countdown {
+      background: rgba(239, 68, 68, 0.2);
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .live-header-countdown .live-header-stat-value {
+      color: #ef4444;
+    }
+
+    .live-refresh-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    .live-refresh-badge .pulse {
+      width: 5px;
+      height: 5px;
+      background: #34d399;
+      border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    /* Round Selector Dropdown (shown in live mode) */
+    .live-round-selector {
+      display: none;
+      margin-bottom: 0.75rem;
+    }
+
+    body.live-mode .live-round-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .live-round-selector label {
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+    }
+
+    .live-round-select {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .live-round-select:focus {
+      outline: none;
+      border-color: var(--fn-yellow);
+    }
+
+    /* Hide the old banner in live mode - we use the header bar instead */
+    body.live-mode .live-match-banner {
+      display: none !important;
+    }
+
+    /* Old Live Match Banner (non-live mode fallback) */
+    .live-match-banner {
+      display: none;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(249, 115, 22, 0.1));
+      border: 2px solid rgba(239, 68, 68, 0.4);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      animation: liveBorderPulse 3s ease-in-out infinite;
+    }
+
+    .live-match-banner.visible {
+      display: block;
+    }
+
+    @keyframes liveBorderPulse {
+      0%, 100% { border-color: rgba(239, 68, 68, 0.4); }
+      50% { border-color: rgba(239, 68, 68, 0.8); }
+    }
+
+    .live-match-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .live-match-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ef4444;
+    }
+
+    .live-match-title .live-dot {
+      width: 10px;
+      height: 10px;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .live-match-refresh {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+    }
+
+    .live-match-refresh .refresh-indicator {
+      width: 6px;
+      height: 6px;
+      background: #34d399;
+      border-radius: 50%;
+    }
+
+    .live-match-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .live-stat {
+      text-align: center;
+    }
+
+    .live-stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .live-stat-label {
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .live-top-leaders {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .live-top-leaders-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .live-leaders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .live-leader-card {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .live-leader-rank {
+      font-size: 1.1rem;
+    }
+
+    .live-leader-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .live-leader-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .live-leader-points {
+      font-size: 0.7rem;
+      color: var(--fn-yellow);
+      font-weight: 600;
+    }
+
+    .live-data-notice {
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: var(--fn-yellow);
+    }
+
+    .event-status-badge.upcoming {
+      background: var(--fn-blue);
+      color: #000;
+    }
+
+    .event-status-badge.completed {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--text-secondary);
+    }
+
+    .event-hero-title {
+      font-family: 'Bungee', 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+      color: var(--text-primary);
+    }
+
+    .event-hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      max-width: 600px;
+    }
+
+    .event-hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .meta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+    }
+
+    .meta-badge.region {
+      background: var(--event-primary);
+      color: #000;
+    }
+
+    .meta-badge.platform {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-tertiary);
+    }
+
+    .meta-badge.requirement {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--fn-green);
+    }
+
+    .meta-badge.time {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--fn-blue);
+    }
+
+    .meta-badge.tournament-type {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--fn-purple);
+    }
+
+    /* Window Tabs */
+    .window-tabs {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1rem 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .window-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .window-tab {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 140px;
+      text-align: left;
+      font-family: inherit;
+      color: var(--text-secondary);
+    }
+
+    .window-tab:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+    }
+
+    .window-tab.active {
+      background: rgba(247, 201, 72, 0.1);
+      border-color: var(--event-primary);
+      color: var(--text-primary);
+    }
+
+    .window-tab-label {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .window-tab-date {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+    }
+
+    .window-tab-status {
+      font-size: 0.7rem;
+      margin-top: 0.25rem;
+    }
+
+    .window-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .window-status.live {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--fn-red);
+    }
+
+    .window-status.upcoming {
+      background: rgba(0, 212, 255, 0.15);
+      color: var(--fn-blue);
+    }
+
+    .window-status.completed,
+    .window-status.crawled {
+      background: rgba(52, 211, 153, 0.1);
+      color: var(--fn-green);
+    }
+
+    .window-status.scheduled {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-tertiary);
+    }
+
+    /* Stats Summary Bar */
+    .stats-summary-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      padding: 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--event-primary);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Event Info Section */
+    .event-info-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .event-info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .event-info-header:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .event-info-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .event-info-toggle {
+      transition: transform 0.3s ease;
+    }
+
+    .event-info-toggle.collapsed {
+      transform: rotate(-90deg);
+    }
+
+    .event-info-content {
+      padding: 0 1.25rem 1.25rem;
+      display: block;
+    }
+
+    .event-info-content.collapsed {
+      display: none;
+    }
+
+    .info-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .info-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-group-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Scoring Rules */
+    .scoring-rules {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .scoring-rule {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(247, 201, 72, 0.08);
+      border: 1px solid rgba(247, 201, 72, 0.2);
+      border-radius: 8px;
+    }
+
+    .scoring-rule-value {
+      font-weight: 700;
+      color: var(--fn-yellow);
+      font-size: 0.95rem;
+    }
+
+    .scoring-rule-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Requirements */
+    .requirements-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .requirement-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .requirement-badge.required {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--fn-red);
+    }
+
+    .requirement-badge.optional {
+      background: rgba(52, 211, 153, 0.1);
+      border-color: rgba(52, 211, 153, 0.3);
+      color: var(--fn-green);
+    }
+
+    /* Jump to Rank */
+    .jump-to-rank {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .jump-to-rank label {
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+    }
+
+    .jump-to-rank input {
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.9rem;
+      width: 100px;
+    }
+
+    .jump-to-rank input:focus {
+      outline: none;
+      border-color: var(--event-primary);
+    }
+
+    .jump-to-rank button {
+      padding: 0.5rem 1rem;
+      background: var(--event-primary);
+      border: none;
+      border-radius: 6px;
+      color: #000;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .jump-to-rank button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    /* Leaderboard Container */
+    .leaderboard-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .leaderboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .leaderboard-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .leaderboard-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .leaderboard-count {
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
+    }
+
+    .search-input {
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-family: inherit;
+      width: 200px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--event-primary);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* Leaderboard Table */
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .leaderboard-table thead {
+      background: var(--bg-surface);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .leaderboard-table th {
+      padding: 0.75rem 0.5rem;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .leaderboard-table th.center {
+      text-align: center;
+    }
+
+    .leaderboard-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s ease;
+    }
+
+    .leaderboard-table tbody tr:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .leaderboard-table tbody tr.expandable {
+      cursor: pointer;
+    }
+
+    .leaderboard-table td {
+      padding: 0.65rem 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    /* Expand Toggle */
+    .expand-toggle {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-radius: 4px;
+    }
+
+    .expand-toggle:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+
+    .expand-toggle.expanded {
+      transform: rotate(90deg);
+      color: var(--event-primary);
+    }
+
+    /* Rank Cell */
+    .rank-cell {
+      width: 60px;
+    }
+
+    .rank-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+    }
+
+    .rank-number.top-1 {
+      background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+      color: #000;
+      box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    }
+
+    .rank-number.top-2 {
+      background: linear-gradient(135deg, #e8e8e8 0%, #b8b8b8 100%);
+      color: #000;
+      box-shadow: 0 2px 8px rgba(200, 200, 200, 0.3);
+    }
+
+    .rank-number.top-3 {
+      background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(205, 127, 50, 0.3);
+    }
+
+    /* Player/Team Cell */
+    .team-cell {
+      min-width: 200px;
+    }
+
+    .player-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .player-name:hover {
+      color: var(--event-primary);
+    }
+
+    .country-flag {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .flag-img {
+      width: 20px;
+      height: 15px;
+      object-fit: cover;
+      border-radius: 2px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .team-members {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      margin-top: 0.25rem;
+    }
+
+    /* Team display - inline layout with + separator */
+    .team-display {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    .team-display .player-name.team-member {
+      font-size: 0.9rem;
+    }
+
+    .team-separator {
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin: 0 0.15rem;
+    }
+
+    .team-member.unknown {
+      color: var(--text-tertiary);
+      font-style: italic;
+      font-size: 0.85rem;
+    }
+
+    /* Stats Cells */
+    .points-cell {
+      font-weight: 700;
+      color: var(--event-primary);
+      font-size: 1rem;
+    }
+
+    .stat-cell {
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    .stat-cell.wins {
+      color: var(--fn-green);
+      font-weight: 600;
+    }
+
+    .stat-cell.elims {
+      color: var(--fn-red);
+    }
+
+    /* Match Breakdown Row */
+    .match-breakdown-row {
+      background: var(--bg-surface) !important;
+    }
+
+    .match-breakdown-row:hover {
+      background: var(--bg-surface) !important;
+    }
+
+    .match-breakdown-row td {
+      padding: 0 !important;
+    }
+
+    .match-breakdown {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .match-breakdown-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .match-breakdown-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .matches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .match-card {
+      padding: 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .match-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    .match-card.victory {
+      border-color: rgba(52, 211, 153, 0.4);
+      background: rgba(52, 211, 153, 0.05);
+    }
+
+    .match-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .match-number {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+
+    .match-placement {
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .match-placement.top-1 {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+    }
+
+    .match-placement.top-3 {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--fn-green);
+    }
+
+    .match-placement.top-5 {
+      background: rgba(0, 212, 255, 0.15);
+      color: var(--fn-blue);
+    }
+
+    .match-stats {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .match-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .match-stat-value {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    .match-stat-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Point Breakdown */
+    .point-breakdown {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .point-breakdown-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      margin-bottom: 0.75rem;
+    }
+
+    .point-breakdown-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .point-breakdown-item {
+      padding: 0.4rem 0.6rem;
+      background: rgba(247, 201, 72, 0.08);
+      border: 1px solid rgba(247, 201, 72, 0.2);
+      border-radius: 6px;
+      font-size: 0.75rem;
+    }
+
+    .point-breakdown-item .label {
+      color: var(--text-tertiary);
+    }
+
+    .point-breakdown-item .value {
+      color: var(--fn-yellow);
+      font-weight: 600;
+      margin-left: 0.25rem;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .pagination-info {
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .pagination-btn {
+      padding: 0.5rem 1rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .page-indicator {
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
+    }
+
+    /* Loading & Error States */
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      gap: 1rem;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--event-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: var(--text-tertiary);
+      font-size: 0.9rem;
+    }
+
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .error-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .error-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .error-text {
+      color: var(--text-tertiary);
+      max-width: 400px;
+    }
+
+    .error-text a {
+      color: var(--fn-yellow);
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .empty-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-text {
+      color: var(--text-tertiary);
+      font-size: 0.9rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem 2rem;
+      color: var(--text-tertiary);
+      font-size: 0.75rem;
+      border-top: 1px solid var(--border);
+      margin-top: 4rem;
+      background: var(--bg-elevated);
+    }
+
+    footer p {
+      margin: 0.25rem 0;
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: var(--fn-yellow);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    footer a:hover {
+      color: #ffe066;
+      text-decoration: underline;
+    }
+
+    .footer-disclaimer {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      main {
+        padding: 1rem;
+      }
+
+      .event-hero-title {
+        font-size: 1.75rem;
+      }
+
+      .event-hero-content {
+        padding: 1.5rem;
+        min-height: 220px;
+      }
+
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 0.5rem 0.35rem;
+        font-size: 0.8rem;
+      }
+
+      .rank-number {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+      }
+
+      .team-cell {
+        min-width: 140px;
+      }
+
+      .team-display .player-name.team-member {
+        font-size: 0.8rem;
+      }
+
+      .team-separator {
+        font-size: 0.75rem;
+      }
+
+      .matches-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-summary-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .search-input {
+        width: 150px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .event-hero-meta {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .leaderboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .pagination {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .window-tab {
+        min-width: 120px;
+        padding: 0.6rem 1rem;
+      }
+
+      /* Live mode mobile styles */
+      .live-header-top {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .live-header-left {
+        width: 100%;
+      }
+
+      .live-header-stats {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .live-header-stat-value {
+        font-size: 0.95rem;
+      }
+
+      .live-header-stat-label {
+        font-size: 0.55rem;
+      }
+
+      .live-event-title {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav id="fortnite-nav"></nav>
+
+  <main>
+    <!-- Back Link -->
+    <a href="/fortnite/events.html" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5"/>
+        <path d="M12 19l-7-7 7-7"/>
+      </svg>
+      Back to Events
+    </a>
+
+    <!-- Compact Live Header Bar (shown in live mode) -->
+    <div class="live-header-bar" id="liveHeaderBar">
+      <div class="live-header-top">
+        <div class="live-header-left">
+          <div class="live-indicator">
+            <span class="dot"></span>
+            LIVE
+          </div>
+          <span class="live-event-title" id="liveEventTitle">Loading...</span>
+        </div>
+        <div class="live-header-stats" id="liveHeaderStats">
+          <div class="live-header-stat">
+            <div class="live-header-stat-value" id="liveStatDuration">--</div>
+            <div class="live-header-stat-label">Duration</div>
+          </div>
+          <div class="live-header-stat">
+            <div class="live-header-stat-value" id="liveStatPlayers">--</div>
+            <div class="live-header-stat-label">Players</div>
+          </div>
+          <div class="live-header-stat">
+            <div class="live-header-stat-value" id="liveStatProgress">--%</div>
+            <div class="live-header-stat-label">Progress</div>
+          </div>
+          <div class="live-header-stat live-header-countdown">
+            <div class="live-header-stat-value" id="liveStatTimeLeft">--</div>
+            <div class="live-header-stat-label">Remaining</div>
+          </div>
+        </div>
+      </div>
+      <div class="live-refresh-badge">
+        <span class="pulse"></span>
+        <span id="liveLastUpdated">Updating...</span>
+      </div>
+    </div>
+
+    <!-- Round Selector (compact dropdown for live mode) -->
+    <div class="live-round-selector" id="liveRoundSelector">
+      <label>Round:</label>
+      <select class="live-round-select" id="liveRoundSelect">
+        <!-- Options populated by JS -->
+      </select>
+    </div>
+
+    <!-- Old Live Match Banner (hidden in live mode, fallback for recently ended) -->
+    <div class="live-match-banner" id="liveMatchBanner">
+      <div class="live-match-header">
+        <div class="live-match-title">
+          <span class="live-dot"></span>
+          <span>LIVE MATCH IN PROGRESS</span>
+        </div>
+        <div class="live-match-refresh">
+          <span class="refresh-indicator"></span>
+          <span id="liveLastUpdatedOld">Updating...</span>
+        </div>
+      </div>
+      <div class="live-match-stats" id="liveMatchStats">
+        <!-- Stats populated by JS -->
+      </div>
+      <div class="live-top-leaders" id="liveTopLeaders" style="display: none;">
+        <div class="live-top-leaders-title">Current Leaders</div>
+        <div class="live-leaders-grid" id="liveLeadersGrid">
+          <!-- Top players populated by JS -->
+        </div>
+      </div>
+      <div class="live-data-notice">
+        ⚡ Live data refreshes every 30 seconds. Full leaderboard data available after the event ends.
+      </div>
+    </div>
+
+    <!-- Event Hero (populated by JS) -->
+    <div id="eventHero">
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading event details...</p>
+      </div>
+    </div>
+
+    <!-- Window Tabs (populated by JS) -->
+    <div id="windowTabs"></div>
+
+    <!-- Stats Summary (populated by JS) -->
+    <div id="statsSummary"></div>
+
+    <!-- Event Info Section (populated by JS) -->
+    <div id="eventInfoSection"></div>
+
+    <!-- Jump to Rank -->
+    <div class="jump-to-rank" id="jumpToRank" style="display: none;">
+      <label for="rankInput">Jump to rank:</label>
+      <input type="number" id="rankInput" min="1" placeholder="e.g. 500">
+      <button id="jumpBtn">Go</button>
+    </div>
+
+    <!-- Leaderboard Container -->
+    <div id="leaderboardContainer">
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading leaderboard...</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Powered by <a href="https://gdb.gg" target="_blank">gdb.gg</a></p>
+    <div class="footer-disclaimer">
+      <p>© 2025 gdb.gg. All game assets belong to their respective owners.</p>
+      <p>Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/fortnite/js/fortnite-nav.js"></script>
+  <script src="/assets/global.js"></script>
+  <script src="/assets/error-handler.js"></script>
+  <script>
+    (function() {
+      'use strict';
+
+      // ===========================================
+      // CONFIGURATION
+      // ===========================================
+      const API_BASE = 'https://fortnite-events-api.dbrnk.workers.dev';
+      
+      // Get URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      let eventId = urlParams.get('id');
+      let initialWindowId = urlParams.get('window');
+      
+      // Detect if the ID is actually a window ID (contains _EventN_ pattern)
+      const windowIdPattern = /_Event\d+_/;
+      if (!initialWindowId && windowIdPattern.test(eventId)) {
+        initialWindowId = eventId;
+        eventId = eventId.replace(/_Event\d+_/, '_');
+      }
+
+      // ===========================================
+      // DOM ELEMENTS
+      // ===========================================
+      const eventHeroEl = document.getElementById('eventHero');
+      const windowTabsEl = document.getElementById('windowTabs');
+      const statsSummaryEl = document.getElementById('statsSummary');
+      const eventInfoEl = document.getElementById('eventInfoSection');
+      const jumpToRankEl = document.getElementById('jumpToRank');
+      const rankInputEl = document.getElementById('rankInput');
+      const jumpBtnEl = document.getElementById('jumpBtn');
+      const leaderboardContainerEl = document.getElementById('leaderboardContainer');
+      const liveMatchBannerEl = document.getElementById('liveMatchBanner');
+      const liveMatchStatsEl = document.getElementById('liveMatchStats');
+      const liveTopLeadersEl = document.getElementById('liveTopLeaders');
+      const liveLeadersGridEl = document.getElementById('liveLeadersGrid');
+      const liveLastUpdatedEl = document.getElementById('liveLastUpdated');
+      
+      // Live mode elements
+      const liveHeaderBarEl = document.getElementById('liveHeaderBar');
+      const liveEventTitleEl = document.getElementById('liveEventTitle');
+      const liveStatDurationEl = document.getElementById('liveStatDuration');
+      const liveStatPlayersEl = document.getElementById('liveStatPlayers');
+      const liveStatProgressEl = document.getElementById('liveStatProgress');
+      const liveStatTimeLeftEl = document.getElementById('liveStatTimeLeft');
+      const liveRoundSelectEl = document.getElementById('liveRoundSelect');
+
+      // ===========================================
+      // STATE
+      // ===========================================
+      let currentEvent = null;
+      let currentWindows = [];
+      let currentWindowId = initialWindowId;
+      let currentWindowData = null;
+      let currentPage = 0;
+      let totalPages = 0;
+      let isLive = false;
+      let isRecentlyEnded = false;  // Within 30 min of event end
+      let autoRefreshInterval = null;
+      let liveRefreshInterval = null;
+      let liveHeaderInterval = null;
+      let expandedRows = new Set();
+      let liveWindowData = null;
+      let matchStartTime = null;
+
+      // ===========================================
+      // NO EVENT ID CHECK
+      // ===========================================
+      if (!eventId) {
+        eventHeroEl.innerHTML = `
+          <div class="error-container">
+            <div class="error-icon">❌</div>
+            <h3 class="error-title">No event specified</h3>
+            <p class="error-text">Please select an event from the <a href="/fortnite/events.html">events page</a>.</p>
+          </div>
+        `;
+        windowTabsEl.innerHTML = '';
+        leaderboardContainerEl.innerHTML = '';
+        return;
+      }
+
+      // ===========================================
+      // UTILITY FUNCTIONS
+      // ===========================================
+
+      // Set event primary color
+      function setEventColor(color) {
+        if (!color) return;
+        const hex = color.startsWith('#') ? color : `#${color}`;
+        document.documentElement.style.setProperty('--event-primary', hex);
+      }
+
+      // Format date/time
+      function formatDateTime(dateStr) {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const options = {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit'
+        };
+        // Show year if not current year
+        if (date.getFullYear() !== now.getFullYear()) {
+          options.year = 'numeric';
+        }
+        return date.toLocaleString(undefined, options);
+      }
+
+      // Format date short
+      function formatDateShort(dateStr) {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const options = { 
+          weekday: 'short',
+          month: 'short', 
+          day: 'numeric'
+        };
+        // Show year if not current year
+        if (date.getFullYear() !== now.getFullYear()) {
+          options.year = 'numeric';
+        }
+        return date.toLocaleDateString(undefined, options);
+      }
+
+      // Format countdown
+      function formatCountdown(targetDate) {
+        const now = new Date();
+        const diff = targetDate - now;
+        
+        if (diff <= 0) return null;
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+        if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+        return `${minutes}m ${seconds}s`;
+      }
+
+      // Format time alive (seconds to mm:ss)
+      function formatTimeAlive(seconds) {
+        if (!seconds) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+      }
+
+      // Get platform display
+      function getPlatformShort(platform) {
+        const map = {
+          'Windows': 'PC',
+          'PS5': 'PS5',
+          'PS4': 'PS4',
+          'XSX': 'Xbox',
+          'XboxOne': 'XB1',
+          'XboxOneGDK': 'Xbox',
+          'Switch': 'Switch',
+          'Android': 'Android',
+          'iOS': 'iOS',
+          'XCloud': 'Cloud',
+          'Helios': 'GFN'
+        };
+        return map[platform] || platform;
+      }
+
+      // Get region display
+      function getRegionDisplay(region) {
+        const map = {
+          'EU': 'Europe',
+          'NAE': 'NA East',
+          'NAW': 'NA West',
+          'BR': 'Brazil',
+          'ASIA': 'Asia',
+          'ME': 'Middle East',
+          'OCE': 'Oceania'
+        };
+        return map[region] || region;
+      }
+
+      // Country code to flag emoji
+      function countryToFlag(countryCode) {
+        if (!countryCode || countryCode.length !== 2) return '';
+        const codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt(0));
+        return String.fromCodePoint(...codePoints);
+      }
+
+      // Get window status
+      function getWindowStatus(window) {
+        // If API provides status, use it
+        if (window.status) {
+          return window.status;
+        }
+        
+        const now = new Date();
+        const begin = new Date(window.begin_time || window.beginTime);
+        const end = new Date(window.end_time || window.endTime);
+
+        if (now >= begin && now <= end) return 'live';
+        if (now < begin) return 'scheduled';
+        return 'ended';
+      }
+
+      // Update URL with current state
+      function updateURL() {
+        const url = new URL(window.location);
+        url.searchParams.set('id', eventId);
+        if (currentWindowId) {
+          url.searchParams.set('window', currentWindowId);
+        }
+        window.history.replaceState({}, '', url);
+      }
+
+      // Update meta tags for social sharing
+      function updateMetaTags(title, description, image) {
+        const fullTitle = `${title} - gdb.gg`;
+        const desc = description || `View details for ${title}`;
+        
+        document.title = fullTitle;
+        
+        const updateMeta = (selector, value) => {
+          const el = document.querySelector(selector);
+          if (el) el.content = value;
+        };
+        
+        updateMeta('meta[property="og:title"]', fullTitle);
+        updateMeta('meta[property="og:description"]', desc);
+        if (image) updateMeta('meta[property="og:image"]', image);
+        updateMeta('meta[property="og:url"]', window.location.href);
+        updateMeta('meta[name="description"]', desc);
+      }
+
+      // ===========================================
+      // RENDER FUNCTIONS
+      // ===========================================
+
+      // Render Hero Section
+      function renderHero(event) {
+        const primaryColor = event.primary_color || event.background_left_color || 'f7c948';
+        setEventColor(primaryColor);
+
+        const bgImage = event.background_image || event.poster_image || '';
+        const bgLeft = event.background_left_color || primaryColor;
+        const bgRight = event.background_right_color || primaryColor;
+        
+        const title = event.title || event.short_title || event.event_id;
+        const description = event.description || '';
+        
+        // Determine status
+        const status = event.status || 'active';
+        const now = new Date();
+        const begin = new Date(event.begin_time);
+        const end = new Date(event.end_time);
+        
+        let displayStatus = status;
+        if (now >= begin && now <= end) displayStatus = 'live';
+        else if (now < begin) displayStatus = 'upcoming';
+        else displayStatus = 'completed';
+        
+        isLive = displayStatus === 'live';
+        
+        // Check if recently ended (within 30 minutes)
+        if (displayStatus === 'completed') {
+          const minutesSinceEnd = (now - end) / (1000 * 60);
+          isRecentlyEnded = minutesSinceEnd <= 30;
+        } else {
+          isRecentlyEnded = false;
+        }
+        
+        // Status badge
+        let statusHtml = '';
+        if (displayStatus === 'live') {
+          const countdown = formatCountdown(end);
+          statusHtml = `<div class="event-status-badge live">🔴 LIVE${countdown ? ` — Ends in ${countdown}` : ''}</div>`;
+        } else if (displayStatus === 'upcoming') {
+          const countdown = formatCountdown(begin);
+          statusHtml = `<div class="event-status-badge upcoming">⏱️ ${countdown ? `Starts in ${countdown}` : 'Upcoming'}</div>`;
+        } else {
+          statusHtml = `<div class="event-status-badge completed">✓ Completed</div>`;
+        }
+
+        // Region badge
+        const regionHtml = `<span class="meta-badge region">${event.region}</span>`;
+
+        // Platforms
+        const platformsHtml = (event.platforms || []).slice(0, 6).map(p => 
+          `<span class="meta-badge platform">${getPlatformShort(p)}</span>`
+        ).join('');
+
+        // Tournament type from metadata
+        const metadata = event.metadata || {};
+        let tournamentTypeHtml = '';
+        if (metadata.tournamentType) {
+          tournamentTypeHtml = `<span class="meta-badge tournament-type">${metadata.tournamentType}</span>`;
+        }
+
+        // Requirements badges
+        const requirements = [];
+        if (metadata.minimumAccountLevel) {
+          requirements.push(`<span class="meta-badge requirement">✓ Level ${metadata.minimumAccountLevel}+</span>`);
+        }
+
+        // Time display
+        const timeHtml = `<span class="meta-badge time">${formatDateTime(event.begin_time)} → ${formatDateTime(event.end_time)}</span>`;
+
+        eventHeroEl.innerHTML = `
+          <div class="event-hero" style="border: 2px solid #${primaryColor}30">
+            <div class="event-hero-bg" style="background-image: url('${bgImage}')"></div>
+            <div class="event-hero-gradient" style="background: linear-gradient(135deg, #${bgLeft} 0%, #${bgRight} 100%)"></div>
+            <div class="event-hero-content">
+              ${statusHtml}
+              <h1 class="event-hero-title">${title}</h1>
+              ${description ? `<p class="event-hero-subtitle">${description.substring(0, 200)}${description.length > 200 ? '...' : ''}</p>` : ''}
+              <div class="event-hero-meta">
+                ${regionHtml}
+                ${tournamentTypeHtml}
+                ${platformsHtml}
+                ${requirements.join('')}
+                ${timeHtml}
+              </div>
+            </div>
+          </div>
+        `;
+
+        updateMetaTags(title, description, event.poster_image || bgImage);
+      }
+
+      // Render Window Tabs
+      function renderWindowTabs(windows) {
+        if (!windows || windows.length === 0) {
+          windowTabsEl.innerHTML = '';
+          return;
+        }
+
+        // If no window selected, pick the most appropriate one
+        if (!currentWindowId) {
+          const now = new Date();
+          
+          // First try to find a live window
+          const liveWindow = windows.find(w => {
+            const begin = new Date(w.begin_time);
+            const end = new Date(w.end_time);
+            return now >= begin && now <= end;
+          });
+          
+          if (liveWindow) {
+            currentWindowId = liveWindow.window_id;
+          } else {
+            // Otherwise pick the most recent crawled/completed window or last window
+            const completedWindows = windows.filter(w => 
+              w.status === 'crawled' || w.status === 'completed' || w.total_participants > 0
+            );
+            if (completedWindows.length > 0) {
+              currentWindowId = completedWindows[completedWindows.length - 1].window_id;
+            } else {
+              currentWindowId = windows[windows.length - 1].window_id;
+            }
+          }
+        }
+
+        const now = new Date();
+        const tabsHtml = windows.map((w, index) => {
+          const windowId = w.window_id;
+          const isActive = windowId === currentWindowId;
+          
+          // Window label
+          const label = w.name || `Round ${w.round || index + 1}`;
+          const dateStr = formatDateShort(w.begin_time);
+          
+          // Status info
+          const status = getWindowStatus(w);
+          const windowBegin = new Date(w.begin_time);
+          const windowEnd = new Date(w.end_time);
+          
+          let statusHtml = '';
+          if (status === 'live' || (now >= windowBegin && now <= windowEnd)) {
+            const timeLeft = formatCountdown(windowEnd);
+            statusHtml = `<span class="window-status live">🔴 ${timeLeft || 'LIVE'}</span>`;
+          } else if (status === 'scheduled' || now < windowBegin) {
+            const timeUntil = formatCountdown(windowBegin);
+            statusHtml = timeUntil ? `<span class="window-status upcoming">⏱️ ${timeUntil}</span>` : `<span class="window-status scheduled">Scheduled</span>`;
+          } else if (status === 'crawled' || status === 'completed') {
+            const participants = w.total_participants;
+            statusHtml = participants ? 
+              `<span class="window-status crawled">${participants.toLocaleString()} players</span>` :
+              `<span class="window-status completed">Completed</span>`;
+          } else {
+            statusHtml = `<span class="window-status scheduled">Pending data</span>`;
+          }
+          
+          return `
+            <button class="window-tab ${isActive ? 'active' : ''}" data-window-id="${windowId}">
+              <span class="window-tab-label">${label}</span>
+              <span class="window-tab-date">${dateStr}</span>
+              <span class="window-tab-status">${statusHtml}</span>
+            </button>
+          `;
+        }).join('');
+
+        windowTabsEl.innerHTML = `<div class="window-tabs">${tabsHtml}</div>`;
+
+        // Add click handlers
+        windowTabsEl.querySelectorAll('.window-tab').forEach(tab => {
+          tab.addEventListener('click', () => {
+            currentWindowId = tab.dataset.windowId;
+            currentPage = 0;
+            expandedRows.clear();
+            updateURL();
+            renderWindowTabs(windows);
+            fetchLeaderboard();
+          });
+        });
+      }
+
+      // Render Stats Summary
+      function renderStatsSummary(windowData) {
+        if (!windowData || !windowData.window) {
+          statsSummaryEl.innerHTML = '';
+          return;
+        }
+
+        const w = windowData.window;
+        const participants = w.totalParticipants || windowData.pagination?.totalEntries || 0;
+        
+        statsSummaryEl.innerHTML = `
+          <div class="stats-summary-bar">
+            <div class="stat-item">
+              <div class="stat-value">${participants.toLocaleString()}</div>
+              <div class="stat-label">Players</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${w.name || 'Round'}</div>
+              <div class="stat-label">Window</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${w.region || currentEvent?.region || '-'}</div>
+              <div class="stat-label">Region</div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Render Event Info Section
+      function renderEventInfo(event, windowData) {
+        const metadata = event.metadata || {};
+        const window = currentWindows.find(w => w.window_id === currentWindowId);
+        
+        let sections = [];
+
+        // Scoring Rules (from window if available)
+        if (window?.scoring_rules) {
+          const rules = window.scoring_rules;
+          if (rules && typeof rules === 'object') {
+            let scoringHtml = '';
+            scoringHtml = `
+              <div class="info-group">
+                <div class="info-group-title">Scoring System</div>
+                <div class="scoring-rules">
+                  <div class="scoring-rule">
+                    <span class="scoring-rule-value">View</span>
+                    <span class="scoring-rule-label">Event page for detailed scoring</span>
+                  </div>
+                </div>
+              </div>
+            `;
+            sections.push(scoringHtml);
+          }
+        }
+
+        // Requirements (from window)
+        if (window?.requirements && window.requirements.length > 0) {
+          const reqHtml = window.requirements.map(req => {
+            if (Array.isArray(req)) {
+              return req.map(r => parseRequirement(r)).filter(Boolean).join(' or ');
+            }
+            return parseRequirement(req);
+          }).filter(Boolean).map(req => 
+            `<span class="requirement-badge">${req}</span>`
+          ).join('');
+
+          if (reqHtml) {
+            sections.push(`
+              <div class="info-group">
+                <div class="info-group-title">Requirements</div>
+                <div class="requirements-list">${reqHtml}</div>
+              </div>
+            `);
+          }
+        }
+
+        // Metadata info
+        if (metadata.minimumAccountLevel || metadata.TeamLockType) {
+          let metaItems = [];
+          if (metadata.minimumAccountLevel) {
+            metaItems.push(`<span class="requirement-badge required">🎮 Account Level ${metadata.minimumAccountLevel}+</span>`);
+          }
+          if (metadata.TeamLockType) {
+            metaItems.push(`<span class="requirement-badge">🔒 Team Lock: ${metadata.TeamLockType}</span>`);
+          }
+          if (metaItems.length > 0) {
+            sections.push(`
+              <div class="info-group">
+                <div class="info-group-title">Event Rules</div>
+                <div class="requirements-list">${metaItems.join('')}</div>
+              </div>
+            `);
+          }
+        }
+
+        if (sections.length === 0) {
+          eventInfoEl.innerHTML = '';
+          return;
+        }
+
+        eventInfoEl.innerHTML = `
+          <div class="event-info-section">
+            <div class="event-info-header" onclick="this.nextElementSibling.classList.toggle('collapsed'); this.querySelector('.event-info-toggle').classList.toggle('collapsed');">
+              <h3>📋 Event Information</h3>
+              <svg class="event-info-toggle collapsed" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </div>
+            <div class="event-info-content collapsed">
+              ${sections.join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Parse requirement string
+      function parseRequirement(req) {
+        if (!req || typeof req !== 'string') return null;
+        
+        if (req.startsWith('eula:')) return '📜 EULA Accepted';
+        if (req.startsWith('adps:')) return '✓ Age Verification';
+        if (req === 'mfa') return '🔐 2FA Required';
+        if (req.startsWith('currentRanking:')) {
+          const parts = req.split(':');
+          if (parts.length >= 3) {
+            const rankType = parts[1].includes('nobuild') ? 'Zero Build' : 'Battle Royale';
+            const rankLevel = parts[2];
+            return `🏆 Ranked ${rankType} ${rankLevel}+`;
+          }
+        }
+        
+        return null;
+      }
+
+      // Render Leaderboard
+      async function renderLeaderboard(data) {
+        currentWindowData = data;
+        const entries = data.entries || [];
+        
+        if (!entries || entries.length === 0) {
+          const liveMessage = isLive 
+            ? `<p class="empty-text">🔴 <strong>Match in progress!</strong> Leaderboard data is being collected and will appear here shortly.</p>
+               <p class="empty-text" style="margin-top: 0.5rem; font-size: 0.85rem;">Data refreshes automatically every 30 seconds.</p>`
+            : `<p class="empty-text">The leaderboard will populate once matches are played and data is collected.</p>`;
+          
+          leaderboardContainerEl.innerHTML = `
+            <div class="leaderboard-container">
+              <div class="empty-state">
+                <div class="empty-icon">${isLive ? '⏳' : '📊'}</div>
+                <h3 class="empty-title">${isLive ? 'Awaiting Live Data' : 'No leaderboard data yet'}</h3>
+                ${liveMessage}
+              </div>
+            </div>
+          `;
+          jumpToRankEl.style.display = 'none';
+          renderStatsSummary(data);
+          return;
+        }
+
+        // Update stats and pagination
+        const totalEntries = data.pagination?.totalEntries || entries.length;
+        totalPages = data.pagination?.totalPages || Math.ceil(totalEntries / 100);
+        jumpToRankEl.style.display = 'flex';
+        
+        renderStatsSummary(data);
+
+        // Build table
+        let tableHtml = `
+          <div class="leaderboard-container">
+            <div class="leaderboard-header">
+              <h2 class="leaderboard-title">🏆 Leaderboard</h2>
+              <div class="leaderboard-meta">
+                <input type="text" class="search-input" id="playerSearchInput" placeholder="Search players...">
+                <span class="leaderboard-count">${totalEntries.toLocaleString()} entries</span>
+              </div>
+            </div>
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th style="width: 30px;"></th>
+                  <th style="width: 60px;">Rank</th>
+                  <th>Player</th>
+                  <th style="width: 70px;">Points</th>
+                  <th class="center" style="width: 50px;">VRs</th>
+                  <th class="center" style="width: 60px;">Games</th>
+                  <th class="center" style="width: 55px;">Elims</th>
+                  <th class="center" style="width: 55px;">Avg</th>
+                  <th class="center" style="width: 55px;">Best</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboardTableBody">
+        `;
+
+        // Build accountId → {displayName, countryCode} lookup map from all entries
+        const playerLookup = new Map();
+        entries.forEach(entry => {
+          if (entry.accountId && entry.displayName) {
+            playerLookup.set(entry.accountId, {
+              displayName: entry.displayName,
+              countryCode: entry.countryCode
+            });
+          }
+        });
+
+        entries.forEach((entry, entryIndex) => {
+          const rank = entry.rank || (currentPage * 100) + entryIndex + 1;
+          const rankClass = rank === 1 ? 'top-1' : rank === 2 ? 'top-2' : rank === 3 ? 'top-3' : '';
+          const rowId = `row-${currentPage}-${entryIndex}`;
+          const isExpanded = expandedRows.has(rowId);
+          
+          // Extract fields from v2 API response
+          const accountId = entry.accountId;
+          const displayName = entry.displayName || 'Unknown';
+          const countryCode = entry.countryCode;
+          const teamAccountIds = entry.teamAccountIds || [];
+          const teamDisplayNames = entry.teamDisplayNames || []; // Enhanced API field
+          const points = entry.points || 0;
+          const matchesPlayed = entry.matchesPlayed || 0;
+          const eliminations = entry.eliminations || 0;
+          const wins = entry.wins || 0;
+          const avgPlacement = entry.avgPlacement || 0;
+          const bestPlacement = entry.bestPlacement || '-';
+          const pointBreakdown = entry.pointBreakdown || {};
+
+          // Build player display with country flag
+          const flag = countryToFlag(countryCode);
+          const flagHtml = countryCode ? 
+            `<img class="flag-img" src="https://flagcdn.com/w40/${countryCode.toLowerCase()}.png" alt="${countryCode}" onerror="this.outerHTML='${flag}'">` : 
+            '';
+
+          // Build team members HTML (for duos/squads - show all member names)
+          let teamMembersHtml = '';
+          const teamCountryCodes = entry.teamCountryCodes || []; // Enhanced API field
+          if (teamAccountIds.length > 1) {
+            // Check if we have teamDisplayNames from API
+            if (teamDisplayNames.length === teamAccountIds.length) {
+              // Use the provided display names (ideal case - API provides names)
+              teamMembersHtml = teamAccountIds.map((memberId, idx) => {
+                const memberName = teamDisplayNames[idx] || 'Unknown';
+                // Get country code - from teamCountryCodes array, or fallback to entry's countryCode for first member
+                const memberCountryCode = teamCountryCodes[idx] || (idx === 0 ? countryCode : null);
+                const memberFlag = countryToFlag(memberCountryCode);
+                const memberFlagHtml = memberCountryCode ? 
+                  `<img class="flag-img" src="https://flagcdn.com/w40/${memberCountryCode.toLowerCase()}.png" alt="${memberCountryCode}" onerror="this.outerHTML='${memberFlag}'">` : 
+                  '';
+                return `<a href="/fortnite/profile.html?id=${memberId}" class="player-name team-member">${memberFlagHtml}${memberName}</a>`;
+              }).join('<span class="team-separator">+</span>');
+            } else {
+              // Fallback: Build array of team members, first is the entry's display name
+              const teamMembers = [];
+              
+              // Add current player first (from entry's displayName)
+              teamMembers.push({
+                accountId: accountId,
+                displayName: displayName,
+                countryCode: countryCode
+              });
+              
+              // Add other team members - try lookup or show "Unknown"
+              teamAccountIds.forEach(memberId => {
+                if (memberId !== accountId) {
+                  const memberInfo = playerLookup.get(memberId);
+                  teamMembers.push({
+                    accountId: memberId,
+                    displayName: memberInfo?.displayName || null,
+                    countryCode: memberInfo?.countryCode || null
+                  });
+                }
+              });
+              
+              // Build HTML for all team members
+              teamMembersHtml = teamMembers.map((member) => {
+                const memberFlag = countryToFlag(member.countryCode);
+                const memberFlagHtml = member.countryCode ? 
+                  `<img class="flag-img" src="https://flagcdn.com/w40/${member.countryCode.toLowerCase()}.png" alt="${member.countryCode}" onerror="this.outerHTML='${memberFlag}'">` : 
+                  '';
+                
+                if (member.displayName) {
+                  return `<a href="/fortnite/profile.html?id=${member.accountId}" class="player-name team-member">${memberFlagHtml}${member.displayName}</a>`;
+                } else {
+                  // Unknown teammate - link to profile but show account ID snippet
+                  const shortId = member.accountId.substring(0, 8) + '...';
+                  return `<a href="/fortnite/profile.html?id=${member.accountId}" class="player-name team-member unknown">${shortId}</a>`;
+                }
+              }).join('<span class="team-separator">+</span>');
+            }
+          } else {
+            // Solo player - just show the single player
+            teamMembersHtml = `
+              <a href="/fortnite/profile.html?id=${accountId}" class="player-name">
+                ${flagHtml}
+                ${displayName}
+              </a>
+            `;
+          }
+
+          tableHtml += `
+            <tr data-row-id="${rowId}" class="expandable" data-account-id="${accountId}">
+              <td>
+                <button class="expand-toggle ${isExpanded ? 'expanded' : ''}" data-row-id="${rowId}">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"/>
+                  </svg>
+                </button>
+              </td>
+              <td class="rank-cell">
+                <span class="rank-number ${rankClass}">${rank}</span>
+              </td>
+              <td class="team-cell">
+                <div class="team-display">
+                  ${teamMembersHtml}
+                </div>
+              </td>
+              <td class="points-cell">${points}</td>
+              <td class="stat-cell wins">${wins}</td>
+              <td class="stat-cell">${matchesPlayed}</td>
+              <td class="stat-cell elims">${eliminations}</td>
+              <td class="stat-cell">${avgPlacement ? avgPlacement.toFixed(1) : '-'}</td>
+              <td class="stat-cell">${bestPlacement}</td>
+            </tr>
+          `;
+
+          // Add expanded match breakdown row (hidden initially)
+          if (isExpanded) {
+            tableHtml += `
+              <tr class="match-breakdown-row" data-parent-row="${rowId}">
+                <td colspan="9">
+                  <div class="match-breakdown" id="breakdown-${rowId}">
+                    <div class="loading-container" style="padding: 2rem;">
+                      <div class="loading-spinner"></div>
+                      <p class="loading-text">Loading match history...</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }
+        });
+
+        tableHtml += `
+              </tbody>
+            </table>
+            <div class="pagination">
+              <span class="pagination-info">Page ${currentPage + 1} of ${totalPages}</span>
+              <div class="pagination-controls">
+                <button class="pagination-btn" id="prevPageBtn" ${currentPage === 0 ? 'disabled' : ''}>← Previous</button>
+                <span class="page-indicator">${(currentPage * 100) + 1} - ${Math.min((currentPage + 1) * 100, totalEntries)}</span>
+                <button class="pagination-btn" id="nextPageBtn" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next →</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        leaderboardContainerEl.innerHTML = tableHtml;
+
+        // Search functionality
+        const searchInput = document.getElementById('playerSearchInput');
+        const tableBody = document.getElementById('leaderboardTableBody');
+        
+        if (searchInput && tableBody) {
+          searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            const rows = tableBody.querySelectorAll('tr:not(.match-breakdown-row)');
+            
+            rows.forEach(row => {
+              const teamCell = row.querySelector('.team-cell');
+              if (!teamCell) return;
+              
+              const text = teamCell.textContent.toLowerCase();
+              const shouldShow = !searchTerm || text.includes(searchTerm);
+              row.style.display = shouldShow ? '' : 'none';
+              
+              // Also hide breakdown row if exists
+              const breakdownRow = tableBody.querySelector(`tr[data-parent-row="${row.dataset.rowId}"]`);
+              if (breakdownRow) {
+                breakdownRow.style.display = shouldShow ? '' : 'none';
+              }
+            });
+          });
+        }
+
+        // Expand toggle handlers
+        document.querySelectorAll('.expand-toggle').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const rowId = btn.dataset.rowId;
+            const row = document.querySelector(`tr[data-row-id="${rowId}"]`);
+            const accountId = row?.dataset.accountId;
+            
+            if (expandedRows.has(rowId)) {
+              // Collapse
+              expandedRows.delete(rowId);
+              btn.classList.remove('expanded');
+              const breakdownRow = document.querySelector(`tr[data-parent-row="${rowId}"]`);
+              if (breakdownRow) breakdownRow.remove();
+            } else {
+              // Expand
+              expandedRows.add(rowId);
+              btn.classList.add('expanded');
+              
+              // Insert breakdown row
+              const newRow = document.createElement('tr');
+              newRow.className = 'match-breakdown-row';
+              newRow.dataset.parentRow = rowId;
+              newRow.innerHTML = `
+                <td colspan="9">
+                  <div class="match-breakdown" id="breakdown-${rowId}">
+                    <div class="loading-container" style="padding: 1.5rem;">
+                      <div class="loading-spinner"></div>
+                      <p class="loading-text">Loading match history...</p>
+                    </div>
+                  </div>
+                </td>
+              `;
+              row.after(newRow);
+              
+              // Fetch match data
+              if (accountId) {
+                await fetchAndRenderMatches(rowId, accountId);
+              }
+            }
+          });
+        });
+
+        // Pagination handlers
+        document.getElementById('prevPageBtn')?.addEventListener('click', () => {
+          if (currentPage > 0) {
+            currentPage--;
+            expandedRows.clear();
+            fetchLeaderboard();
+          }
+        });
+
+        document.getElementById('nextPageBtn')?.addEventListener('click', () => {
+          if (currentPage < totalPages - 1) {
+            currentPage++;
+            expandedRows.clear();
+            fetchLeaderboard();
+          }
+        });
+
+        // Load expanded rows' match data
+        for (const rowId of expandedRows) {
+          const row = document.querySelector(`tr[data-row-id="${rowId}"]`);
+          const accountId = row?.dataset.accountId;
+          if (accountId) {
+            fetchAndRenderMatches(rowId, accountId);
+          }
+        }
+      }
+
+      // Fetch and render matches for a player
+      async function fetchAndRenderMatches(rowId, accountId) {
+        const breakdownEl = document.getElementById(`breakdown-${rowId}`);
+        if (!breakdownEl) return;
+
+        try {
+          const response = await fetch(`${API_BASE}/v2/matches/${encodeURIComponent(currentWindowId)}?accountId=${encodeURIComponent(accountId)}`);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          const data = await response.json();
+          const matches = data.matches || [];
+
+          if (matches.length === 0) {
+            breakdownEl.innerHTML = `
+              <div class="match-breakdown-header">
+                <span class="match-breakdown-title">Match History</span>
+              </div>
+              <p style="color: var(--text-tertiary); font-size: 0.85rem;">No match data available.</p>
+            `;
+            return;
+          }
+
+          // Get player's leaderboard entry for point breakdown
+          const entry = currentWindowData?.entries?.find(e => e.accountId === accountId);
+          const pointBreakdown = entry?.pointBreakdown || {};
+
+          // Render matches
+          const matchesHtml = matches.map((match, i) => {
+            const placement = match.placement || match.rawStats?.PLACEMENT_STAT_INDEX || '-';
+            const elims = match.eliminations || match.rawStats?.TEAM_ELIMS_STAT_INDEX || 0;
+            const timeAlive = match.timeAlive || match.rawStats?.TIME_ALIVE_STAT || 0;
+            const isVictory = match.isVictory || match.rawStats?.VICTORY_ROYALE_STAT === 1;
+            
+            const placementClass = placement === 1 ? 'top-1' : placement <= 3 ? 'top-3' : placement <= 5 ? 'top-5' : '';
+            
+            return `
+              <div class="match-card ${isVictory ? 'victory' : ''}">
+                <div class="match-header">
+                  <span class="match-number">Game ${i + 1}</span>
+                  <span class="match-placement ${placementClass}">#${placement}</span>
+                </div>
+                <div class="match-stats">
+                  <div class="match-stat">
+                    <span class="match-stat-value">${elims}</span>
+                    <span class="match-stat-label">Elims</span>
+                  </div>
+                  <div class="match-stat">
+                    <span class="match-stat-value">${formatTimeAlive(timeAlive)}</span>
+                    <span class="match-stat-label">Alive</span>
+                  </div>
+                  ${isVictory ? '<div class="match-stat"><span class="match-stat-value">🏆</span><span class="match-stat-label">Victory!</span></div>' : ''}
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          // Render point breakdown if available
+          let pointBreakdownHtml = '';
+          if (Object.keys(pointBreakdown).length > 0) {
+            const breakdownItems = Object.entries(pointBreakdown).map(([key, val]) => {
+              let label = key;
+              if (key.startsWith('PLACEMENT_STAT_INDEX:')) {
+                const pos = key.split(':')[1];
+                label = `#${pos} Finish`;
+              } else if (key.startsWith('TEAM_ELIMS_STAT_INDEX:')) {
+                const count = key.split(':')[1];
+                label = `${count} Elims`;
+              }
+              return `
+                <div class="point-breakdown-item">
+                  <span class="label">${label}:</span>
+                  <span class="value">${val.timesAchieved}× = +${val.pointsEarned}</span>
+                </div>
+              `;
+            }).join('');
+
+            pointBreakdownHtml = `
+              <div class="point-breakdown">
+                <div class="point-breakdown-title">Point Breakdown</div>
+                <div class="point-breakdown-grid">${breakdownItems}</div>
+              </div>
+            `;
+          }
+
+          breakdownEl.innerHTML = `
+            <div class="match-breakdown-header">
+              <span class="match-breakdown-title">Match History (${matches.length} games)</span>
+            </div>
+            <div class="matches-grid">${matchesHtml}</div>
+            ${pointBreakdownHtml}
+          `;
+
+        } catch (error) {
+          console.error('Failed to fetch matches:', error);
+          breakdownEl.innerHTML = `
+            <div class="match-breakdown-header">
+              <span class="match-breakdown-title">Match History</span>
+            </div>
+            <p style="color: var(--text-tertiary); font-size: 0.85rem;">Failed to load match data.</p>
+          `;
+        }
+      }
+
+      // ===========================================
+      // LIVE DATA FUNCTIONS
+      // ===========================================
+
+      // Fetch live data from the /v2/live endpoint
+      async function fetchLiveData() {
+        try {
+          const response = await fetch(`${API_BASE}/v2/live`);
+          if (!response.ok) return null;
+          
+          const data = await response.json();
+          
+          // Find the window that matches our current window
+          const allWindows = [...(data.grouped?.live || []), ...(data.grouped?.upcoming || [])];
+          const matchingWindow = allWindows.find(w => w.windowId === currentWindowId || w.eventId === eventId);
+          
+          if (matchingWindow) {
+            liveWindowData = matchingWindow;
+            updateLiveBanner(matchingWindow);
+            return matchingWindow;
+          }
+          
+          return null;
+        } catch (error) {
+          console.error('Failed to fetch live data:', error);
+          return null;
+        }
+      }
+
+      // Update the live match banner with data
+      function updateLiveBanner(data) {
+        if (!data || (!isLive && !isRecentlyEnded)) {
+          exitLiveMode();
+          return;
+        }
+
+        // Enter live mode
+        enterLiveMode();
+
+        // Calculate match duration
+        const beginTime = new Date(data.beginTime);
+        const endTime = new Date(data.endTime);
+        const now = new Date();
+        const durationSeconds = Math.floor((now - beginTime) / 1000);
+        const durationMins = Math.floor(durationSeconds / 60);
+        const durationHrs = Math.floor(durationMins / 60);
+        const durationDisplay = durationHrs > 0 
+          ? `${durationHrs}h ${durationMins % 60}m`
+          : `${durationMins}m`;
+
+        // Update compact header bar
+        if (currentEvent) {
+          liveEventTitleEl.textContent = currentEvent.title || currentEvent.short_title || 'Event';
+        }
+        liveStatDurationEl.textContent = durationDisplay;
+        liveStatPlayersEl.textContent = data.stats?.participants?.toLocaleString() || '--';
+        liveStatProgressEl.textContent = `${data.progressPercent?.toFixed(0) || 0}%`;
+        liveStatTimeLeftEl.textContent = formatCountdown(endTime) || 'Soon';
+        liveLastUpdatedEl.textContent = `Auto-refresh • ${new Date().toLocaleTimeString()}`;
+      }
+
+      // Enter live mode - transform the page
+      function enterLiveMode() {
+        if (document.body.classList.contains('live-mode')) return;
+        
+        document.body.classList.add('live-mode');
+        
+        // Populate round selector dropdown
+        populateRoundSelector();
+        
+        // Start live header update interval
+        startLiveHeaderUpdates();
+      }
+
+      // Exit live mode - revert to standard layout
+      function exitLiveMode() {
+        document.body.classList.remove('live-mode');
+        
+        if (liveHeaderInterval) {
+          clearInterval(liveHeaderInterval);
+          liveHeaderInterval = null;
+        }
+      }
+
+      // Populate the round selector dropdown
+      function populateRoundSelector() {
+        if (!currentWindows || currentWindows.length === 0) return;
+        
+        liveRoundSelectEl.innerHTML = currentWindows.map(w => {
+          const status = getWindowStatus(w);
+          const statusEmoji = status === 'live' ? '🔴 ' : status === 'scheduled' ? '⏳ ' : '✅ ';
+          const isSelected = w.window_id === currentWindowId;
+          return `<option value="${w.window_id}" ${isSelected ? 'selected' : ''}>${statusEmoji}${w.name}</option>`;
+        }).join('');
+        
+        // Handle round change
+        liveRoundSelectEl.onchange = () => {
+          currentWindowId = liveRoundSelectEl.value;
+          currentPage = 0;
+          expandedRows.clear();
+          updateURL();
+          fetchLeaderboard();
+        };
+      }
+
+      // Update live header stats every second
+      function startLiveHeaderUpdates() {
+        if (liveHeaderInterval) clearInterval(liveHeaderInterval);
+        
+        liveHeaderInterval = setInterval(() => {
+          if (!isLive || !liveWindowData) return;
+          
+          // Update duration
+          const beginTime = new Date(liveWindowData.beginTime);
+          const now = new Date();
+          const durationSeconds = Math.floor((now - beginTime) / 1000);
+          const durationMins = Math.floor(durationSeconds / 60);
+          const durationHrs = Math.floor(durationMins / 60);
+          liveStatDurationEl.textContent = durationHrs > 0 
+            ? `${durationHrs}h ${durationMins % 60}m`
+            : `${durationMins}m`;
+          
+          // Update countdown
+          const endTime = new Date(liveWindowData.endTime);
+          liveStatTimeLeftEl.textContent = formatCountdown(endTime) || 'Soon';
+          
+          // Check if event ended
+          if (now > endTime) {
+            checkEventEnded();
+          }
+        }, 1000);
+      }
+
+      // Check if event ended and handle 30-minute grace period
+      function checkEventEnded() {
+        if (!liveWindowData) return;
+        
+        const endTime = new Date(liveWindowData.endTime);
+        const now = new Date();
+        const minutesSinceEnd = (now - endTime) / (1000 * 60);
+        
+        if (minutesSinceEnd > 30) {
+          // More than 30 minutes since end - exit live mode
+          isLive = false;
+          isRecentlyEnded = false;
+          exitLiveMode();
+          stopLivePolling();
+          // Refresh to get final data
+          fetchEventDetails();
+        } else if (minutesSinceEnd > 0) {
+          // Within 30 minutes of end - mark as recently ended
+          isRecentlyEnded = true;
+          isLive = false;
+        }
+      }
+
+      // Start live data polling (every 30 seconds)
+      function startLivePolling() {
+        if (liveRefreshInterval) {
+          clearInterval(liveRefreshInterval);
+        }
+        
+        // Fetch immediately
+        fetchLiveData();
+        
+        // Then poll every 30 seconds
+        liveRefreshInterval = setInterval(() => {
+          if (isLive || isRecentlyEnded) {
+            fetchLiveData();
+          } else {
+            clearInterval(liveRefreshInterval);
+            exitLiveMode();
+          }
+        }, 30000);
+      }
+
+      // Stop live data polling
+      function stopLivePolling() {
+        if (liveRefreshInterval) {
+          clearInterval(liveRefreshInterval);
+          liveRefreshInterval = null;
+        }
+        exitLiveMode();
+      }
+
+      // ===========================================
+      // DATA FETCHING
+      // ===========================================
+
+      // Fetch event details using v2 API
+      async function fetchEventDetails() {
+        try {
+          const response = await fetch(`${API_BASE}/v2/event/${encodeURIComponent(eventId)}`);
+          
+          if (!response.ok) {
+            throw new Error(`Event not found (${response.status})`);
+          }
+          
+          const data = await response.json();
+          
+          currentEvent = data.event;
+          currentWindows = data.windows || [];
+          
+          if (!currentEvent) {
+            throw new Error('Event data not found');
+          }
+          
+          renderHero(currentEvent);
+          renderWindowTabs(currentWindows);
+          renderEventInfo(currentEvent, null);
+          
+          // If no windows, show message
+          if (currentWindows.length === 0) {
+            leaderboardContainerEl.innerHTML = `
+              <div class="leaderboard-container">
+                <div class="empty-state">
+                  <div class="empty-icon">📅</div>
+                  <h3 class="empty-title">No rounds available yet</h3>
+                  <p class="empty-text">Event rounds will appear here once they are scheduled.</p>
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          // Fetch leaderboard for current window
+          fetchLeaderboard();
+
+          // Auto-refresh for live events or recently ended
+          if (isLive || isRecentlyEnded) {
+            startAutoRefresh();
+            startCountdownTimer();
+            startLivePolling();
+          } else {
+            stopLivePolling();
+            exitLiveMode();
+          }
+
+        } catch (error) {
+          console.error('Failed to fetch event:', error);
+          eventHeroEl.innerHTML = `
+            <div class="error-container">
+              <div class="error-icon">⚠️</div>
+              <h3 class="error-title">Failed to load event</h3>
+              <p class="error-text">${error.message}</p>
+              <p class="error-text" style="margin-top: 0.5rem;"><a href="/fortnite/events.html">← Return to events</a></p>
+            </div>
+          `;
+          windowTabsEl.innerHTML = '';
+          leaderboardContainerEl.innerHTML = '';
+        }
+      }
+
+      // Fetch leaderboard
+      async function fetchLeaderboard() {
+        if (!currentWindowId) {
+          leaderboardContainerEl.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📋</div>
+              <h3 class="empty-title">No round selected</h3>
+              <p class="empty-text">Please select a round from the tabs above.</p>
+            </div>
+          `;
+          return;
+        }
+
+        try {
+          leaderboardContainerEl.innerHTML = `
+            <div class="loading-container">
+              <div class="loading-spinner"></div>
+              <p class="loading-text">Loading leaderboard...</p>
+            </div>
+          `;
+
+          const url = `${API_BASE}/v2/leaderboard/${encodeURIComponent(currentWindowId)}?page=${currentPage}&limit=100`;
+          const response = await fetch(url);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          const data = await response.json();
+          renderLeaderboard(data);
+          renderEventInfo(currentEvent, data);
+
+        } catch (error) {
+          console.error('Failed to fetch leaderboard:', error);
+          leaderboardContainerEl.innerHTML = `
+            <div class="error-container">
+              <div class="error-icon">⚠️</div>
+              <h3 class="error-title">Failed to load leaderboard</h3>
+              <p class="error-text">${error.message}</p>
+            </div>
+          `;
+        }
+      }
+
+      // Auto-refresh for live events
+      function startAutoRefresh() {
+        if (autoRefreshInterval) {
+          clearInterval(autoRefreshInterval);
+        }
+        
+        autoRefreshInterval = setInterval(() => {
+          if (isLive) {
+            fetchLeaderboard();
+            // Re-render hero to update countdown
+            if (currentEvent) {
+              renderHero(currentEvent);
+            }
+          } else {
+            clearInterval(autoRefreshInterval);
+            stopLivePolling();
+          }
+        }, 30000); // Refresh every 30 seconds for live events
+      }
+
+      // Real-time countdown update for live events
+      let countdownInterval = null;
+      function startCountdownTimer() {
+        if (countdownInterval) clearInterval(countdownInterval);
+        
+        countdownInterval = setInterval(() => {
+          const statusBadge = document.querySelector('.event-status-badge.live');
+          if (statusBadge && currentEvent) {
+            // Find the current window's end time
+            const windows = currentEvent.windows || [];
+            const liveWindow = windows.find(w => w.status === 'live');
+            if (liveWindow) {
+              const end = new Date(liveWindow.end_time);
+              const countdown = formatCountdown(end);
+              if (countdown) {
+                statusBadge.textContent = `🔴 LIVE — Ends in ${countdown}`;
+              } else {
+                // Event ended, refresh the page data
+                fetchEventDetails();
+              }
+            }
+          } else if (!isLive) {
+            clearInterval(countdownInterval);
+          }
+        }, 1000);
+      }
+
+      // ===========================================
+      // EVENT HANDLERS
+      // ===========================================
+
+      // Jump to rank
+      jumpBtnEl.addEventListener('click', () => {
+        const rank = parseInt(rankInputEl.value);
+        if (rank && rank > 0) {
+          const targetPage = Math.floor((rank - 1) / 100);
+          if (targetPage !== currentPage) {
+            currentPage = targetPage;
+            expandedRows.clear();
+            fetchLeaderboard();
+          }
+        }
+      });
+
+      rankInputEl.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          jumpBtnEl.click();
+        }
+      });
+
+      // ===========================================
+      // INITIALIZE
+      // ===========================================
+      fetchEventDetails();
+
+    })();
+  </script>
+</body>
+</html>

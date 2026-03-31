@@ -1,0 +1,1625 @@
+/* ============================================
+   gdb.gg - Twitch Sub-Navigation
+   Platform-specific navigation bar
+   ============================================ */
+
+/* Twitch Sub-Nav Container */
+#twitch-sub-nav {
+    position: sticky;
+    top: var(--master-nav-height, 36px); /* Below unified gdb.gg bar */
+    z-index: 999;
+}
+
+.twitch-sub-nav {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(180deg, rgba(10, 10, 15, 0.98) 0%, rgba(19, 19, 26, 0.95) 100%);
+    border-bottom: 2px solid rgba(145, 70, 255, 0.4);
+    backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 4px 20px rgba(145, 70, 255, 0.15);
+}
+
+.twitch-sub-nav-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    height: 100%;
+    width: 100%;
+}
+
+/* Left section: Twitch branding */
+.twitch-sub-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-shrink: 0;
+}
+
+.twitch-sub-nav-brand-icon {
+    display: flex;
+    align-items: center;
+    padding-right: 1.25rem;
+    border-right: 1px solid rgba(145, 70, 255, 0.3);
+}
+
+.twitch-sub-nav-brand-icon svg {
+    width: 20px;
+    height: 20px;
+    color: #9146ff;
+    filter: drop-shadow(0 0 6px rgba(145, 70, 255, 0.5));
+}
+
+/* Center section: Search */
+.twitch-sub-nav-center {
+    flex: 1;
+    max-width: 500px;
+    position: relative;
+}
+
+.twitch-sub-nav-search {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(145, 70, 255, 0.2);
+    border-radius: 6px;
+    padding: 0.4rem;
+    transition: all 0.2s ease;
+}
+
+.twitch-sub-nav-search:focus-within {
+    border-color: rgba(145, 70, 255, 0.5);
+    box-shadow: 0 0 0 3px rgba(145, 70, 255, 0.1);
+}
+
+.nav-search-type {
+    background: rgba(145, 70, 255, 0.1);
+    border: none;
+    border-radius: 4px;
+    color: #9146ff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35rem 0.6rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.nav-search-type:focus {
+    outline: none;
+}
+
+#nav-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #e5e5e5;
+    font-size: 0.813rem;
+    padding: 0.25rem 0.5rem;
+    min-width: 0;
+}
+
+#nav-search-input::placeholder {
+    color: #6a6a6a;
+}
+
+#nav-search-input:focus {
+    outline: none;
+}
+
+.nav-search-btn {
+    background: rgba(145, 70, 255, 0.15);
+    border: none;
+    border-radius: 4px;
+    color: #9146ff;
+    padding: 0.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.nav-search-btn:hover {
+    background: rgba(145, 70, 255, 0.25);
+}
+
+.nav-search-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.nav-search-results {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    background: #1a1a1a;
+    border: 1px solid rgba(145, 70, 255, 0.3);
+    border-radius: 6px;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.nav-search-results.active {
+    display: block;
+}
+
+.nav-search-result {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    color: #e5e5e5;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.nav-search-result:last-child {
+    border-bottom: none;
+}
+
+.nav-search-result:hover {
+    background: rgba(145, 70, 255, 0.1);
+}
+
+.nav-search-result img {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.nav-search-result-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-search-result-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.nav-search-live {
+    background: #e91916;
+    color: white;
+    font-size: 0.625rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+.nav-search-loading,
+.nav-search-empty {
+    padding: 1rem;
+    text-align: center;
+    color: #a0a0a0;
+    font-size: 0.875rem;
+}
+
+/* Navigation Links */
+.twitch-sub-nav-links {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.twitch-sub-nav-links a {
+    color: #888;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(145, 70, 255, 0.2);
+    background: rgba(145, 70, 255, 0.05);
+    transition: all 0.2s ease-out;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.twitch-sub-nav-links a svg {
+    width: 14px;
+    height: 14px;
+}
+
+.twitch-sub-nav-links a:hover {
+    color: #d0bfff;
+    border-color: rgba(145, 70, 255, 0.5);
+    background: rgba(145, 70, 255, 0.15);
+    box-shadow: 0 0 12px rgba(145, 70, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.twitch-sub-nav-links a.active {
+    color: #ffffff;
+    border-color: rgba(145, 70, 255, 0.7);
+    background: linear-gradient(135deg, rgba(145, 70, 255, 0.25), rgba(145, 70, 255, 0.15));
+    box-shadow: 0 0 18px rgba(145, 70, 255, 0.4);
+}
+
+/* Right section: Nav Links */
+.twitch-sub-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .twitch-sub-nav-inner {
+        padding: 0 1rem;
+        gap: 1rem;
+    }
+    
+    .twitch-sub-nav-brand-icon {
+        padding-right: 0.75rem;
+    }
+    
+    .twitch-sub-nav-center {
+        max-width: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .twitch-sub-nav-center {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    #twitch-sub-nav {
+        top: 44px;
+    }
+    
+    .twitch-sub-nav {
+        height: 40px;
+    }
+    
+    .twitch-sub-nav-links a {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+    }
+    
+    .twitch-sub-nav-links a span {
+        display: none;
+    }
+    
+    .twitch-sub-nav-brand-icon {
+        border-right: none;
+        padding-right: 0;
+    }
+}
+
+/* ============================================
+   Mobile Bottom Navigation (Twitch-specific)
+   Replaces global nav on mobile for Twitch pages
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Hide global mobile bottom nav on Twitch pages */
+    .mobile-bottom-nav {
+        display: none !important;
+    }
+    
+    /* Hide desktop sub-nav on mobile */
+    .twitch-sub-nav {
+        display: none;
+    }
+    
+    /* Twitch mobile bottom nav */
+    .twitch-mobile-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: linear-gradient(180deg, rgba(10, 10, 15, 0.98) 0%, rgba(5, 5, 10, 1) 100%);
+        backdrop-filter: blur(20px);
+        border-top: 2px solid rgba(145, 70, 255, 0.4);
+        box-shadow: 0 -4px 20px rgba(145, 70, 255, 0.2);
+        z-index: 1000;
+        padding: 0.4rem 0.5rem;
+        padding-bottom: calc(0.4rem + env(safe-area-inset-bottom, 0px));
+        justify-content: space-around;
+        align-items: center;
+    }
+    
+    .twitch-mobile-nav a,
+    .twitch-mobile-nav button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #888;
+        font-size: 0.55rem;
+        font-weight: 600;
+        padding: 0.35rem 0.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        gap: 0.2rem;
+        min-width: 60px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: 'Courier New', Courier, monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .twitch-mobile-nav a svg,
+    .twitch-mobile-nav button svg {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .twitch-mobile-nav a:hover,
+    .twitch-mobile-nav a.active {
+        color: #d0bfff;
+        background: rgba(145, 70, 255, 0.15);
+    }
+    
+    .twitch-mobile-nav a.active {
+        color: #ffffff;
+        background: rgba(145, 70, 255, 0.25);
+        box-shadow: 0 0 12px rgba(145, 70, 255, 0.3);
+    }
+    
+    .twitch-mobile-nav button:hover {
+        color: #d0bfff;
+        background: rgba(145, 70, 255, 0.15);
+    }
+    
+    /* More menu overlay */
+    .twitch-more-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 64px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    
+    .twitch-more-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* More menu drawer */
+    .twitch-more-menu {
+        position: fixed;
+        bottom: 64px;
+        left: 0;
+        right: 0;
+        background: linear-gradient(180deg, rgba(19, 19, 26, 0.98) 0%, rgba(10, 10, 15, 1) 100%);
+        border-top: 2px solid rgba(145, 70, 255, 0.4);
+        padding: 1rem;
+        padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+        z-index: 999;
+        transform: translateY(100%);
+        transition: transform 0.25s ease;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .twitch-more-menu.active {
+        transform: translateY(0);
+    }
+    
+    .twitch-more-menu-title {
+        font-size: 0.7rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 0.75rem;
+        padding-left: 0.25rem;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    
+    .twitch-more-menu-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .twitch-more-menu a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #aaa;
+        font-size: 0.6rem;
+        font-weight: 500;
+        padding: 0.75rem 0.5rem;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.2s ease;
+        gap: 0.35rem;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    
+    .twitch-more-menu a svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .twitch-more-menu a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+    
+    /* Platform-specific colors in more menu */
+    .twitch-more-menu a.nav-home { color: #8ab4f8; border-color: rgba(138, 180, 248, 0.3); }
+    .twitch-more-menu a.nav-steam { color: #66c0f4; border-color: rgba(102, 192, 244, 0.3); }
+    .twitch-more-menu a.nav-xbox { color: #8ee35a; border-color: rgba(91, 191, 33, 0.3); }
+    .twitch-more-menu a.nav-fortnite { color: #ffc107; border-color: rgba(255, 193, 7, 0.3); }
+    
+    .twitch-more-menu a.nav-home:hover { background: rgba(138, 180, 248, 0.15); }
+    .twitch-more-menu a.nav-steam:hover { background: rgba(102, 192, 244, 0.15); }
+    .twitch-more-menu a.nav-xbox:hover { background: rgba(91, 191, 33, 0.15); }
+    .twitch-more-menu a.nav-fortnite:hover { background: rgba(255, 193, 7, 0.15); }
+}
+
+/* Hide on desktop */
+@media (min-width: 769px) {
+    .twitch-mobile-nav,
+    .twitch-more-overlay,
+    .twitch-more-menu {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   Twitch Mobile Content Styles
+   Optimized layouts for mobile devices
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Body padding for fixed bottom nav */
+    body {
+        padding-bottom: 80px !important;
+    }
+    
+    /* Container adjustments */
+    .container {
+        padding: 1rem !important;
+    }
+    
+    /* ---- Search Section ---- */
+    .search-section {
+        padding: 1rem !important;
+        margin-bottom: 1.25rem !important;
+        clip-path: none !important;
+        border-radius: 12px;
+    }
+    
+    .search-bar {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+    
+    .search-type-select,
+    #creator-search,
+    .btn-search {
+        width: 100% !important;
+        clip-path: none !important;
+        border-radius: 8px !important;
+        font-size: 0.85rem !important;
+        padding: 0.85rem 1rem !important;
+    }
+    
+    .search-results-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+    
+    .search-result-card {
+        padding: 1rem !important;
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .search-result-avatar img {
+        width: 50px !important;
+        height: 50px !important;
+        clip-path: none !important;
+        border-radius: 8px !important;
+    }
+    
+    .search-result-info h4 {
+        font-size: 1rem !important;
+    }
+    
+    .search-result-info p {
+        font-size: 0.75rem !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* ---- Section Blocks ---- */
+    .section-block {
+        padding: 1rem !important;
+        clip-path: none !important;
+        border-radius: 12px !important;
+        margin-bottom: 1rem;
+    }
+    
+    .section-block:hover {
+        transform: none !important;
+        animation: none !important;
+    }
+    
+    .section-header {
+        margin-bottom: 1rem !important;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .section-block h3 {
+        font-size: 1.1rem !important;
+        letter-spacing: 2px !important;
+    }
+    
+    /* ---- Stream Cards (Horizontal Scroll) ---- */
+    .streams-grid-horizontal {
+        gap: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+        margin: 0 -1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .stream-card {
+        flex: 0 0 220px !important;
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .stream-card:hover {
+        transform: none !important;
+    }
+    
+    .stream-thumbnail {
+        border-radius: 10px 10px 0 0;
+    }
+    
+    .stream-viewers {
+        font-size: 0.7rem !important;
+        padding: 0.3rem 0.6rem !important;
+        bottom: 8px !important;
+        left: 8px !important;
+    }
+    
+    .stream-info {
+        padding: 0.75rem !important;
+    }
+    
+    .stream-info h4 {
+        font-size: 0.85rem !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    .stream-info p {
+        font-size: 0.7rem !important;
+    }
+    
+    /* ---- Stream Card with Avatar (Most Followed) ---- */
+    .stream-card-avatar {
+        padding: 0.5rem !important;
+    }
+    
+    .stream-card-avatar img {
+        width: 80px !important;
+        height: 80px !important;
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .stream-card-info {
+        padding: 0.75rem !important;
+    }
+    
+    .stream-card-name {
+        font-size: 0.9rem !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    .stream-card-game {
+        font-size: 0.75rem !important;
+    }
+    
+    .stream-card-stats {
+        font-size: 0.7rem !important;
+        gap: 0.75rem !important;
+    }
+    
+    /* ---- Categories Grid ---- */
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+    }
+    
+    .category-card {
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .category-card:hover {
+        transform: none !important;
+    }
+    
+    .category-card-image {
+        padding: 0.5rem !important;
+        min-height: 140px !important;
+    }
+    
+    .category-card-image img {
+        height: 120px !important;
+        clip-path: none !important;
+        border-radius: 6px !important;
+    }
+    
+    .category-card-name {
+        padding: 0.6rem 0.5rem !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    .category-card-stats {
+        padding: 0.5rem !important;
+        font-size: 0.65rem !important;
+        gap: 0.5rem !important;
+    }
+    
+    /* ---- Most Followed Grid ---- */
+    .streams-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+    }
+    
+    /* ---- Buttons ---- */
+    .btn-primary,
+    .btn-secondary {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.7rem !important;
+        letter-spacing: 1px !important;
+        clip-path: none !important;
+        border-radius: 6px !important;
+    }
+    
+    .btn-primary:hover,
+    .btn-secondary:hover {
+        transform: none !important;
+    }
+    
+    /* ---- Footer ---- */
+    footer {
+        padding: 2rem 1rem !important;
+        margin-top: 2rem !important;
+        font-size: 0.7rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    footer .social-links {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    footer .social-links a {
+        padding: 0.6rem 1rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    /* ---- Disable hover animations on touch ---- */
+    .search-section:hover,
+    .section-block:hover {
+        animation: none !important;
+        transform: none !important;
+    }
+    
+    /* ---- Loading/Error States ---- */
+    .loading-text,
+    .empty-state,
+    .error-text {
+        padding: 1.5rem !important;
+        font-size: 0.85rem !important;
+        letter-spacing: 1px !important;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 400px) {
+    .container {
+        padding: 0.75rem !important;
+    }
+    
+    .section-block h3 {
+        font-size: 0.95rem !important;
+    }
+    
+    .stream-card {
+        flex: 0 0 180px !important;
+    }
+    
+    .categories-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .category-card-image {
+        min-height: 160px !important;
+    }
+    
+    .category-card-image img {
+        height: 140px !important;
+    }
+    
+    .streams-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .stream-card-avatar img {
+        width: 100px !important;
+        height: 100px !important;
+    }
+}
+
+/* ============================================
+   Leaderboards Page - Mobile Styles
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* ---- Leaderboards Header ---- */
+    .leaderboards-header {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .leaderboards-header h2 {
+        font-size: 1.5rem !important;
+        letter-spacing: 2px !important;
+    }
+    
+    .leaderboards-header p {
+        font-size: 0.75rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    /* ---- Leaderboard Tabs ---- */
+    .leaderboard-tabs {
+        gap: 0.5rem !important;
+        margin-bottom: 1.25rem !important;
+        flex-wrap: wrap !important;
+        flex-direction: row !important;
+    }
+    
+    .leaderboard-tab {
+        padding: 0.6rem 1rem !important;
+        font-size: 0.7rem !important;
+        letter-spacing: 1px !important;
+        clip-path: none !important;
+        border-radius: 8px !important;
+        flex: 1;
+        min-width: 80px;
+        text-align: center;
+    }
+    
+    .leaderboard-tab:hover {
+        transform: none !important;
+    }
+    
+    /* ---- Leaderboard Table ---- */
+    .leaderboard-table {
+        padding: 1rem !important;
+        clip-path: none !important;
+        border-radius: 12px !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .table-header {
+        display: none !important;
+    }
+    
+    .table-row {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+        padding: 0.75rem !important;
+        border-radius: 8px !important;
+        margin-bottom: 0.5rem !important;
+        background: rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    .table-row:hover {
+        transform: none !important;
+    }
+    
+    .col-rank {
+        flex-shrink: 0 !important;
+    }
+    
+    .rank-badge {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 0.75rem !important;
+        min-width: 36px !important;
+        text-align: center !important;
+    }
+    
+    .col-streamer {
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+    
+    .streamer-avatar {
+        width: 40px !important;
+        height: 40px !important;
+        clip-path: none !important;
+        border-radius: 8px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    .streamer-info {
+        min-width: 0 !important;
+        flex: 1 !important;
+    }
+    
+    .streamer-name {
+        font-size: 0.85rem !important;
+        letter-spacing: 0.5px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    .stream-title {
+        font-size: 0.7rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        display: none !important;
+    }
+    
+    .col-game,
+    .col-uptime {
+        display: none !important;
+    }
+    
+    .col-viewers {
+        flex-shrink: 0 !important;
+    }
+    
+    .viewer-count-badge {
+        padding: 0.3rem 0.5rem !important;
+        font-size: 0.7rem !important;
+    }
+    
+    /* ---- Stats Row ---- */
+    .stats-row {
+        gap: 0.75rem !important;
+        margin-bottom: 1.25rem !important;
+    }
+    
+    .stat-card {
+        padding: 1rem !important;
+        min-width: 0 !important;
+        flex: 1 1 calc(50% - 0.5rem) !important;
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .stat-label {
+        font-size: 0.65rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    /* ---- Load More Button ---- */
+    .load-more {
+        margin-top: 1rem !important;
+    }
+    
+    .load-more button {
+        padding: 0.75rem 2rem !important;
+        font-size: 0.8rem !important;
+        letter-spacing: 1px !important;
+        clip-path: none !important;
+        border-radius: 8px !important;
+        width: 100% !important;
+    }
+    
+    .load-more button:hover {
+        transform: none !important;
+    }
+    
+    /* ---- Placeholder Content ---- */
+    .placeholder-content {
+        padding: 2rem 1rem !important;
+        clip-path: none !important;
+        border-radius: 12px !important;
+        font-size: 0.9rem !important;
+        letter-spacing: 1px !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .leaderboards-header h2 {
+        font-size: 1.25rem !important;
+    }
+    
+    .leaderboard-tab {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.65rem !important;
+    }
+    
+    .stat-card {
+        flex: 1 1 100% !important;
+    }
+    
+    .streamer-avatar {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    
+    .streamer-name {
+        font-size: 0.8rem !important;
+    }
+}
+
+/* ============================================
+   Category Detail Page - Mobile Styles
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* ---- Category Header ---- */
+    .category-header {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 1.25rem !important;
+        padding: 1.25rem !important;
+        margin-bottom: 1.5rem !important;
+        clip-path: none !important;
+        border-radius: 12px !important;
+        text-align: center !important;
+    }
+    
+    .category-box-art {
+        width: 120px !important;
+        height: auto !important;
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .category-info {
+        width: 100% !important;
+    }
+    
+    .category-info h2 {
+        font-size: 1.4rem !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 0.5rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .category-rank {
+        font-size: 0.9rem !important;
+        margin-bottom: 1rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .category-stats {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+        margin-top: 1rem !important;
+        justify-content: center !important;
+    }
+    
+    .stat-item {
+        text-align: center !important;
+        gap: 0.25rem !important;
+    }
+    
+    .category-stats .stat-value {
+        font-size: 1.25rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .category-stats .stat-label {
+        font-size: 0.65rem !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* ---- Charts Section ---- */
+    .charts-section {
+        margin: 1.5rem 0 !important;
+    }
+    
+    .charts-section h3 {
+        font-size: 1.1rem !important;
+        letter-spacing: 2px !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* ---- Toggle Buttons ---- */
+    .toggle-group {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .toggle-btn {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.65rem !important;
+        letter-spacing: 0.5px !important;
+        clip-path: none !important;
+        border-radius: 6px !important;
+        flex: 1 !important;
+        min-width: 60px !important;
+        text-align: center !important;
+    }
+    
+    .toggle-btn:hover {
+        transform: none !important;
+    }
+    
+    /* ---- Charts Grid ---- */
+    .charts-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .chart-container {
+        padding: 1rem !important;
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .chart-container h4 {
+        font-size: 0.85rem !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .chart-wrapper {
+        height: 200px !important;
+    }
+    
+    /* ---- Stats Grid ---- */
+    .stats-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+        margin: 1rem 0 !important;
+    }
+    
+    .category-page .stat-card {
+        padding: 1rem !important;
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .category-page .stat-card:hover {
+        transform: none !important;
+    }
+    
+    .category-page .stat-card h4 {
+        font-size: 0.75rem !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .category-page .stat-card p {
+        font-size: 0.75rem !important;
+        margin: 0.35rem 0 !important;
+        letter-spacing: 0 !important;
+    }
+    
+    /* ---- Loading State ---- */
+    .loading {
+        padding: 2rem !important;
+        font-size: 0.9rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    /* ---- Buttons ---- */
+    .category-page .btn-primary,
+    .category-page .btn-secondary {
+        padding: 0.75rem 1.25rem !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 1px !important;
+        clip-path: none !important;
+        border-radius: 8px !important;
+    }
+    
+    .category-page .btn-primary:hover,
+    .category-page .btn-secondary:hover {
+        transform: none !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .category-box-art {
+        width: 100px !important;
+    }
+    
+    .category-info h2 {
+        font-size: 1.2rem !important;
+    }
+    
+    .category-stats {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.75rem !important;
+    }
+    
+    .category-stats .stat-value {
+        font-size: 1.1rem !important;
+    }
+    
+    .toggle-btn {
+        padding: 0.4rem 0.5rem !important;
+        font-size: 0.6rem !important;
+    }
+    
+    .chart-wrapper {
+        height: 180px !important;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ============================================
+   Profile Page - Mobile Styles
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* ---- Profile Header ---- */
+    .profile-header-enhanced {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 1rem !important;
+        padding: 1.25rem !important;
+        margin-bottom: 1.5rem !important;
+        clip-path: none !important;
+        border-radius: 12px !important;
+        text-align: center !important;
+    }
+    
+    .profile-avatar-container {
+        margin: 0 auto !important;
+    }
+    
+    .profile-avatar-xl {
+        width: 100px !important;
+        height: 100px !important;
+        clip-path: none !important;
+        border-radius: 12px !important;
+    }
+    
+    .avatar-live-tag {
+        font-size: 0.65rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .profile-header-info {
+        width: 100% !important;
+        text-align: center !important;
+    }
+    
+    .profile-header-info h1 {
+        font-size: 1.4rem !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 0.5rem !important;
+        word-break: break-word !important;
+    }
+    
+    .live-now-inline {
+        margin: 0.75rem 0 !important;
+        align-items: center !important;
+    }
+    
+    .live-pill {
+        font-size: 0.85rem !important;
+    }
+    
+    .live-meta {
+        font-size: 0.75rem !important;
+    }
+    
+    .live-title {
+        font-size: 0.75rem !important;
+    }
+    
+    /* ---- Quick Stats ---- */
+    .profile-quick-stats {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+        margin: 1rem 0 !important;
+        width: 100% !important;
+    }
+    
+    .quick-stat {
+        text-align: center !important;
+        gap: 0.25rem !important;
+    }
+    
+    .stat-number {
+        font-size: 1.2rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .stat-label {
+        font-size: 0.65rem !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* ---- Tracking Status ---- */
+    .tracking-status {
+        width: 100% !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+    }
+    
+    .tracking-status .btn-primary {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 0.6rem 1rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    .tracking-indicator {
+        padding: 0.4rem 0.75rem !important;
+    }
+    
+    .status-label {
+        font-size: 0.75rem !important;
+    }
+    
+    .tracking-details {
+        font-size: 0.65rem !important;
+        text-align: center !important;
+    }
+    
+    /* ---- Tabs Navigation ---- */
+    .tabs-nav {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.4rem !important;
+        margin-bottom: 1.25rem !important;
+    }
+    
+    .tab-btn {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.65rem !important;
+        letter-spacing: 0.5px !important;
+        clip-path: none !important;
+        border-radius: 6px !important;
+        flex: 1 1 auto !important;
+        min-width: 70px !important;
+        text-align: center !important;
+    }
+    
+    .tab-btn:hover {
+        transform: none !important;
+    }
+    
+    /* ---- Card Enhanced ---- */
+    .card-enhanced {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .card-enhanced h3 {
+        font-size: 1rem !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* ---- Stats Grid (Profile) ---- */
+    .profile-page .stats-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.6rem !important;
+        margin-top: 1rem !important;
+    }
+    
+    .stat-box {
+        padding: 0.75rem !important;
+        clip-path: none !important;
+        border-radius: 8px !important;
+    }
+    
+    .stat-box:hover {
+        transform: none !important;
+    }
+    
+    .stat-box-label {
+        font-size: 0.6rem !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .stat-box-value {
+        font-size: 1.1rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .stat-box-value.large-number {
+        font-size: 0.95rem !important;
+    }
+    
+    .stat-box-value.xlarge-number {
+        font-size: 0.85rem !important;
+    }
+    
+    .stat-box-delta {
+        font-size: 0.7rem !important;
+    }
+    
+    /* ---- Toggle Group (Profile) ---- */
+    .profile-page .toggle-group {
+        gap: 0.4rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .profile-page .toggle-btn {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 0.6rem !important;
+        letter-spacing: 0.5px !important;
+        clip-path: none !important;
+        border-radius: 6px !important;
+    }
+    
+    /* ---- Charts (Profile) ---- */
+    .profile-page .charts-section {
+        margin-top: 1rem !important;
+    }
+    
+    .profile-page .charts-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        margin-top: 1rem !important;
+    }
+    
+    .profile-page .chart-container {
+        padding: 0.75rem !important;
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .profile-page .chart-container h4 {
+        font-size: 0.8rem !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .profile-page .chart-wrapper {
+        height: 180px !important;
+    }
+    
+    /* ---- Clips & Videos Grid ---- */
+    .clips-grid,
+    .videos-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .clip-card,
+    .video-card {
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .clip-card:hover,
+    .video-card:hover {
+        transform: none !important;
+    }
+    
+    .clip-info,
+    .video-info {
+        padding: 0.75rem !important;
+    }
+    
+    .clip-info h4,
+    .video-info h4 {
+        font-size: 0.85rem !important;
+        letter-spacing: 0.25px !important;
+        margin-bottom: 0.35rem !important;
+    }
+    
+    .clip-stats,
+    .video-stats {
+        font-size: 0.7rem !important;
+        gap: 0.75rem !important;
+    }
+    
+    .clip-rank {
+        padding: 0.35rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    /* ---- Emotes Grid ---- */
+    .emotes-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 0.5rem !important;
+        padding: 0.5rem !important;
+    }
+    
+    .emote-card {
+        padding: 0.5rem !important;
+        clip-path: none !important;
+        border-radius: 8px !important;
+    }
+    
+    .emote-card:hover {
+        transform: none !important;
+    }
+    
+    .emote-image {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    .emote-name {
+        font-size: 0.55rem !important;
+        letter-spacing: 0 !important;
+    }
+    
+    /* ---- Teams Grid ---- */
+    .teams-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+    }
+    
+    .team-card {
+        padding: 0.75rem !important;
+        clip-path: none !important;
+        border-radius: 8px !important;
+    }
+    
+    .team-card:hover {
+        transform: none !important;
+    }
+    
+    .team-card img {
+        max-height: 80px !important;
+    }
+    
+    .team-card h4 {
+        font-size: 0.75rem !important;
+    }
+    
+    .teams-detailed {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+    
+    .team-detailed-card {
+        padding: 0.75rem !important;
+        clip-path: none !important;
+        border-radius: 10px !important;
+    }
+    
+    .team-detailed-card .team-banner {
+        max-height: 100px !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .team-detailed-card .team-logo {
+        width: 48px !important;
+        height: 48px !important;
+    }
+    
+    /* ---- Tab Footer ---- */
+    .tab-footer {
+        font-size: 0.7rem !important;
+        margin-top: 0.75rem !important;
+    }
+    
+    /* ---- Buttons (Profile) ---- */
+    .profile-page .btn-primary {
+        padding: 0.6rem 1rem !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 1px !important;
+        clip-path: none !important;
+        border-radius: 8px !important;
+    }
+    
+    .profile-page .btn-primary:hover {
+        transform: none !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .profile-avatar-xl {
+        width: 80px !important;
+        height: 80px !important;
+    }
+    
+    .profile-header-info h1 {
+        font-size: 1.2rem !important;
+    }
+    
+    .profile-quick-stats {
+        gap: 0.5rem !important;
+    }
+    
+    .stat-number {
+        font-size: 1rem !important;
+    }
+    
+    .tab-btn {
+        padding: 0.4rem 0.5rem !important;
+        font-size: 0.6rem !important;
+        min-width: 55px !important;
+    }
+    
+    .stat-box-value {
+        font-size: 0.95rem !important;
+    }
+    
+    .stat-box-value.large-number {
+        font-size: 0.85rem !important;
+    }
+    
+    .stat-box-value.xlarge-number {
+        font-size: 0.75rem !important;
+    }
+    
+    .emotes-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .emote-image {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    
+    .profile-page .chart-wrapper {
+        height: 160px !important;
+    }
+    
+    .clips-grid,
+    .videos-grid {
+        gap: 0.5rem !important;
+    }
+}
