@@ -222,20 +222,6 @@ export default {
     const canonicalRewriteResp = await handleItemCanonicalRewrite(request, env);
     if (canonicalRewriteResp) return canonicalRewriteResp;
 
-    // SPA routing: serve profile page for player-profile paths
-    if (
-      url.pathname.startsWith('//marathon/player-profiles/u/') ||
-      url.pathname.startsWith('//marathon/player-profiles/bungie/')
-    ) {
-      const assetUrl = new URL(request.url);
-      assetUrl.pathname = '//marathon/profile/index.html';
-      const resp = await env.ASSETS.fetch(assetUrl);
-      return new Response(resp.body, {
-        status: 200,
-        headers: resp.headers,
-      });
-    }
-
     // Everything else: serve static assets normally
     return env.ASSETS.fetch(request);
   },

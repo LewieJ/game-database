@@ -540,12 +540,9 @@
             renderLinkedAccountsGrid(user);
             loadLinkedAccounts();
 
-            // Wire up profile button
+            // Profiles are handled on MarathonDB.gg (not on this site)
             const profileBtn = document.getElementById('viewProfileBtn');
-            if (profileBtn && user.username) {
-                profileBtn.href = '/player-profiles/u/' + encodeURIComponent(user.username) + '/';
-                profileBtn.style.display = '';
-            }
+            if (profileBtn) profileBtn.style.display = 'none';
 
             loadingEl.style.display = 'none';
             contentEl.style.display = 'block';
