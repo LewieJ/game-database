@@ -11,6 +11,7 @@ For the **search → profile page** flow: after you resolve an Epic **account id
 | `raw` | omitted | If `true`, includes full Epic statsproxy JSON under `stats.raw` (large; use only for debugging) |
 | `stats_debug` | `false` | If `true`, adds `stats.parser_debug`: Epic key count, how many `br_*` rows were parsed, full sorted `unique_playlists` list, and any `br_*` keys that still fail parsing (should be empty after fixes) |
 | `stats_by_input` | `true` | If `false`, omits **`stats.by_input`** (smaller JSON). When enabled, splits BR stats by Epic input: keyboard+mouse, gamepad, touch (from `br_*_keyboardmouse_` / `_gamepad_` / `_touch_` in keys). **Ranked is unchanged** — Habanero has no per-input breakdown in this API. |
+| `stats_by_experience` | `true` | If `false`, omits **`stats.summary.by_experience`** and **`by_experience`** inside each **`stats.by_input`** row (smaller JSON). |
 | `ranked_history` | `true` | If `false`, skips the all-seasons Habanero fetch (smaller / faster; `ranked.historical` is `null`) |
 | `ranked_history_enrich` | `false` | If `true`, enriches historical rows with track metadata (heavier; same idea as `?enrich=true` on `/ranked/{id}/all-seasons`) |
 | `cache_first` | `false` | If `true`, serves **stats** from D1 when the player row has **`parsed_data`** and `last_updated` is within **`cache_max_age`** (skips Epic statsproxy for that request). Account + ranked still load from Epic. See [progression-leaderboards.md](./progression-leaderboards.md). |
@@ -49,7 +50,27 @@ curl -sS "https://fapi.gdb.gg/v1/profile/956f46275d1c45949038ee0017190934"
 | `total_score` | number | |
 | `by_mode` | object | Per team size: `solo`, `duo`, `trio`, `squad`, **`octet`** — each `{ matches, wins, kills, win_rate }` |
 | `by_build_variant` | object | Heuristic: **`build`**, **`nobuild`**, **`unknown`** — same shape as a mode row |
+| `by_experience` | object | Rollups by **game mode / experience** (playlist-id heuristics; first rule wins). Each key is `{ matches, wins, kills, win_rate }`. Keys are stable — see table below. Unclassified playlists land in **`other`**. For human-readable playlist names and ids, a useful reference is [Fortnite Italian Stats — Playlists](https://fortnite-stats.azurewebsites.net/Playlists). |
 | `competitive` | object | `arena_matches`, `tournament_matches`, `tournament_wins` |
+
+#### `by_experience` keys
+
+| Key | Meaning (heuristic) |
+|-----|---------------------|
+| `battle_royale_build` | Core BR with building: `default*`, `trios`, `fm_build`, `bots_default`, `futuremap`, etc. |
+| `battle_royale_zero_build` | Core Zero Build playlists (`nobuildbr`, `nobuild_*`, etc.) not already classified below |
+| `reload_build` | Reload island family (see below) classified as **build** by the same rules as `by_build_variant.build` — e.g. `blastberry` / `sunflower` stems without `nobuild` / `nobuildbr` in the playlist id |
+| `reload_zero_build` | Reload family with zero-build markers in the id (`nobuild`, `nobuildbr`, …) |
+| `reload_unknown` | Reload family but build vs zero build could not be inferred (same limits as `by_build_variant.unknown`) |
+
+Reload family (playlist id substrings): `blastberry`, `dashberry`, `punchberry`, `piperboot`, `sourspawn`, `timberstake`, `rusticpepper`, `tigerranch`, `squareclub`, `sugarclip`, `foxtrot`, ranked Reload (`habanero` + those markers or `sunflower`), and `sunflower` + mode tokens / `vkplay` / `nobuild` (see `StatsParser.isReloadPlaylist` in code).
+| `blitz` | Blitz Royale / Forbidden Fruit (`forbiddenfruit`) |
+| `og` | OG / Chapter-style island: `figment`, `barkline` (includes ranked OG when the id contains `figment`) |
+| `competitive` | Arena / tournaments / ranked: `showdown*`, `habanero` (after Reload/OG rules) |
+| `large_team` | Team Rumble–style and large-team LTMs: `respawn`, `papaya`, `bigbattle`, `delulu`, `teamrumble` |
+| `ltm_other` | Other LTMs (Floor is Lava, Solid Gold, Ship It, Mini BR, etc.) |
+| `creative` | Creative / UEFN / Festival islands / Del Mar / `vk_*`, `juno`, `sprout`, … |
+| `other` | Anything that did not match the rules above |
 
 ### `stats.by_input` (default: included)
 
@@ -61,7 +82,7 @@ Same rollup shape as **`stats.summary`** for each device Epic tracks in statsv2:
 | `gamepad` | Controller |
 | `touch` | Mobile / touch |
 
-Each value includes: `total_matches`, `total_wins`, `total_kills`, `total_outlived`, `total_minutes`, `win_rate`, `kills_per_match`, `hours_played`, `top_3_finishes`, `top_5_finishes`, `total_score`, **`by_mode`**, **`by_build_variant`**, **`competitive`** — all scoped to that input only.
+Each value includes: `total_matches`, `total_wins`, `total_kills`, `total_outlived`, `total_minutes`, `win_rate`, `kills_per_match`, `hours_played`, `top_3_finishes`, `top_5_finishes`, `total_score`, **`by_mode`**, **`by_build_variant`**, **`by_experience`** (unless `stats_by_experience=false`), **`competitive`** — all scoped to that input only.
 
 - **`stats.summary`** remains the **all-input combined** view (sum of every `br_*` row regardless of device).
 - Playlists that do not use the standard `br_*_{input}_m0_playlist_*` pattern are not in this split (same as parser rules).
@@ -197,7 +218,7 @@ Adds **`stats.parser_debug`**:
 
 If a slice fails, **`meta.partial`** is `true` and **`meta.errors`** is an array of `{ "source": "account" | "stats" | "ranked" | "ranked_history", "message": "…" }`. Other slices may still be present (`stats` or `ranked` can be partial).
 
-- **`stats.summary`** — from `StatsParser`: totals are sums of all parsed `br_*_m0_playlist_*` rows (all playlists Epic returns). **`by_mode.octet`** covers 8-player-style playlists (e.g. Reload octets). **`by_build_variant`** is a **heuristic** (`build` / `nobuild` / `unknown`) from playlist id strings — not official Epic labels; use `?stats_debug=true` to see every playlist name we classified.  
+- **`stats.summary`** — from `StatsParser`: totals are sums of all parsed `br_*_m0_playlist_*` rows (all playlists Epic returns). **`by_mode.octet`** covers 8-player-style playlists (e.g. Reload octets). **`by_build_variant`** and **`by_experience`** are **heuristics** from playlist id strings — not official Epic labels; use `?stats_debug=true` to see every playlist name we classified. Omit **`by_experience`** with `?stats_by_experience=false` if you need a smaller payload.  
 - **`ranked.current`** — current-season summary (same idea as `getPlayerRankSummary`).  
 - **`ranked.historical`** — all tracks / seasons (`getPlayerRanksAllSeasons`), grouped like standalone `/ranked/{accountId}/all-seasons`. `null` if `ranked_history=false` or that upstream call failed.  
 - **`meta.partial`** — `true` if any upstream call failed; check **`meta.errors`** (`source`: `account` | `stats` | `ranked` | `ranked_history`).
