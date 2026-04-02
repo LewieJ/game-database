@@ -111,3 +111,11 @@ html[data-rnk-platform] .rnk-glass-panel {
     -webkit-backdrop-filter: blur(14px) saturate(140%);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
+
+html[data-rnk-platform="fortnite"] .home-footer-dot {
+    color: rgb(var(--rnk-b-r), var(--rnk-b-g), var(--rnk-b-b));
+}
+
+html[data-rnk-platform="fortnite"] .home-footer-links a:hover {
+    color: rgb(var(--rnk-b-r), var(--rnk-b-g), var(--rnk-b-b));
+}

@@ -509,41 +509,6 @@
       margin: 0;
     }
 
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 3rem 2rem 2rem;
-      color: var(--text-tertiary);
-      font-size: 0.75rem;
-      border-top: 1px solid var(--border);
-      margin-top: 4rem;
-      background: var(--bg-elevated);
-    }
-
-    footer p {
-      margin: 0.25rem 0;
-      line-height: 1.6;
-    }
-
-    footer a {
-      color: var(--fn-yellow);
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-
-    footer a:hover {
-      color: #ffe066;
-      text-decoration: underline;
-    }
-
-    .footer-disclaimer {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
-
     /* Responsive */
     @media (max-width: 768px) {
       main {
@@ -649,14 +614,36 @@
 
   <main>
     <div class="page-header">
-      <h1 id="pageTitle">Ranked <span>Leaderboards</span></h1>
-      <p class="page-subtitle" id="pageSubtitle">Top players across all ranked modes</p>
+      <h1 id="pageTitle">Fortnite <span>Leaderboards</span></h1>
+      <p class="page-subtitle" id="pageSubtitle">Top wins, kills, and more from the gdb.gg community</p>
     </div>
 
-    <!-- Category Toggle -->
-    <div class="category-toggle">
-      <button class="category-btn active" data-category="ranked" onclick="selectCategory('ranked')">Ranked</button>
-      <button class="category-btn" data-category="general" onclick="selectCategory('general')">General</button>
+    <p id="rankedPausedNote" class="page-subtitle" style="text-align:center;margin-bottom:1rem;font-size:0.85rem;color:var(--text-tertiary);max-width:36rem;margin-left:auto;margin-right:auto;line-height:1.45">
+      Competitive ranked boards are turned off here for now. You can still explore lifetime wins, kills, win rate, and kills per match below—we may bring ranked back later.
+    </p>
+
+    <div
+      class="category-toggle"
+      id="leaderboardCategoryToggle"
+      style="display: none"
+      aria-hidden="true"
+    >
+      <button
+        class="category-btn"
+        type="button"
+        data-category="ranked"
+        onclick="selectCategory('ranked')"
+      >
+        Ranked
+      </button>
+      <button
+        class="category-btn"
+        type="button"
+        data-category="general"
+        onclick="selectCategory('general')"
+      >
+        General
+      </button>
     </div>
 
     <!-- Mode Selection -->
@@ -671,12 +658,19 @@
 
     <!-- Info Banner -->
     <div class="info-banner">
-      <p>📊 Leaderboards update automatically when players check their ranks</p>
+      <p>
+        These boards only show people who have used <strong>gdb.gg</strong> to look up a Fortnite profile at least
+        once. They are <strong>not</strong> official Epic leaderboards and don’t include every player in the world.
+      </p>
     </div>
   </main>
 
   <script>
-    // Available ranked modes
+    const FAPI_BASE = 'https://fapi.gdb.gg';
+    /** Set true to restore Ranked / General toggle and Habanero tabs (GET /v1/leaderboard/ranked). */
+    const RANKED_LEADERBOARDS_ENABLED = false;
+
+    /** Habanero ladder keys supported by GET /v1/leaderboard/ranked (D1). */
     const RANKED_MODES = [
       { key: 'ranked-br', name: 'Battle Royale', shortName: 'BR' },
       { key: 'ranked-zb', name: 'Zero Build', shortName: 'ZB' },
@@ -685,25 +679,15 @@
       { key: 'ranked-feral', name: 'Ballistic', shortName: 'Ballistic' }
     ];
 
-    // Available general modes
-    const GENERAL_MODES = [
-      { key: 'overall', name: 'Overall', shortName: 'Overall', type: 'global' },
-      { key: 'overall-solo', name: 'Overall Solo', shortName: 'Solo', type: 'playlist', playlist: 'overall', mode: 'solo' },
-      { key: 'overall-duo', name: 'Overall Duo', shortName: 'Duo', type: 'playlist', playlist: 'overall', mode: 'duo' },
-      { key: 'overall-trio', name: 'Overall Trio', shortName: 'Trio', type: 'playlist', playlist: 'overall', mode: 'trio' },
-      { key: 'overall-squad', name: 'Overall Squad', shortName: 'Squad', type: 'playlist', playlist: 'overall', mode: 'squad' },
-      { key: 'blitz-solo', name: 'Blitz Solo', shortName: 'Blitz Solo', type: 'playlist', playlist: 'blitz', mode: 'solo' }
-    ];
+    /** Global leaderboard: one pool (player_profiles). Stat = API category. */
+    const GENERAL_MODES = [{ key: 'lifetime', name: 'All-time on gdb.gg', shortName: 'All-time', type: 'global' }];
 
-    // Available stat categories
     const STAT_CATEGORIES = {
       global: [
-        { key: 'wins', name: 'Total Wins' },
-        { key: 'kills', name: 'Total Kills' }
-      ],
-      playlist: [
-        { key: 'wins', name: 'Wins' },
-        { key: 'kills', name: 'Kills' }
+        { key: 'wins', name: 'Total Wins', apiCategory: 'wins' },
+        { key: 'kills', name: 'Total Kills', apiCategory: 'kills' },
+        { key: 'win_rate', name: 'Win rate %', apiCategory: 'win_rate' },
+        { key: 'kpm', name: 'Kills / match', apiCategory: 'kpm' }
       ]
     };
 
@@ -744,70 +728,89 @@
       return basePath + (icons[rankName] || '6071-unknown.png');
     }
 
-    // State
-    let currentSeason = 'ch7s1';
-    let currentMode = 'ranked-br';
-    let currentCategory = 'ranked';
-    let currentPlaylist = 'all';
+    let currentMode = 'lifetime';
+    let currentCategory = 'general';
     let currentStat = 'wins';
     let currentPage = 1;
     const ITEMS_PER_PAGE = 25;
+    /** Full global leaderboard rows after fetch (client-paged). */
+    let cachedGlobalRows = [];
 
     function init() {
       const urlParams = new URLSearchParams(window.location.search);
-      const seasonParam = urlParams.get('season');
       const modeParam = urlParams.get('mode');
       const categoryParam = urlParams.get('category');
       const pageParam = urlParams.get('page');
-      
-      if (seasonParam) currentSeason = seasonParam;
-      if (pageParam) currentPage = parseInt(pageParam) || 1;
 
-      if (categoryParam === 'general') {
+      if (pageParam) currentPage = parseInt(pageParam, 10) || 1;
+
+      if (!RANKED_LEADERBOARDS_ENABLED) {
         currentCategory = 'general';
-        currentMode = modeParam || 'overall';
+        currentMode =
+          modeParam && GENERAL_MODES.find(m => m.key === modeParam) ? modeParam : 'lifetime';
         currentStat = urlParams.get('stat') || 'wins';
-        currentPlaylist = 'all';
+        if (!STAT_CATEGORIES.global.find(s => s.key === currentStat)) currentStat = 'wins';
+        if (categoryParam === 'ranked') {
+          const url = new URL(window.location);
+          url.searchParams.set('category', 'general');
+          url.searchParams.set('mode', currentMode);
+          if (currentStat !== 'wins') url.searchParams.set('stat', currentStat);
+          else url.searchParams.delete('stat');
+          window.history.replaceState({}, '', url);
+        }
+      } else if (categoryParam === 'general') {
+        currentCategory = 'general';
+        currentMode = modeParam && GENERAL_MODES.find(m => m.key === modeParam) ? modeParam : 'lifetime';
+        currentStat = urlParams.get('stat') || 'wins';
+        if (!STAT_CATEGORIES.global.find(s => s.key === currentStat)) currentStat = 'wins';
       } else {
         currentCategory = 'ranked';
         currentMode = modeParam && RANKED_MODES.find(m => m.key === modeParam) ? modeParam : 'ranked-br';
       }
 
+      const noteEl = document.getElementById('rankedPausedNote');
+      if (noteEl) noteEl.style.display = RANKED_LEADERBOARDS_ENABLED ? 'none' : '';
+      const catToggle = document.getElementById('leaderboardCategoryToggle');
+      if (catToggle) {
+        catToggle.style.display = RANKED_LEADERBOARDS_ENABLED ? 'flex' : 'none';
+        catToggle.setAttribute('aria-hidden', RANKED_LEADERBOARDS_ENABLED ? 'false' : 'true');
+      }
+
       updatePageHeader();
       updateCategoryButtons();
       renderModeTabs();
-      loadLeaderboard(currentSeason, currentMode, currentCategory);
+      loadLeaderboard(currentMode, currentCategory);
     }
 
     function selectCategory(category) {
+      if (!RANKED_LEADERBOARDS_ENABLED && category === 'ranked') return;
       if (category === currentCategory) return;
-      
+
       currentCategory = category;
-      currentMode = category === 'ranked' ? 'ranked-br' : 'overall';
+      currentMode = category === 'ranked' ? 'ranked-br' : 'lifetime';
       currentPage = 1;
-      
+      cachedGlobalRows = [];
+
       const url = new URL(window.location);
       url.searchParams.set('category', category);
       url.searchParams.set('mode', currentMode);
       url.searchParams.delete('page');
-      
+      url.searchParams.delete('season');
+
       if (category === 'ranked') {
-        url.searchParams.set('season', currentSeason);
         url.searchParams.delete('stat');
-      } else {
-        url.searchParams.delete('season');
       }
-      
+
       window.history.pushState({}, '', url);
-      
+
       updatePageHeader();
       updateCategoryButtons();
       renderModeTabs();
-      loadLeaderboard(currentSeason, currentMode, currentCategory);
+      loadLeaderboard(currentMode, currentCategory);
     }
 
     function updateCategoryButtons() {
-      document.querySelectorAll('.category-btn').forEach(btn => {
+      document.querySelectorAll('.category-btn').forEach(function (btn) {
         btn.classList.toggle('active', btn.dataset.category === currentCategory);
       });
     }
@@ -815,23 +818,25 @@
     function updatePageHeader() {
       const titleEl = document.getElementById('pageTitle');
       const subtitleEl = document.getElementById('pageSubtitle');
-      
-      if (currentCategory === 'ranked') {
+      if (!titleEl || !subtitleEl) return;
+
+      if (!RANKED_LEADERBOARDS_ENABLED || currentCategory === 'general') {
+        titleEl.innerHTML = 'Fortnite <span>Leaderboards</span>';
+        subtitleEl.textContent =
+          'Sort by wins, kills, win rate, or kills per match—among players who use gdb.gg';
+      } else if (currentCategory === 'ranked') {
         titleEl.innerHTML = 'Ranked <span>Leaderboards</span>';
-        subtitleEl.textContent = 'Chapter 7 Season 1 • Top players across all ranked modes';
-      } else {
-        titleEl.innerHTML = 'General <span>Leaderboards</span>';
-        subtitleEl.textContent = 'All-time stats • Top players by wins, kills, and performance';
+        subtitleEl.textContent = 'Competitive ranks for players who check their stats on gdb.gg';
       }
     }
 
     function renderModeTabs() {
       const tabsContainer = document.getElementById('modeTabs');
-      
-      if (currentCategory === 'ranked') {
+
+      if (RANKED_LEADERBOARDS_ENABLED && currentCategory === 'ranked') {
         tabsContainer.className = 'mode-tabs';
         tabsContainer.innerHTML = RANKED_MODES.map(mode => `
-          <a href="?category=${currentCategory}&season=${currentSeason}&mode=${mode.key}" 
+          <a href="?category=${currentCategory}&mode=${mode.key}" 
              class="mode-tab ${mode.key === currentMode ? 'active' : ''}" 
              onclick="selectMode('${mode.key}', event)">
             ${mode.shortName}
@@ -844,7 +849,7 @@
         tabsContainer.className = 'mode-dropdown-container';
         tabsContainer.innerHTML = `
           <div class="selector-wrapper">
-            <label class="selector-label">Mode / Playlist</label>
+            <label class="selector-label">Category</label>
             <select class="mode-dropdown" onchange="selectModeFromDropdown(event)">
               ${GENERAL_MODES.map(mode => `
                 <option value="${mode.key}" ${mode.key === currentMode ? 'selected' : ''}>
@@ -854,7 +859,7 @@
             </select>
           </div>
           <div class="selector-wrapper">
-            <label class="selector-label">Stat Type</label>
+            <label class="selector-label">Sort by</label>
             <select class="stat-dropdown" onchange="selectStatFromDropdown(event)">
               ${availableStats.map(stat => `
                 <option value="${stat.key}" ${stat.key === currentStat ? 'selected' : ''}>
@@ -871,48 +876,47 @@
       event.preventDefault();
       currentMode = modeKey;
       currentPage = 1;
-      
+      cachedGlobalRows = [];
+
       const url = new URL(window.location);
       url.searchParams.set('category', currentCategory);
       url.searchParams.set('mode', modeKey);
       url.searchParams.delete('page');
-      
-      if (currentCategory === 'ranked') {
-        url.searchParams.set('season', currentSeason);
-      }
-      
+      url.searchParams.delete('season');
+
       window.history.pushState({}, '', url);
-      
+
       renderModeTabs();
-      loadLeaderboard(currentSeason, modeKey, currentCategory);
+      loadLeaderboard(modeKey, currentCategory);
     }
 
     function selectModeFromDropdown(event) {
       const modeKey = event.target.value;
       currentMode = modeKey;
       currentPage = 1;
-      
+      cachedGlobalRows = [];
+
       const modeObj = GENERAL_MODES.find(m => m.key === modeKey);
       const availableStats = STAT_CATEGORIES[modeObj.type];
       if (!availableStats.find(s => s.key === currentStat)) {
         currentStat = 'wins';
       }
-      
+
       const url = new URL(window.location);
       url.searchParams.set('category', currentCategory);
       url.searchParams.set('mode', modeKey);
       url.searchParams.delete('page');
-      
+
       if (currentStat !== 'wins') {
         url.searchParams.set('stat', currentStat);
       } else {
         url.searchParams.delete('stat');
       }
-      
+
       window.history.pushState({}, '', url);
-      
+
       renderModeTabs();
-      loadLeaderboard(currentSeason, modeKey, currentCategory);
+      loadLeaderboard(modeKey, currentCategory);
     }
 
     function selectStatFromDropdown(event) {
@@ -932,15 +936,52 @@
       }
       
       window.history.pushState({}, '', url);
-      
-      loadLeaderboard(currentSeason, currentMode, currentCategory);
+
+      loadLeaderboard(currentMode, currentCategory);
     }
 
-    async function loadLeaderboard(season, modeKey, category) {
+    async function fetchGlobalLeaderboard(apiCategory) {
+      const snapUrl = `${FAPI_BASE}/v1/leaderboard/snapshot?category=${encodeURIComponent(apiCategory)}`;
+      try {
+        const snapRes = await fetch(snapUrl);
+        if (snapRes.ok) {
+          const j = await snapRes.json();
+          if (j.leaderboard && j.leaderboard.length) return j;
+        }
+      } catch (e) {
+        console.warn('Snapshot leaderboard skipped', e);
+      }
+      const liveRes = await fetch(
+        `${FAPI_BASE}/leaderboard?category=${encodeURIComponent(apiCategory)}&limit=500`
+      );
+      if (!liveRes.ok) throw new Error(`HTTP ${liveRes.status}`);
+      return liveRes.json();
+    }
+
+    function formatGeneralStatValue(entry, statKey) {
+      if (statKey === 'wins') return (entry.total_wins ?? entry.wins ?? 0).toLocaleString();
+      if (statKey === 'kills') return (entry.total_kills ?? entry.kills ?? 0).toLocaleString();
+      if (statKey === 'win_rate') return `${(entry.win_rate ?? 0).toFixed(2)}%`;
+      if (statKey === 'kpm') return (entry.kills_per_match ?? 0).toFixed(2);
+      return '—';
+    }
+
+    function generalStatColumnLabel(statKey) {
+      if (statKey === 'wins') return 'Wins';
+      if (statKey === 'kills') return 'Kills';
+      if (statKey === 'win_rate') return 'Win rate';
+      if (statKey === 'kpm') return 'K/M';
+      return 'Value';
+    }
+
+    async function loadLeaderboard(modeKey, category) {
+      if (!RANKED_LEADERBOARDS_ENABLED) {
+        category = 'general';
+      }
       const contentDiv = document.getElementById('leaderboardContent');
       const modes = category === 'ranked' ? RANKED_MODES : GENERAL_MODES;
       const mode = modes.find(m => m.key === modeKey);
-      
+
       contentDiv.innerHTML = `
         <div class="loading-container">
           <div class="loading-spinner"></div>
@@ -949,28 +990,32 @@
       `;
 
       try {
-        let response;
-        
-        if (category === 'ranked') {
-          response = await fetch(`https://fortnite.gdb.gg/ranked/${season}/leaderboard/${modeKey}?limit=100`);
-        } else {
-          const limit = ITEMS_PER_PAGE;
-          const currentModeObj = GENERAL_MODES.find(m => m.key === modeKey);
-          
-          let endpoint;
-          if (currentModeObj.type === 'playlist') {
-            endpoint = `https://fortnite.gdb.gg/leaderboard/${currentModeObj.playlist}/${currentModeObj.mode}/${currentStat}?limit=${limit}&page=${currentPage}`;
-          } else {
-            endpoint = `https://fortnite.gdb.gg/leaderboard?category=${currentStat}&limit=${limit}&page=${currentPage}`;
-          }
-          
-          response = await fetch(endpoint);
-        }
-        
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        let data;
 
-        const data = await response.json();
-        
+        if (category === 'ranked') {
+          const response = await fetch(
+            `${FAPI_BASE}/v1/leaderboard/ranked?type=${encodeURIComponent(modeKey)}&limit=100`
+          );
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          data = await response.json();
+        } else {
+          const statDef = STAT_CATEGORIES.global.find(s => s.key === currentStat) || STAT_CATEGORIES.global[0];
+          const apiCategory = statDef.apiCategory || statDef.key;
+          data = await fetchGlobalLeaderboard(apiCategory);
+          cachedGlobalRows = data.leaderboard || [];
+          const totalPages = Math.max(1, Math.ceil(cachedGlobalRows.length / ITEMS_PER_PAGE));
+          if (currentPage > totalPages) {
+            currentPage = 1;
+            const url = new URL(window.location);
+            url.searchParams.delete('page');
+            window.history.replaceState({}, '', url);
+          }
+          const start = (currentPage - 1) * ITEMS_PER_PAGE;
+          data = Object.assign({}, data, {
+            leaderboard: cachedGlobalRows.slice(start, start + ITEMS_PER_PAGE)
+          });
+        }
+
         if (!data.leaderboard || data.leaderboard.length === 0) {
           renderEmptyState(mode, category);
           return;
@@ -985,133 +1030,213 @@
 
     function renderLeaderboard(data, mode, category) {
       const contentDiv = document.getElementById('leaderboardContent');
-      
-      // Deduplicate by account_id
+
       const uniqueEntries = [];
       const seenPlayers = new Map();
-      
-      data.leaderboard.forEach((entry) => {
-        const accountId = entry.account_id;
+      data.leaderboard.forEach(function (entry) {
+        const accountId = entry.account_id || entry.accountId;
+        if (!accountId) return;
         if (!seenPlayers.has(accountId)) {
           seenPlayers.set(accountId, true);
           uniqueEntries.push(entry);
         }
       });
-      
-      const rows = uniqueEntries.map((entry, index) => {
-        const rank = entry.position ?? (category === 'general' 
-          ? (currentPage - 1) * ITEMS_PER_PAGE + index + 1
-          : index + 1);
-        
-        let rankClass = '';
-        if (rank === 1) rankClass = 'top-1';
-        else if (rank === 2) rankClass = 'top-2';
-        else if (rank === 3) rankClass = 'top-3';
 
-        const playerProfileUrl = `/fortnite/profile.html?id=${entry.account_id}`;
-        const displayName = entry.display_name || entry.account_id.substring(0, 8) + '...';
-        
-        if (category === 'ranked') {
-          const divisionName = entry.current_rank_name || DIVISION_NAMES[entry.current_division] || 'Unknown';
-          const iconUrl = getRankIcon(divisionName);
-          const progressPercent = Math.round((entry.promotion_progress || 0) * 100);
-          
-          return `
-            <tr>
-              <td class="rank-cell"><span class="rank-number ${rankClass}">${rank}</span></td>
-              <td><div class="player-cell"><a href="${playerProfileUrl}" class="player-name">${displayName}</a></div></td>
-              <td>
-                <div class="division-cell">
-                  <img src="${iconUrl}" alt="${divisionName}" class="division-icon">
-                  <span class="division-name">${divisionName}</span>
-                </div>
-              </td>
-              <td class="progress-cell"><span class="progress-value">${progressPercent}%</span></td>
-            </tr>
-          `;
-        } else {
-          const winsValue = entry.wins ?? entry.total_wins ?? 0;
-          const killsValue = entry.kills ?? entry.total_kills ?? 0;
-          const statValue = currentStat === 'kills' ? killsValue : winsValue;
-          
-          return `
-            <tr>
-              <td class="rank-cell"><span class="rank-number ${rankClass}">${rank}</span></td>
-              <td><div class="player-cell"><a href="${playerProfileUrl}" class="player-name">${displayName}</a></div></td>
-              <td class="progress-cell"><span class="progress-value">${statValue.toLocaleString()}</span></td>
-            </tr>
-          `;
-        }
-      }).join('');
+      const rows = uniqueEntries
+        .map(function (entry, index) {
+          const rank =
+            entry.position != null
+              ? entry.position
+              : category === 'general'
+                ? (currentPage - 1) * ITEMS_PER_PAGE + index + 1
+                : index + 1;
 
-      const tableHeaders = category === 'ranked' 
-        ? '<th>Rank</th><th>Player</th><th>Division</th><th class="center">Progress</th>'
-        : currentStat === 'kills'
-          ? '<th>Rank</th><th>Player</th><th class="center">Kills</th>'
-          : '<th>Rank</th><th>Player</th><th class="center">Wins</th>';
+          let rankClass = '';
+          if (rank === 1) rankClass = 'top-1';
+          else if (rank === 2) rankClass = 'top-2';
+          else if (rank === 3) rankClass = 'top-3';
 
-      // Pagination for general leaderboards
+          const aid = entry.account_id || entry.accountId;
+          const playerProfileUrl = '/fortnite/profile.html?id=' + encodeURIComponent(aid);
+          const displayName =
+            entry.display_name || entry.displayName || (aid ? aid.substring(0, 8) + '…' : 'Unknown');
+
+          if (category === 'ranked') {
+            const divNum = entry.current_division != null ? entry.current_division : 0;
+            const divisionName =
+              entry.current_rank_name || entry.currentRank || DIVISION_NAMES[divNum] || 'Unknown';
+            const iconUrl = getRankIcon(divisionName);
+            let prog = entry.promotion_progress != null ? entry.promotion_progress : entry.progress != null ? entry.progress : 0;
+            if (prog > 0 && prog <= 1) prog = prog * 100;
+            const progressPercent = Math.round(prog);
+
+            return (
+              '<tr>' +
+              '<td class="rank-cell"><span class="rank-number ' +
+              rankClass +
+              '">' +
+              rank +
+              '</span></td>' +
+              '<td><div class="player-cell"><a href="' +
+              playerProfileUrl +
+              '" class="player-name">' +
+              displayName +
+              '</a></div></td>' +
+              '<td><div class="division-cell">' +
+              '<img src="' +
+              iconUrl +
+              '" alt="' +
+              divisionName +
+              '" class="division-icon">' +
+              '<span class="division-name">' +
+              divisionName +
+              '</span></div></td>' +
+              '<td class="progress-cell"><span class="progress-value">' +
+              progressPercent +
+              '%</span></td>' +
+              '</tr>'
+            );
+          }
+
+          const statStr = formatGeneralStatValue(entry, currentStat);
+          return (
+            '<tr>' +
+            '<td class="rank-cell"><span class="rank-number ' +
+            rankClass +
+            '">' +
+            rank +
+            '</span></td>' +
+            '<td><div class="player-cell"><a href="' +
+            playerProfileUrl +
+            '" class="player-name">' +
+            displayName +
+            '</a></div></td>' +
+            '<td class="progress-cell"><span class="progress-value">' +
+            statStr +
+            '</span></td>' +
+            '</tr>'
+          );
+        })
+        .join('');
+
+      const statCol = generalStatColumnLabel(currentStat);
+      const tableHeaders =
+        category === 'ranked'
+          ? '<th>Rank</th><th>Player</th><th>Division</th><th class="center">Progress</th>'
+          : '<th>Rank</th><th>Player</th><th class="center">' +
+            statCol +
+            '</th>';
+
       let paginationHtml = '';
-      if (category === 'general') {
+      if (category === 'general' && cachedGlobalRows.length) {
+        const total = cachedGlobalRows.length;
         const startRank = (currentPage - 1) * ITEMS_PER_PAGE + 1;
-        const endRank = startRank + uniqueEntries.length - 1;
-        const hasMore = data.leaderboard.length === ITEMS_PER_PAGE;
-        
-        paginationHtml = `
-          <div class="pagination">
-            <div class="pagination-info">
-              Showing ranks ${startRank}–${endRank}
-            </div>
-            <div class="pagination-controls">
-              ${currentPage > 1 ? `<button class="pagination-btn" onclick="changePage(${currentPage - 1})">← Previous</button>` : ''}
-              <span class="page-indicator">Page ${currentPage}</span>
-              ${hasMore ? `<button class="pagination-btn" onclick="changePage(${currentPage + 1})">Next →</button>` : ''}
-            </div>
-          </div>
-        `;
+        const endRank = Math.min(currentPage * ITEMS_PER_PAGE, total);
+        const hasMore = currentPage * ITEMS_PER_PAGE < total;
+
+        paginationHtml =
+          '<div class="pagination">' +
+          '<div class="pagination-info">Showing ' +
+          startRank +
+          '–' +
+          endRank +
+          ' of ' +
+          total +
+          '</div>' +
+          '<div class="pagination-controls">' +
+          (currentPage > 1
+            ? '<button class="pagination-btn" onclick="changePage(' + (currentPage - 1) + ')">← Previous</button>'
+            : '') +
+          '<span class="page-indicator">Page ' +
+          currentPage +
+          '</span>' +
+          (hasMore
+            ? '<button class="pagination-btn" onclick="changePage(' + (currentPage + 1) + ')">Next →</button>'
+            : '') +
+          '</div></div>';
       }
 
-      contentDiv.innerHTML = `
-        <div class="leaderboard-container">
-          <div class="leaderboard-header">
-            <h2 class="leaderboard-title">${mode.name}</h2>
-            <span class="leaderboard-count">${uniqueEntries.length} players</span>
-          </div>
-          <table class="leaderboard-table">
-            <thead><tr>${tableHeaders}</tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-          ${paginationHtml}
-        </div>
-      `;
+      const noteLine =
+        category === 'ranked' && RANKED_LEADERBOARDS_ENABLED
+          ? '<p style="font-size:0.75rem;color:var(--text-muted);margin:0 0 0.5rem;">' +
+            'Only players who have viewed their ranked stats on gdb.gg can appear here.' +
+            '</p>'
+          : '';
+
+      contentDiv.innerHTML =
+        '<div class="leaderboard-container">' +
+        '<div class="leaderboard-header">' +
+        '<div><h2 class="leaderboard-title">' +
+        mode.name +
+        '</h2>' +
+        noteLine +
+        '</div>' +
+        '<span class="leaderboard-count">' +
+        uniqueEntries.length +
+        (category === 'general' && cachedGlobalRows.length ? ' / ' + cachedGlobalRows.length : '') +
+        ' players</span>' +
+        '</div>' +
+        '<table class="leaderboard-table">' +
+        '<thead><tr>' +
+        tableHeaders +
+        '</tr></thead>' +
+        '<tbody>' +
+        rows +
+        '</tbody></table>' +
+        paginationHtml +
+        '</div>';
     }
 
     function changePage(newPage) {
+      if (newPage < 1) return;
       currentPage = newPage;
-      
+
       const url = new URL(window.location);
       if (newPage > 1) {
-        url.searchParams.set('page', newPage);
+        url.searchParams.set('page', String(newPage));
       } else {
         url.searchParams.delete('page');
       }
       window.history.pushState({}, '', url);
-      
-      loadLeaderboard(currentSeason, currentMode, currentCategory);
+
+      if (currentCategory === 'general' && cachedGlobalRows.length) {
+        const statDef = STAT_CATEGORIES.global.find(s => s.key === currentStat) || STAT_CATEGORIES.global[0];
+        const data = {
+          type: 'global',
+          category: statDef.apiCategory,
+          leaderboard: cachedGlobalRows.slice(
+            (newPage - 1) * ITEMS_PER_PAGE,
+            newPage * ITEMS_PER_PAGE
+          )
+        };
+        const mode = GENERAL_MODES.find(m => m.key === currentMode);
+        renderLeaderboard(data, mode, 'general');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      loadLeaderboard(currentMode, currentCategory);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function renderEmptyState(mode, category) {
       const contentDiv = document.getElementById('leaderboardContent');
-      const text = category === 'ranked' ? 'ranked yet' : 'tracked yet';
-      
-      contentDiv.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">📭</div>
-          <h3 class="empty-title">No Leaderboard Data</h3>
-          <p class="empty-text">No players have been ${text} for ${mode.name}.</p>
-        </div>
-      `;
+      const hint =
+        category === 'ranked'
+          ? 'Ranked lists grow when players open their competitive stats on gdb.gg. Check back after more people use the site.'
+          : 'This list fills up as more players look up their profiles here. Try another sort, or share gdb.gg with friends.';
+
+      contentDiv.innerHTML =
+        '<div class="empty-state">' +
+        '<div class="empty-icon">📭</div>' +
+        '<h3 class="empty-title">No one here yet</h3>' +
+        '<p class="empty-text">There’s nobody to show for <strong>' +
+        mode.name +
+        '</strong> right now.</p>' +
+        '<p class="empty-text" style="margin-top:0.75rem;max-width:28rem;margin-left:auto;margin-right:auto;">' +
+        hint +
+        '</p>' +
+        '</div>';
     }
 
     function renderError(mode, errorMsg) {
@@ -1130,11 +1255,22 @@
     init();
   </script>
 
-  <footer>
-    <p>Powered by <a href="https://gdb.gg" target="_blank">gdb.gg</a></p>
-    <div class="footer-disclaimer">
-      <p>© 2025 gdb.gg. All game assets belong to their respective owners.</p>
-      <p>Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+  <footer class="home-footer" role="contentinfo">
+    <div class="home-footer-inner">
+      <a href="/" class="home-footer-brand" aria-label="Game Database home">
+        <span class="home-footer-logo">GDB</span><span class="home-footer-dot">.</span><span class="home-footer-gg">GG</span>
+      </a>
+      <div class="home-footer-links">
+        <a href="/marathon/">Marathon</a>
+        <a href="/fortnite/">Fortnite</a>
+        <a href="/#games">Games</a>
+        <a href="/pages/about/">About</a>
+        <a href="/pages/contact/">Contact</a>
+        <a href="/pages/privacy-policy/">Privacy Policy</a>
+        <a href="/pages/terms-and-conditions/">Terms</a>
+      </div>
+      <p class="home-footer-game">Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+      <p class="home-footer-copy">&copy; 2026 Game Database · GDB.GG</p>
     </div>
   </footer>
 </body>
