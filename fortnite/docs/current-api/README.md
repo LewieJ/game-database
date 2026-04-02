@@ -31,6 +31,9 @@ All paths below are relative to the base (e.g. `GET https://fapi.gdb.gg/health`)
 | [users.md](./users.md) | User search, account lookup |
 | [profile.md](./profile.md) | **`GET /v1/profile/{accountId}`** — stats + ranked bundle |
 | [progression-leaderboards.md](./progression-leaderboards.md) | Time-series (`/v1/progress`, `/v1/ranked`), global + ranked leaderboards, D1 scope |
+| [store.md](./store.md) | **`GET /v1/store`**, **`/v1/store/br`** — item shop (Epic + enriched), heavy KV + CDN cache |
+| [ccu.md](./ccu.md) | **`GET /ccu/comprehensive`**, hourly D1 snapshot, crawler — CCU cost model |
+| [tournaments.md](./tournaments.md) | **`GET /v1/tournaments/events`**, D1 tournament viewer, bulk sync |
 
 ## Epic upstream reference
 
