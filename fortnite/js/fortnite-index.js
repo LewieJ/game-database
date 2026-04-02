@@ -125,7 +125,7 @@
   }
 
   // ==================== SEARCH AUTOCOMPLETE ====================
-  const LEADERBOARD_CACHE_KEY = 'fortnite_leaderboard_cache';
+  const LEADERBOARD_CACHE_KEY = 'fortnite_leaderboard_cache_v2';
   const CACHE_DURATION = 5 * 60 * 1000;
 
   let cachedLeaderboard = null;
@@ -142,13 +142,19 @@
           return;
         }
       }
-      const response = await fetch('https://fortnite.gdb.gg/leaderboard?category=wins&limit=100');
+      const response = await fetch(
+        FAPI_BASE + '/leaderboard?category=wins&limit=100'
+      );
+      if (!response.ok) throw new Error('leaderboard ' + response.status);
       const data = await response.json();
       cachedLeaderboard = data.leaderboard || [];
-      localStorage.setItem(LEADERBOARD_CACHE_KEY, JSON.stringify({
-        data: cachedLeaderboard,
-        timestamp: Date.now()
-      }));
+      localStorage.setItem(
+        LEADERBOARD_CACHE_KEY,
+        JSON.stringify({
+          data: cachedLeaderboard,
+          timestamp: Date.now()
+        })
+      );
     } catch (error) {
       cachedLeaderboard = [];
     }
@@ -188,7 +194,7 @@
           id: p.account_id,
           name: p.display_name,
           wins: p.total_wins,
-          rank: p.rank
+          rank: p.position != null ? p.position : p.rank
         }));
     }
 
@@ -538,38 +544,79 @@
   }
 
   // ==================== LEADERBOARD CAROUSEL ====================
+  /** Homepage carousel: global leaderboard slices from fapi (ranked carousel paused). */
   let currentCarouselIndex = 0;
   let carouselData = [];
   const carouselCategories = [
-    { mode: 'ranked-br', label: 'CH7S1 Ranked · Battle Royale', endpoint: 'https://fortnite.gdb.gg/ranked/ch7s1/leaderboard/ranked-br?limit=4', type: 'ranked' },
-    { mode: 'ranked-zb', label: 'CH7S1 Ranked · Zero Build', endpoint: 'https://fortnite.gdb.gg/ranked/ch7s1/leaderboard/ranked-zb?limit=4', type: 'ranked' },
-    { mode: 'ranked_blastberry_nobuild', label: 'CH7S1 Ranked · Reload ZB', endpoint: 'https://fortnite.gdb.gg/ranked/ch7s1/leaderboard/ranked_blastberry_nobuild?limit=4', type: 'ranked' },
-    { mode: 'general-kills', label: 'Lifetime · Most Kills', endpoint: 'https://fortnite.gdb.gg/leaderboard?category=kills&limit=4', type: 'general' }
+    {
+      label: 'Top wins on gdb.gg',
+      type: 'general',
+      stat: 'wins',
+      apiCategory: 'wins'
+    },
+    {
+      label: 'Most kills on gdb.gg',
+      type: 'general',
+      stat: 'kills',
+      apiCategory: 'kills'
+    },
+    {
+      label: 'Best win rate on gdb.gg',
+      type: 'general',
+      stat: 'win_rate',
+      apiCategory: 'win_rate'
+    },
+    {
+      label: 'Most kills per match on gdb.gg',
+      type: 'general',
+      stat: 'kpm',
+      apiCategory: 'kpm'
+    }
   ];
+
+  function carouselStatLabelAndValue(player, stat) {
+    if (stat === 'wins') {
+      return { label: 'Wins', value: (player.total_wins != null ? player.total_wins : player.wins || 0).toLocaleString() };
+    }
+    if (stat === 'kills') {
+      return { label: 'Kills', value: (player.total_kills != null ? player.total_kills : player.kills || 0).toLocaleString() };
+    }
+    if (stat === 'win_rate') {
+      return { label: 'Win rate', value: (player.win_rate != null ? player.win_rate : 0).toFixed(2) + '%' };
+    }
+    if (stat === 'kpm') {
+      return { label: 'K/M', value: (player.kills_per_match != null ? player.kills_per_match : 0).toFixed(2) };
+    }
+    return { label: '—', value: '—' };
+  }
 
   async function loadLeaderboardCarousel() {
     try {
       const category = carouselCategories[currentCarouselIndex];
-      const response = await fetch(category.endpoint);
-      
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      
+      const url =
+        FAPI_BASE +
+        '/leaderboard?category=' +
+        encodeURIComponent(category.apiCategory) +
+        '&limit=4';
+      const response = await fetch(url);
+
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+
       const data = await response.json();
       if (!data.leaderboard || data.leaderboard.length === 0) throw new Error('No data');
-      
+
       carouselData = data.leaderboard;
       renderCarousel(category);
-      
+
       const subtitle = document.getElementById('carouselSubtitle');
       if (subtitle) subtitle.textContent = category.label;
     } catch (error) {
       const track = document.getElementById('carouselTrack');
       if (track) {
-        track.innerHTML = `
-          <div style="padding: 2rem; text-align: center; color: var(--text-tertiary); width: 100%;">
-            Unable to load leaderboard
-          </div>
-        `;
+        track.innerHTML =
+          '<div style="padding: 2rem; text-align: center; color: var(--text-tertiary); width: 100%;">' +
+          'No leaderboard to show yet. Look up a few profiles on gdb.gg and check back soon!' +
+          '</div>';
       }
     }
   }
@@ -577,32 +624,45 @@
   function renderCarousel(category) {
     const container = document.getElementById('carouselTrack');
     if (!container) return;
-    
-    const html = carouselData.map((player, index) => {
-      const rankClass = index === 0 ? '' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-4';
-      
-      let statLabel, statValue;
-      if (category.type === 'ranked') {
-        statLabel = player.current_rank_name || 'Unknown';
-        statValue = Math.round((player.promotion_progress || 0) * 100) + '%';
-      } else {
-        statLabel = 'Kills';
-        statValue = (player.total_kills || 0).toLocaleString();
-      }
 
-      return `
-        <a href="/fortnite/profile.html?id=${player.account_id}&name=${encodeURIComponent(player.display_name || player.account_id)}" class="leader-card ${rankClass}">
-          <div class="leader-rank">#${index + 1}</div>
-          <div class="leader-avatar">
-            <img src="${getPlayerAvatar(player.account_id)}" alt="">
-          </div>
-          <div class="leader-name">${player.display_name || player.account_id.substring(0, 8) + '...'}</div>
-          <div class="leader-stat-label">${statLabel}</div>
-          <div class="leader-stat-value">${statValue}</div>
-        </a>
-      `;
-    }).join('');
-    
+    const html = carouselData
+      .map(function (player, index) {
+        const rankClass =
+          index === 0 ? '' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-4';
+        const aid = player.account_id || player.accountId;
+        const name = player.display_name || player.displayName || aid;
+        const sv = carouselStatLabelAndValue(player, category.stat);
+
+        return (
+          '<a href="/fortnite/profile.html?id=' +
+          encodeURIComponent(aid) +
+          '&name=' +
+          encodeURIComponent(name || '') +
+          '" class="leader-card ' +
+          rankClass +
+          '">' +
+          '<div class="leader-rank">#' +
+          (index + 1) +
+          '</div>' +
+          '<div class="leader-avatar">' +
+          '<img src="' +
+          getPlayerAvatar(aid) +
+          '" alt="">' +
+          '</div>' +
+          '<div class="leader-name">' +
+          (name && name.length > 20 ? name.substring(0, 18) + '…' : name || '…') +
+          '</div>' +
+          '<div class="leader-stat-label">' +
+          sv.label +
+          '</div>' +
+          '<div class="leader-stat-value">' +
+          sv.value +
+          '</div>' +
+          '</a>'
+        );
+      })
+      .join('');
+
     container.innerHTML = html;
   }
 

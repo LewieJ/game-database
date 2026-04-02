@@ -3044,6 +3044,9 @@
 
     const FAPI_BASE = 'https://fapi.gdb.gg';
     const FAPI_PROFILE_BASE = FAPI_BASE + '/v1/profile';
+    /** Default v1 profile query: ranked history + per-input + by_experience (Blitz / Reload / OG tabs). */
+    const FAPI_PROFILE_DEFAULT_QUERY =
+      'ranked_history=true&stats_by_input=true&stats_by_experience=true';
 
     /** Normalize GET /v1/progress list for buildProgressSection */
     function normalizeProgressListResponse(raw) {
@@ -3157,6 +3160,101 @@
       return out;
     }
 
+    /** One `by_experience` row → shape expected by `buildPlaylistSection` mode cards */
+    function experienceRowToPlaylistModeStats(row) {
+      if (!row || typeof row !== 'object') return null;
+      const matches = row.matches ?? 0;
+      const kills = row.kills ?? 0;
+      const wins = row.wins ?? 0;
+      if (!matches && !wins && !kills) return null;
+      const kd = matches > 0 ? kills / matches : 0;
+      const wr = row.win_rate != null ? row.win_rate : matches > 0 ? (wins / matches) * 100 : 0;
+      return { wins: wins, kills: kills, matches: matches, kd: kd, win_rate: wr };
+    }
+
+    function sumV1ExperienceRows(rowList) {
+      let tw = 0;
+      let tk = 0;
+      let tm = 0;
+      rowList.forEach(function (row) {
+        if (!row || typeof row !== 'object') return;
+        tw += row.wins ?? 0;
+        tk += row.kills ?? 0;
+        tm += row.matches ?? 0;
+      });
+      return {
+        total_wins: tw,
+        total_kills: tk,
+        total_matches: tm,
+        overall_kd: tm > 0 ? tk / tm : 0,
+        overall_win_rate: tm > 0 ? (tw / tm) * 100 : 0
+      };
+    }
+
+    /**
+     * Build Blitz / Reload / OG tab payloads from `stats.summary.by_experience` or per-input `by_experience`.
+     * Reload aggregates `reload_build` + `reload_zero_build` + `reload_unknown`; modes break out build vs ZB.
+     */
+    function buildPlaylistStatsFromByExperience(bexp) {
+      const empty = function () {
+        return { available: false, aggregate: {}, modes: {}, tournaments: [] };
+      };
+      if (!bexp || typeof bexp !== 'object') {
+        return { blitz: empty(), reload: empty(), og: empty() };
+      }
+
+      function packSingle(key) {
+        const row = bexp[key];
+        const ms = experienceRowToPlaylistModeStats(row);
+        const avail = !!(ms && ms.matches > 0);
+        return {
+          available: avail,
+          aggregate: avail
+            ? {
+                total_wins: ms.wins,
+                total_kills: ms.kills,
+                total_matches: ms.matches,
+                overall_kd: ms.kd,
+                overall_win_rate: ms.win_rate
+              }
+            : {},
+          modes: {},
+          tournaments: []
+        };
+      }
+
+      const blitzPack = packSingle('blitz');
+      const ogPack = packSingle('og');
+
+      const rKeys = ['reload_build', 'reload_zero_build', 'reload_unknown'];
+      const reloadModes = {};
+      rKeys.forEach(function (k) {
+        const ms = experienceRowToPlaylistModeStats(bexp[k]);
+        if (ms && ms.matches > 0) reloadModes[k] = ms;
+      });
+      const reloadRows = rKeys.map(function (k) {
+        return bexp[k];
+      });
+      const reloadSum = sumV1ExperienceRows(reloadRows);
+      const reloadAvail = reloadSum.total_matches > 0;
+      const reloadPack = {
+        available: reloadAvail,
+        aggregate: reloadAvail ? reloadSum : {},
+        modes: reloadModes,
+        tournaments: []
+      };
+
+      return { blitz: blitzPack, reload: reloadPack, og: ogPack };
+    }
+
+    function getByExperienceForInput(statsData, inputFilter) {
+      const p = statsData && statsData.parsed;
+      if (!p) return null;
+      if (inputFilter === 'all') return p.byExperience || null;
+      const slice = p.byInputExperience && p.byInputExperience[inputFilter];
+      return slice || null;
+    }
+
     function legacyByInputFromV1Stats(stats) {
       const bi = stats && stats.by_input;
       if (!bi || typeof bi !== 'object') return null;
@@ -3235,6 +3333,23 @@
       const bvLegacy = mapV1BuildVariantToLegacy(summary && summary.by_build_variant);
       if (Object.keys(bvLegacy).length) {
         statsData.parsed.byBuildVariant = bvLegacy;
+      }
+      if (summary && summary.by_experience && typeof summary.by_experience === 'object') {
+        statsData.parsed.byExperience = summary.by_experience;
+      }
+      const biRaw = bundle.stats && bundle.stats.by_input;
+      if (biRaw && typeof biRaw === 'object') {
+        const pie = {};
+        if (biRaw.keyboard_mouse && biRaw.keyboard_mouse.by_experience) {
+          pie.keyboard = biRaw.keyboard_mouse.by_experience;
+        }
+        if (biRaw.gamepad && biRaw.gamepad.by_experience) {
+          pie.gamepad = biRaw.gamepad.by_experience;
+        }
+        if (biRaw.touch && biRaw.touch.by_experience) {
+          pie.touch = biRaw.touch.by_experience;
+        }
+        if (Object.keys(pie).length) statsData.parsed.byInputExperience = pie;
       }
       const byInputLegacy = legacyByInputFromV1Stats(bundle.stats);
       if (byInputLegacy) statsData.parsed.byInput = byInputLegacy;
@@ -3324,29 +3439,30 @@
       };
     }
     
-    // Load server status
+    // Site / stats lookup reachability (health check on our backend)
     async function loadServerStatus() {
       const statusEl = document.getElementById('serverStatus');
       const navStatusEl = document.getElementById('serverStatusNav');
-      
-      // Check if elements exist before trying to set innerHTML
+
       if (!statusEl) return;
-      
+
+      const online =
+        '<span class="status-dot online"></span><span>Stats lookup ready</span>';
+      const offline =
+        '<span class="status-dot offline"></span><span>Stats lookup unavailable</span>';
+
       try {
-        const res = await fetch('https://fortnite.gdb.gg/lightswitch');
-        const data = await res.json();
-        const status = Array.isArray(data) ? data[0] : data.value?.[0];
-        
-        if (status?.status === 'UP') {
-          statusEl.innerHTML = '<span class="status-dot online"></span><span>Fortnite Online</span>';
-          if (navStatusEl) navStatusEl.innerHTML = '<span class="status-dot online"></span><span>Fortnite Online</span>';
+        const res = await fetch(FAPI_BASE + '/health');
+        if (res.ok) {
+          statusEl.innerHTML = online;
+          if (navStatusEl) navStatusEl.innerHTML = online;
         } else {
-          statusEl.innerHTML = '<span class="status-dot offline"></span><span>Fortnite Offline</span>';
-          if (navStatusEl) navStatusEl.innerHTML = '<span class="status-dot offline"></span><span>Fortnite Offline</span>';
+          statusEl.innerHTML = offline;
+          if (navStatusEl) navStatusEl.innerHTML = offline;
         }
       } catch {
-        statusEl.innerHTML = '<span class="status-dot offline"></span><span>Status Unknown</span>';
-        if (navStatusEl) navStatusEl.innerHTML = '<span class="status-dot offline"></span><span>Status Unknown</span>';
+        statusEl.innerHTML = offline;
+        if (navStatusEl) navStatusEl.innerHTML = offline;
       }
     }
     
@@ -3378,7 +3494,7 @@
         }
 
         const profileUrl =
-          FAPI_PROFILE_BASE + '/' + encodeURIComponent(accountId) + '?ranked_history=true';
+          FAPI_PROFILE_BASE + '/' + encodeURIComponent(accountId) + '?' + FAPI_PROFILE_DEFAULT_QUERY;
         const progressUrl =
           FAPI_BASE + '/v1/progress/' + encodeURIComponent(accountId) + '?limit=20';
 
@@ -3462,7 +3578,7 @@
       
       try {
         const profileUrl =
-          FAPI_PROFILE_BASE + '/' + encodeURIComponent(accountId) + '?ranked_history=true';
+          FAPI_PROFILE_BASE + '/' + encodeURIComponent(accountId) + '?' + FAPI_PROFILE_DEFAULT_QUERY;
         const progressUrl =
           FAPI_BASE + '/v1/progress/' + encodeURIComponent(accountId) + '?limit=20';
 
@@ -3561,7 +3677,13 @@
     function displayProfile(account, statsData, progressData, rankedData, platform, playlistStats, playlistsAvailable, meta, inputFilter = 'all', playlistFilter = 'reload') {
       let overview, byMode;
 
-      const selectedPlaylist = playlistStats?.[playlistFilter];
+      const fromExperience = buildPlaylistStatsFromByExperience(getByExperienceForInput(statsData, inputFilter));
+      const hasLegacyPlaylistObject =
+        playlistStats &&
+        typeof playlistStats === 'object' &&
+        (playlistStats.blitz || playlistStats.reload || playlistStats.og);
+      const playlistStatsEffective = hasLegacyPlaylistObject ? playlistStats : fromExperience;
+
       let competitiveDisplay = statsData?.parsed?.competitive || null;
       let buildVariantDisplay = statsData?.parsed?.byBuildVariant || null;
 
@@ -3641,10 +3763,11 @@
       
       const currentTab = window.currentProfileTab || 'overview';
       
-      // Check for playlist-specific data using V2 API structure
-      const hasBlitz = playlistsAvailable?.blitz || playlistStats?.blitz?.available || false;
-      const hasReload = playlistsAvailable?.reload || playlistStats?.reload?.available || false;
-      const hasOG = playlistsAvailable?.og || playlistStats?.og?.available || false;
+      const hasBlitz =
+        playlistsAvailable?.blitz || playlistStatsEffective?.blitz?.available || false;
+      const hasReload =
+        playlistsAvailable?.reload || playlistStatsEffective?.reload?.available || false;
+      const hasOG = playlistsAvailable?.og || playlistStatsEffective?.og?.available || false;
       
       html.push(`
         <div class="profile-tabs-row">
@@ -3737,8 +3860,8 @@
       ) {
         html.push(`
         <div class="stats-section">
-          <h2 class="section-title">Competitive (Epic)</h2>
-          <p style="font-size:0.8rem;color:var(--text-tertiary);margin:-0.25rem 0 0.75rem;">Arena / tournament counts from stats bundle</p>
+          <h2 class="section-title">Competitive</h2>
+          <p style="font-size:0.8rem;color:var(--text-tertiary);margin:-0.25rem 0 0.75rem;">Arena and tournament matches from your Epic stats</p>
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-label">Arena matches</div>
@@ -3761,8 +3884,8 @@
       if (buildVariantKeys.length) {
         html.push(`
         <div class="stats-section">
-          <h2 class="section-title">Build vs zero build (heuristic)</h2>
-          <p style="font-size:0.8rem;color:var(--text-tertiary);margin:-0.25rem 0 0.75rem;">From playlist id classification — not an official Epic label</p>
+          <h2 class="section-title">Build vs zero build</h2>
+          <p style="font-size:0.8rem;color:var(--text-tertiary);margin:-0.25rem 0 0.75rem;">Estimated split by mode type (may not match in-game labels exactly)</p>
       `);
         const bvLabels = { build: 'Build', nobuild: 'Zero build', unknown: 'Unknown' };
         buildVariantKeys.forEach(function (bvKey) {
@@ -3853,17 +3976,17 @@
       
       // ============ BLITZ TAB ============
       html.push(`<div class="tab-content ${currentTab === 'blitz' ? 'active' : ''}" id="tab-blitz">`);
-      html.push(buildPlaylistSection(playlistStats?.blitz, 'Blitz'));
+      html.push(buildPlaylistSection(playlistStatsEffective?.blitz, 'Blitz'));
       html.push(`</div>`); // Close tab-blitz
       
       // ============ RELOAD TAB ============
       html.push(`<div class="tab-content ${currentTab === 'reload' ? 'active' : ''}" id="tab-reload">`);
-      html.push(buildPlaylistSection(playlistStats?.reload, 'Reload'));
+      html.push(buildPlaylistSection(playlistStatsEffective?.reload, 'Reload'));
       html.push(`</div>`); // Close tab-reload
       
       // ============ OG TAB ============
       html.push(`<div class="tab-content ${currentTab === 'og' ? 'active' : ''}" id="tab-og">`);
-      html.push(buildPlaylistSection(playlistStats?.og, 'OG'));
+      html.push(buildPlaylistSection(playlistStatsEffective?.og, 'OG'));
       html.push(`</div>`); // Close tab-og
       
       // ============ PROGRESSION TAB ============
@@ -4401,7 +4524,7 @@
 
       return `
         <div class="stats-section ranked-chart-section">
-          <h2 class="section-title">📈 Rank progression (stored history)</h2>
+          <h2 class="section-title">📈 Rank progression over time</h2>
           <div class="ranked-chart-controls">
             <div class="ranked-chart-modes">
               ${modeButtons}
@@ -5178,7 +5301,7 @@
       const aggregate = playlistData.aggregate || {};
       const modes = playlistData.modes || {};
       const tournaments = playlistData.tournaments || [];
-      
+
       // Aggregate Stats Section
       html.push(`
         <div class="stats-section">
@@ -5222,14 +5345,21 @@
             <h2 class="section-title">Stats by Mode</h2>
         `);
         
+        const experienceModeLabels = {
+          reload_build: 'Reload (build)',
+          reload_zero_build: 'Reload (zero build)',
+          reload_unknown: 'Reload (unknown variant)'
+        };
+
         modeEntries.forEach(([modeName, modeStats]) => {
           // Skip if no matches
           if (!modeStats.matches) return;
           
-          // Format mode name
-          const displayName = modeName
-            .replace(/_/g, ' ')
-            .replace(/\b\w/g, l => l.toUpperCase());
+          const displayName =
+            experienceModeLabels[modeName] ||
+            modeName
+              .replace(/_/g, ' ')
+              .replace(/\b\w/g, l => l.toUpperCase());
           
           html.push(`
             <div class="platform-card">
@@ -5610,7 +5740,7 @@
           <div class="no-progress">
             <div class="no-progress-icon">📊</div>
             <p>No progression snapshots in our database yet</p>
-            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Charts and history populate when this profile is loaded on gdb.gg (D1), then update over time.</p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Charts and rank history build up over time as you view this profile on gdb.gg.</p>
           </div>
         `);
       } else {
@@ -5750,7 +5880,7 @@
         let data = currentHistoricRanked;
         if (!data || !data.by_ranking_type) {
           const response = await fetch(
-            FAPI_PROFILE_BASE + '/' + encodeURIComponent(accountId) + '?ranked_history=true'
+            FAPI_PROFILE_BASE + '/' + encodeURIComponent(accountId) + '?' + FAPI_PROFILE_DEFAULT_QUERY
           );
           if (!response.ok) throw new Error('Failed to load historic ranked data');
           const bundle = await response.json();
@@ -6007,8 +6137,23 @@
     }
   </script>
 
-  <footer style="text-align: center; padding: 2rem; color: #9aa0a6; font-size: 0.8rem; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 3rem;">
-    <p>&copy; 2025 gdb.gg — Built with <span>♥</span> by a non-dev</p>
+  <footer class="home-footer" role="contentinfo">
+    <div class="home-footer-inner">
+      <a href="/" class="home-footer-brand" aria-label="Game Database home">
+        <span class="home-footer-logo">GDB</span><span class="home-footer-dot">.</span><span class="home-footer-gg">GG</span>
+      </a>
+      <div class="home-footer-links">
+        <a href="/marathon/">Marathon</a>
+        <a href="/fortnite/">Fortnite</a>
+        <a href="/#games">Games</a>
+        <a href="/pages/about/">About</a>
+        <a href="/pages/contact/">Contact</a>
+        <a href="/pages/privacy-policy/">Privacy Policy</a>
+        <a href="/pages/terms-and-conditions/">Terms</a>
+      </div>
+      <p class="home-footer-game">Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+      <p class="home-footer-copy">&copy; 2026 Game Database · GDB.GG</p>
+    </div>
   </footer>
 </body>
 </html>

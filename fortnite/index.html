@@ -826,39 +826,45 @@
       line-height: 1.6;
     }
 
-    /* Footer */
-    footer {
+    /* Early development notice (Fortnite homepage) */
+    .fortnite-dev-banner {
+      box-sizing: border-box;
+      margin: 0 1.25rem 1.25rem;
+      padding: 1rem 1.2rem;
+      max-width: 52rem;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 12px;
+      border: 2px solid rgba(247, 201, 72, 0.6);
+      background: linear-gradient(135deg, rgba(247, 201, 72, 0.28), rgba(0, 212, 255, 0.14));
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 10px 32px rgba(0, 0, 0, 0.4);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      line-height: 1.55;
       text-align: center;
-      padding: 3rem 2rem 2rem;
-      color: var(--text-tertiary);
-      font-size: 0.75rem;
-      border-top: 1px solid var(--border);
-      margin-top: 4rem;
-      background: var(--bg-elevated);
     }
 
-    footer p {
-      margin: 0.25rem 0;
-      line-height: 1.6;
-    }
-
-    footer a {
+    .fortnite-dev-banner strong {
+      display: block;
+      font-size: 1.12rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
       color: var(--fn-yellow);
-      text-decoration: none;
-      transition: color 0.2s ease;
+      text-shadow: 0 0 24px rgba(247, 201, 72, 0.45);
     }
 
-    footer a:hover {
-      color: #ffe066;
-      text-decoration: underline;
-    }
-
-    .footer-disclaimer {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.7rem;
-      color: var(--text-muted);
+    @media (max-width: 768px) {
+      .fortnite-dev-banner {
+        margin-left: 1rem;
+        margin-right: 1rem;
+        font-size: 0.88rem;
+        padding: 0.9rem 1rem;
+      }
+      .fortnite-dev-banner strong {
+        font-size: 1rem;
+      }
     }
 
     /* Loading Spinner */
@@ -1083,6 +1089,10 @@
   <script src="/fortnite/js/fortnite-nav.js"></script>
 
   <div class="main-content">
+    <div class="fortnite-dev-banner" role="region" aria-label="Fortnite site development status">
+      <strong>Very early development</strong>
+      The Fortnite area of gdb.gg is still being built. Many features are unfinished, experimental, or not live yet—stats, pages, and tools may change, break, or return incomplete data.
+    </div>
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="search-column">
@@ -1090,7 +1100,7 @@
           <h1>Find a Player</h1>
         </div>
 
-        <!-- Search Box (player lookup via fapi.gdb.gg) -->
+        <!-- Search Box (Epic player lookup) -->
         <div class="search-box">
           <form id="searchForm" role="search" aria-label="Fortnite player lookup">
             <div class="search-wrapper">
@@ -1170,7 +1180,7 @@
     <!-- Leaderboard Carousel -->
     <div class="leaderboard-carousel">
       <div class="carousel-header">
-        <div class="carousel-subtitle" id="carouselSubtitle">Loading top players...</div>
+        <div class="carousel-subtitle" id="carouselSubtitle">Loading community leaderboards…</div>
       </div>
       <div class="carousel-track" id="carouselTrack">
         <!-- Cards will be injected by JS -->
@@ -1195,11 +1205,22 @@
     </section>
   </div>
 
-  <footer>
-    <p>Powered by <a href="https://gdb.gg" target="_blank">gdb.gg</a></p>
-    <div class="footer-disclaimer">
-      <p>© 2025 gdb.gg. All game assets belong to their respective owners.</p>
-      <p>Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+  <footer class="home-footer" role="contentinfo">
+    <div class="home-footer-inner">
+      <a href="/" class="home-footer-brand" aria-label="Game Database home">
+        <span class="home-footer-logo">GDB</span><span class="home-footer-dot">.</span><span class="home-footer-gg">GG</span>
+      </a>
+      <div class="home-footer-links">
+        <a href="/marathon/">Marathon</a>
+        <a href="/fortnite/">Fortnite</a>
+        <a href="/#games">Games</a>
+        <a href="/pages/about/">About</a>
+        <a href="/pages/contact/">Contact</a>
+        <a href="/pages/privacy-policy/">Privacy Policy</a>
+        <a href="/pages/terms-and-conditions/">Terms</a>
+      </div>
+      <p class="home-footer-game">Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+      <p class="home-footer-copy">&copy; 2026 Game Database · GDB.GG</p>
     </div>
   </footer>
 

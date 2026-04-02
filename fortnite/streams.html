@@ -451,41 +451,6 @@
       color: var(--text-tertiary);
     }
 
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 3rem 2rem 2rem;
-      color: var(--text-tertiary);
-      font-size: 0.75rem;
-      border-top: 1px solid var(--border);
-      margin-top: 4rem;
-      background: var(--bg-elevated);
-    }
-
-    footer p {
-      margin: 0.25rem 0;
-      line-height: 1.6;
-    }
-
-    footer a {
-      color: var(--fn-yellow);
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-
-    footer a:hover {
-      color: #ffe066;
-      text-decoration: underline;
-    }
-
-    .footer-disclaimer {
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
-
     /* Mobile Responsive */
     @media (max-width: 768px) {
       main {
@@ -639,11 +604,22 @@
     </div>
   </main>
 
-  <footer>
-    <p>Powered by <a href="https://gdb.gg" target="_blank">gdb.gg</a></p>
-    <div class="footer-disclaimer">
-      <p>© 2025 gdb.gg. All game assets belong to their respective owners.</p>
-      <p>Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+  <footer class="home-footer" role="contentinfo">
+    <div class="home-footer-inner">
+      <a href="/" class="home-footer-brand" aria-label="Game Database home">
+        <span class="home-footer-logo">GDB</span><span class="home-footer-dot">.</span><span class="home-footer-gg">GG</span>
+      </a>
+      <div class="home-footer-links">
+        <a href="/marathon/">Marathon</a>
+        <a href="/fortnite/">Fortnite</a>
+        <a href="/#games">Games</a>
+        <a href="/pages/about/">About</a>
+        <a href="/pages/contact/">Contact</a>
+        <a href="/pages/privacy-policy/">Privacy Policy</a>
+        <a href="/pages/terms-and-conditions/">Terms</a>
+      </div>
+      <p class="home-footer-game">Fortnite™ is a trademark of Epic Games, Inc. This site is not affiliated with or endorsed by Epic Games.</p>
+      <p class="home-footer-copy">&copy; 2026 Game Database · GDB.GG</p>
     </div>
   </footer>
 
