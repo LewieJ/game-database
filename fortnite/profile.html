@@ -3039,8 +3039,158 @@
     let currentPlaylistStats = null;
     let currentPlaylistsAvailable = null;
     let currentMeta = null;
+    /** `ranked.historical` from last profile load (or refetched in Historic tab) */
+    let currentHistoricRanked = null;
 
-    const FAPI_PROFILE_BASE = 'https://fapi.gdb.gg/v1/profile';
+    const FAPI_BASE = 'https://fapi.gdb.gg';
+    const FAPI_PROFILE_BASE = FAPI_BASE + '/v1/profile';
+
+    /** Normalize GET /v1/progress list for buildProgressSection */
+    function normalizeProgressListResponse(raw) {
+      if (!raw || typeof raw !== 'object') return { history: [] };
+      let rows = raw.history || raw.entries || raw.rows || raw.snapshots;
+      if (!rows && Array.isArray(raw)) rows = raw;
+      if (!rows || !Array.isArray(rows)) return { history: [] };
+      const history = rows
+        .map(function (row) {
+          const ts = row.timestamp ?? row.recorded_at ?? row.created_at ?? row.cached_at;
+          let timestamp;
+          if (typeof ts === 'number') {
+            timestamp = ts < 1e12 ? ts * 1000 : ts;
+          } else if (ts) {
+            timestamp = new Date(ts).getTime();
+          } else {
+            timestamp = Date.now();
+          }
+          return {
+            timestamp: timestamp,
+            deltas: row.deltas || null,
+            total_wins: row.total_wins ?? row.wins,
+            win_rate: row.win_rate
+          };
+        })
+        .sort(function (a, b) {
+          return b.timestamp - a.timestamp;
+        });
+      return { history: history };
+    }
+
+    /** Normalize GET /v1/progress/.../chart for Chart.js */
+    function normalizeProgressChartResponse(raw) {
+      if (!raw || typeof raw !== 'object') return { chart_data: [], summary: {} };
+      let points = raw.chart_data || raw.points || raw.series;
+      if (!points && Array.isArray(raw)) points = raw;
+      if (!points || !Array.isArray(points)) return { chart_data: [], summary: raw.summary || {} };
+
+      const chart_data = points
+        .map(function (p) {
+          const ts = p.timestamp ?? p.t ?? p.recorded_at ?? p.time ?? p.bucket_start;
+          let timestamp;
+          if (typeof ts === 'number') {
+            timestamp = ts < 1e12 ? ts * 1000 : ts;
+          } else if (ts) {
+            timestamp = new Date(ts).getTime();
+          } else {
+            timestamp = Date.now();
+          }
+          return {
+            timestamp: timestamp,
+            total_wins: p.total_wins ?? p.wins ?? 0,
+            total_matches: p.total_matches ?? p.matches ?? 0,
+            total_kills: p.total_kills ?? p.kills ?? 0,
+            win_rate: p.win_rate ?? 0
+          };
+        })
+        .sort(function (a, b) {
+          return a.timestamp - b.timestamp;
+        });
+
+      const summary = Object.assign({}, raw.summary || {});
+      if (summary.period_matches == null && chart_data.length >= 2) {
+        const first = chart_data[0];
+        const last = chart_data[chart_data.length - 1];
+        summary.period_matches = (last.total_matches || 0) - (first.total_matches || 0);
+        summary.period_wins = (last.total_wins || 0) - (first.total_wins || 0);
+        summary.period_kills = (last.total_kills || 0) - (first.total_kills || 0);
+        summary.period_win_rate = last.win_rate;
+      }
+      return { chart_data: chart_data, summary: summary };
+    }
+
+    function legacyModesFromV1ByMode(bm) {
+      const out = {};
+      if (!bm || typeof bm !== 'object') return out;
+      Object.keys(bm).forEach(function (key) {
+        const row = bm[key];
+        if (!row || typeof row !== 'object') return;
+        const matches = row.matches ?? 0;
+        const kills = row.kills ?? 0;
+        out[key] = {
+          placetop1: row.wins ?? 0,
+          kills: kills,
+          matchesplayed: matches,
+          matches: matches,
+          kills_per_match: matches > 0 ? kills / matches : 0,
+          win_rate: row.win_rate ?? 0
+        };
+      });
+      return out;
+    }
+
+    function mapV1BuildVariantToLegacy(bbv) {
+      const out = {};
+      if (!bbv || typeof bbv !== 'object') return out;
+      Object.keys(bbv).forEach(function (key) {
+        const row = bbv[key];
+        if (!row || typeof row !== 'object') return;
+        const matches = row.matches ?? 0;
+        const kills = row.kills ?? 0;
+        out[key] = {
+          placetop1: row.wins ?? 0,
+          kills: kills,
+          matchesplayed: matches,
+          matches: matches,
+          kills_per_match: matches > 0 ? kills / matches : 0,
+          win_rate: row.win_rate ?? 0
+        };
+      });
+      return out;
+    }
+
+    function legacyByInputFromV1Stats(stats) {
+      const bi = stats && stats.by_input;
+      if (!bi || typeof bi !== 'object') return null;
+      const out = {};
+      const kb = legacyModesFromV1ByMode(bi.keyboard_mouse && bi.keyboard_mouse.by_mode);
+      if (kb && Object.keys(kb).length) out.keyboard = kb;
+      const gp = legacyModesFromV1ByMode(bi.gamepad && bi.gamepad.by_mode);
+      if (gp && Object.keys(gp).length) out.gamepad = gp;
+      const tc = legacyModesFromV1ByMode(bi.touch && bi.touch.by_mode);
+      if (tc && Object.keys(tc).length) out.touch = tc;
+      return Object.keys(out).length ? out : null;
+    }
+
+    /** Per-input rollups for v1 (top finishes + competitive + build heuristic split). */
+    function legacyByInputTotalsFromV1(stats) {
+      const bi = stats && stats.by_input;
+      if (!bi || typeof bi !== 'object') return null;
+      const out = {};
+      function add(seg, uiKey) {
+        if (!seg || typeof seg !== 'object') return;
+        const bLev = mapV1BuildVariantToLegacy(seg.by_build_variant);
+        out[uiKey] = {
+          top_3_finishes: seg.top_3_finishes,
+          top_5_finishes: seg.top_5_finishes,
+          total_score: seg.total_score,
+          competitive: seg.competitive || null,
+          byBuildVariant: Object.keys(bLev).length ? bLev : null
+        };
+      }
+      add(bi.keyboard_mouse, 'keyboard');
+      add(bi.gamepad, 'gamepad');
+      add(bi.touch, 'touch');
+      return Object.keys(out).length ? out : null;
+    }
 
     /** Map GET /v1/profile bundle to legacy shapes used by displayProfile (overview, byMode, ranked.modes). */
     function adaptV1ProfileBundle(bundle, fallbackName) {
@@ -3055,16 +3205,16 @@
             placetop3: summary.top_3_finishes ?? 0,
             placetop5: summary.top_5_finishes ?? 0,
             placetop10: 0,
-            hours_played: summary.hours_played ?? 0
+            total_score: summary.total_score ?? 0
           }
         : {};
 
       const byMode = {};
       const bm = summary && summary.by_mode;
       if (bm) {
-        ['solo', 'duo', 'trio', 'squad', 'octet'].forEach(function (key) {
+        Object.keys(bm).forEach(function (key) {
           const row = bm[key];
-          if (!row) return;
+          if (!row || typeof row !== 'object') return;
           const matches = row.matches ?? 0;
           const kills = row.kills ?? 0;
           byMode[key] = {
@@ -3073,13 +3223,23 @@
             matchesplayed: matches,
             matches: matches,
             kills_per_match: matches > 0 ? kills / matches : 0,
-            win_rate: row.win_rate ?? 0,
-            hours_played: 0
+            win_rate: row.win_rate ?? 0
           };
         });
       }
 
       const statsData = { parsed: { overview: overview, byMode: byMode } };
+      if (summary && summary.competitive) {
+        statsData.parsed.competitive = summary.competitive;
+      }
+      const bvLegacy = mapV1BuildVariantToLegacy(summary && summary.by_build_variant);
+      if (Object.keys(bvLegacy).length) {
+        statsData.parsed.byBuildVariant = bvLegacy;
+      }
+      const byInputLegacy = legacyByInputFromV1Stats(bundle.stats);
+      if (byInputLegacy) statsData.parsed.byInput = byInputLegacy;
+      const byInputTotals = legacyByInputTotalsFromV1(bundle.stats);
+      if (byInputTotals) statsData.parsed.byInputTotals = byInputTotals;
 
       const RANK_NAME_TO_TIER = {
         'Bronze 1': 1,
@@ -3217,9 +3377,15 @@
           updateMetaTags(displayName, null);
         }
 
-        const profileResponse = await fetch(
-          `${FAPI_PROFILE_BASE}/${encodeURIComponent(accountId)}?ranked_history=false`
-        );
+        const profileUrl =
+          FAPI_PROFILE_BASE + '/' + encodeURIComponent(accountId) + '?ranked_history=true';
+        const progressUrl =
+          FAPI_BASE + '/v1/progress/' + encodeURIComponent(accountId) + '?limit=20';
+
+        const [profileResponse, progressResponse] = await Promise.all([
+          fetch(profileUrl),
+          fetch(progressUrl)
+        ]);
 
         if (!profileResponse.ok) {
           throw new Error('Player not found');
@@ -3228,14 +3394,24 @@
         const bundle = await profileResponse.json();
         const { account, statsData, rankedData, meta } = adaptV1ProfileBundle(bundle, displayName);
 
+        let progressData = null;
+        if (progressResponse.ok) {
+          try {
+            progressData = normalizeProgressListResponse(await progressResponse.json());
+          } catch (e) {
+            console.warn('Progress list parse failed', e);
+          }
+        }
+
         currentAccount = account;
         currentStatsData = statsData;
-        currentProgressData = null;
+        currentProgressData = progressData;
         currentRankedData = rankedData;
         currentPlatform = platform;
         currentPlaylistStats = null;
         currentPlaylistsAvailable = null;
         currentMeta = meta;
+        currentHistoricRanked = bundle.ranked && bundle.ranked.historical ? bundle.ranked.historical : null;
 
         previousSeasonsData = null;
         previousSeasonsLoaded = false;
@@ -3256,7 +3432,11 @@
           kd: kd
         });
 
-        displayProfile(account, statsData, null, rankedData, platform, null, null, meta, 'all', 'reload');
+        displayProfile(account, statsData, progressData, rankedData, platform, null, null, meta, 'all', 'reload');
+
+        setTimeout(function () {
+          initMiniChart(accountId);
+        }, 100);
       } catch (error) {
         showError(error.message);
       }
@@ -3281,9 +3461,15 @@
       btn.classList.add('spinning');
       
       try {
-        const profileResponse = await fetch(
-          `${FAPI_PROFILE_BASE}/${encodeURIComponent(accountId)}?ranked_history=false`
-        );
+        const profileUrl =
+          FAPI_PROFILE_BASE + '/' + encodeURIComponent(accountId) + '?ranked_history=true';
+        const progressUrl =
+          FAPI_BASE + '/v1/progress/' + encodeURIComponent(accountId) + '?limit=20';
+
+        const [profileResponse, progressResponse] = await Promise.all([
+          fetch(profileUrl),
+          fetch(progressUrl)
+        ]);
 
         if (profileResponse.ok) {
           const bundle = await profileResponse.json();
@@ -3291,13 +3477,22 @@
           currentStatsData = adapted.statsData;
           currentRankedData = adapted.rankedData;
           currentMeta = adapted.meta;
-          currentProgressData = null;
           currentPlaylistStats = null;
           currentPlaylistsAvailable = null;
+          currentHistoricRanked = bundle.ranked && bundle.ranked.historical ? bundle.ranked.historical : null;
           if (adapted.account) currentAccount = adapted.account;
+          if (progressResponse.ok) {
+            try {
+              currentProgressData = normalizeProgressListResponse(await progressResponse.json());
+            } catch (e) {
+              console.warn('Progress list parse failed', e);
+            }
+          }
         }
 
         displayProfile(currentAccount, currentStatsData, currentProgressData, currentRankedData, currentPlatform, currentPlaylistStats, currentPlaylistsAvailable, currentMeta, currentInputFilter, currentPlaylistFilter);
+
+        scheduleOverviewMiniChart();
 
         localStorage.setItem(`lastRefresh_${accountId}`, Date.now().toString());
       } catch (error) {
@@ -3321,31 +3516,75 @@
       `;
     }
 
+    const GAME_MODE_LABELS = {
+      solo: 'Solo',
+      duo: 'Duo',
+      trio: 'Trio',
+      squad: 'Squad',
+      octet: 'Octet'
+    };
+
+    function gameModeDisplayName(key) {
+      if (GAME_MODE_LABELS[key]) return GAME_MODE_LABELS[key];
+      return String(key)
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, function (c) {
+          return c.toUpperCase();
+        });
+    }
+
+    function orderedGameModeKeys(byMode) {
+      const bm = byMode || {};
+      const preferred = ['solo', 'duo', 'trio', 'squad', 'octet'];
+      const seen = {};
+      const keys = [];
+      function hasMatches(k) {
+        const row = bm[k];
+        return row && (row.matchesplayed || row.matches);
+      }
+      preferred.forEach(function (k) {
+        if (hasMatches(k) && !seen[k]) {
+          seen[k] = true;
+          keys.push(k);
+        }
+      });
+      Object.keys(bm)
+        .sort()
+        .forEach(function (k) {
+          if (seen[k] || !hasMatches(k)) return;
+          seen[k] = true;
+          keys.push(k);
+        });
+      return keys;
+    }
+
     function displayProfile(account, statsData, progressData, rankedData, platform, playlistStats, playlistsAvailable, meta, inputFilter = 'all', playlistFilter = 'reload') {
-      // Extract data based on input filter and playlist filter
       let overview, byMode;
-      
-      // Determine which playlist data to use
+
       const selectedPlaylist = playlistStats?.[playlistFilter];
-      
+      let competitiveDisplay = statsData?.parsed?.competitive || null;
+      let buildVariantDisplay = statsData?.parsed?.byBuildVariant || null;
+
       if (inputFilter === 'all') {
-        // Use overall stats from parsed.overview
         overview = statsData?.parsed?.overview || {};
         byMode = statsData?.parsed?.byMode || {};
       } else {
-        // Use input-specific stats
         const inputData = statsData?.parsed?.byInput?.[inputFilter] || {};
-        
-        // Aggregate overview from input data
+
         overview = aggregateInputOverview(inputData);
-        
-        // Use input-specific mode data
-        byMode = {
-          solo: inputData.solo || {},
-          duo: inputData.duo || {},
-          trio: inputData.trio || {},
-          squad: inputData.squad || {}
-        };
+        const inputTotals = statsData?.parsed?.byInputTotals?.[inputFilter];
+        if (inputTotals) {
+          if (inputTotals.top_3_finishes != null) overview.placetop3 = inputTotals.top_3_finishes;
+          if (inputTotals.top_5_finishes != null) overview.placetop5 = inputTotals.top_5_finishes;
+          if (inputTotals.total_score != null) overview.total_score = inputTotals.total_score;
+          if (inputTotals.competitive) competitiveDisplay = inputTotals.competitive;
+          if (inputTotals.byBuildVariant) buildVariantDisplay = inputTotals.byBuildVariant;
+        }
+
+        byMode = {};
+        Object.keys(inputData).forEach(function (k) {
+          if (inputData[k] && typeof inputData[k] === 'object') byMode[k] = inputData[k];
+        });
       }
       
       // Build HTML
@@ -3416,7 +3655,6 @@
             <button class="profile-tab ${currentTab === 'blitz' ? 'active' : ''} ${!hasBlitz ? 'disabled' : ''}" onclick="${hasBlitz ? "switchProfileTab('blitz')" : ''}" ${!hasBlitz ? 'title="No Blitz data available"' : ''}>Blitz</button>
             <button class="profile-tab ${currentTab === 'reload' ? 'active' : ''} ${!hasReload ? 'disabled' : ''}" onclick="${hasReload ? "switchProfileTab('reload')" : ''}" ${!hasReload ? 'title="No Reload data available"' : ''}>Reload</button>
             <button class="profile-tab ${currentTab === 'og' ? 'active' : ''} ${!hasOG ? 'disabled' : ''}" onclick="${hasOG ? "switchProfileTab('og')" : ''}" ${!hasOG ? 'title="No OG data available"' : ''}>OG</button>
-            <button class="profile-tab ${currentTab === 'achievements' ? 'active' : ''}" onclick="switchProfileTab('achievements')">Achievements</button>
             <button class="profile-tab ${currentTab === 'historic-ranked' ? 'active' : ''}" onclick="switchProfileTab('historic-ranked')">Historic Ranked</button>
           </div>
           <div class="input-filters">
@@ -3484,12 +3722,66 @@
               <div class="stat-value">${(displayStats.placetop10 || 0).toLocaleString()}</div>
             </div>
             <div class="stat-card">
-              <div class="stat-label">Time Played</div>
-              <div class="stat-value">${Math.round((overview.hours_played || 0)).toLocaleString()}h</div>
+              <div class="stat-label">Score</div>
+              <div class="stat-value">${((displayStats.total_score != null ? displayStats.total_score : displayStats.score) || 0).toLocaleString()}</div>
             </div>
           </div>
         </div>
       `);
+
+      if (
+        competitiveDisplay &&
+        (competitiveDisplay.arena_matches ||
+          competitiveDisplay.tournament_matches ||
+          competitiveDisplay.tournament_wins)
+      ) {
+        html.push(`
+        <div class="stats-section">
+          <h2 class="section-title">Competitive (Epic)</h2>
+          <p style="font-size:0.8rem;color:var(--text-tertiary);margin:-0.25rem 0 0.75rem;">Arena / tournament counts from stats bundle</p>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Arena matches</div>
+              <div class="stat-value">${(competitiveDisplay.arena_matches || 0).toLocaleString()}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Tournament matches</div>
+              <div class="stat-value">${(competitiveDisplay.tournament_matches || 0).toLocaleString()}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Tournament wins</div>
+              <div class="stat-value highlight">${(competitiveDisplay.tournament_wins || 0).toLocaleString()}</div>
+            </div>
+          </div>
+        </div>
+      `);
+      }
+
+      const buildVariantKeys = orderedGameModeKeys(buildVariantDisplay || {});
+      if (buildVariantKeys.length) {
+        html.push(`
+        <div class="stats-section">
+          <h2 class="section-title">Build vs zero build (heuristic)</h2>
+          <p style="font-size:0.8rem;color:var(--text-tertiary);margin:-0.25rem 0 0.75rem;">From playlist id classification — not an official Epic label</p>
+      `);
+        const bvLabels = { build: 'Build', nobuild: 'Zero build', unknown: 'Unknown' };
+        buildVariantKeys.forEach(function (bvKey) {
+          const row = buildVariantDisplay[bvKey];
+          const nm = bvLabels[bvKey] || gameModeDisplayName(bvKey);
+          html.push(`
+          <div class="platform-card">
+            <h3 class="platform-name">${nm}</h3>
+            <div class="stats-grid">
+              <div class="stat-card"><div class="stat-label">Wins</div><div class="stat-value highlight">${(row.placetop1 || 0).toLocaleString()}</div></div>
+              <div class="stat-card"><div class="stat-label">Kills</div><div class="stat-value">${(row.kills || 0).toLocaleString()}</div></div>
+              <div class="stat-card"><div class="stat-label">Matches</div><div class="stat-value">${(row.matchesplayed || 0).toLocaleString()}</div></div>
+              <div class="stat-card"><div class="stat-label">Win rate</div><div class="stat-value">${(row.win_rate || 0).toFixed(1)}%</div></div>
+            </div>
+          </div>
+        `);
+        });
+        html.push(`</div>`);
+      }
       
       // Mini Progression Chart Section (7-day kills/wins)
       html.push(`
@@ -3507,26 +3799,15 @@
         </div>
       `);
       
-      // Game Mode Stats - Show Solo/Duo/Trio/Squad from byMode
+      // Game mode stats: all keys from summary.by_mode (solo → octet + any future modes)
       html.push(`
         <div class="stats-section">
           <h2 class="section-title">Stats by Game Mode</h2>
       `);
       
-      // Traditional mode breakdown from parsed.byMode
-      const traditionalModes = [
-        { key: 'solo', name: 'Solo' },
-        { key: 'duo', name: 'Duo' },
-        { key: 'trio', name: 'Trio' },
-        { key: 'squad', name: 'Squad' }
-      ];
-      
-      traditionalModes.forEach(({ key, name }) => {
+      orderedGameModeKeys(byMode).forEach(function (key) {
         const modeData = byMode[key] || {};
-        
-        // Skip if no matches played
-        if (!modeData.matchesplayed && !modeData.matches) return;
-        
+        const name = gameModeDisplayName(key);
         html.push(`
           <div class="platform-card">
             <h3 class="platform-name">${name}</h3>
@@ -3550,10 +3831,6 @@
               <div class="stat-card">
                 <div class="stat-label">Win Rate</div>
                 <div class="stat-value">${(modeData.win_rate || 0).toFixed(1)}%</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-label">Time Played</div>
-                <div class="stat-value">${Math.round((modeData.hours_played || 0)).toLocaleString()}h</div>
               </div>
             </div>
           </div>
@@ -3594,11 +3871,6 @@
       html.push(buildProgressSection(progressData));
       html.push(`</div>`); // Close tab-progression
       
-      // ============ ACHIEVEMENTS TAB ============
-      html.push(`<div class="tab-content ${currentTab === 'achievements' ? 'active' : ''}" id="tab-achievements">`);
-      html.push(`<div class="achievements-loading">Loading achievements...</div>`);
-      html.push(`</div>`); // Close tab-achievements
-      
       // ============ HISTORIC RANKED TAB ============
       html.push(`<div class="tab-content ${currentTab === 'historic-ranked' ? 'active' : ''}" id="tab-historic-ranked">`);
       html.push(`<div class="historic-ranked-loading" style="text-align: center; padding: 3rem; color: #9ca3af;">Loading historic ranked data...</div>`);
@@ -3606,11 +3878,6 @@
       
       // Set the HTML
       document.getElementById('content').innerHTML = html.join('');
-      
-      // Load achievements data if on achievements tab
-      if (currentTab === 'achievements') {
-        loadAchievements(account.id, account.displayName);
-      }
       
       // Load historic ranked data if on historic-ranked tab
       if (currentTab === 'historic-ranked') {
@@ -3628,7 +3895,6 @@
         if (btn.textContent.toLowerCase() === tab || 
             (tab === 'overview' && btn.textContent === 'Overview') ||
             (tab === 'ranked' && btn.textContent === 'Ranked') ||
-            (tab === 'achievements' && btn.textContent === 'Achievements') ||
             (tab === 'historic-ranked' && btn.textContent === 'Historic Ranked') ||
             (tab === 'progression' && btn.textContent === 'Progression')) {
           btn.classList.add('active');
@@ -3642,11 +3908,6 @@
       const activeContent = document.getElementById(`tab-${tab}`);
       if (activeContent) {
         activeContent.classList.add('active');
-      }
-      
-      // Load achievements if switching to achievements tab
-      if (tab === 'achievements' && currentAccount) {
-        loadAchievements(currentAccount.id, currentAccount.displayName);
       }
       
       // Load historic ranked if switching to historic-ranked tab
@@ -3674,8 +3935,6 @@
     }
     
     function aggregateInputOverview(inputData) {
-      // Aggregate stats from all modes for this input type
-      const modes = ['solo', 'duo', 'trio', 'squad', 'other'];
       const overview = {
         kills: 0,
         matchesplayed: 0,
@@ -3684,22 +3943,28 @@
         placetop5: 0,
         placetop10: 0,
         placetop25: 0,
-        minutesplayed: 0,
         score: 0
       };
-      
-      modes.forEach(mode => {
-        if (inputData[mode]) {
-          overview.kills += inputData[mode].kills || 0;
-          overview.matchesplayed += inputData[mode].matchesplayed || 0;
-          overview.placetop1 += inputData[mode].placetop1 || 0;
-          overview.placetop3 += inputData[mode].placetop3 || 0;
-          overview.placetop5 += inputData[mode].placetop5 || 0;
-          overview.placetop10 += inputData[mode].placetop10 || 0;
-          overview.placetop25 += inputData[mode].placetop25 || 0;
-          overview.minutesplayed += inputData[mode].minutesplayed || 0;
-          overview.score += inputData[mode].score || 0;
+
+      Object.keys(inputData || {}).forEach(function (mode) {
+        const row = inputData[mode];
+        if (!row || typeof row !== 'object' || Array.isArray(row)) return;
+        if (
+          row.kills == null &&
+          row.placetop1 == null &&
+          row.matchesplayed == null &&
+          row.matches == null
+        ) {
+          return;
         }
+        overview.kills += row.kills || 0;
+        overview.matchesplayed += row.matchesplayed || row.matches || 0;
+        overview.placetop1 += row.placetop1 || 0;
+        overview.placetop3 += row.placetop3 || 0;
+        overview.placetop5 += row.placetop5 || 0;
+        overview.placetop10 += row.placetop10 || 0;
+        overview.placetop25 += row.placetop25 || 0;
+        overview.score += row.score || 0;
       });
       
       // Calculate derived stats
@@ -3709,19 +3974,34 @@
       overview.win_rate = overview.matchesplayed > 0 
         ? (overview.placetop1 / overview.matchesplayed) * 100 
         : 0;
-      overview.hours_played = Math.round(overview.minutesplayed / 60);
       
       return overview;
     }
     
+    function scheduleOverviewMiniChart() {
+      if (!accountId) return;
+      if ((window.currentProfileTab || 'overview') !== 'overview') return;
+      if (miniChart) {
+        try {
+          miniChart.destroy();
+        } catch (e) {}
+        miniChart = null;
+      }
+      setTimeout(function () {
+        initMiniChart(accountId);
+      }, 50);
+    }
+
     function setInputFilter(filter) {
       currentInputFilter = filter;
       displayProfile(currentAccount, currentStatsData, currentProgressData, currentRankedData, currentPlatform, currentPlaylistStats, currentPlaylistsAvailable, currentMeta, filter, currentPlaylistFilter);
+      scheduleOverviewMiniChart();
     }
-    
+
     function setPlaylistFilter(playlist) {
       currentPlaylistFilter = playlist;
       displayProfile(currentAccount, currentStatsData, currentProgressData, currentRankedData, currentPlatform, currentPlaylistStats, currentPlaylistsAvailable, currentMeta, currentInputFilter, playlist);
+      scheduleOverviewMiniChart();
     }
 
     // Rank icon mapping (using Arabic numerals to match API)
@@ -4121,7 +4401,7 @@
 
       return `
         <div class="stats-section ranked-chart-section">
-          <h2 class="section-title">📈 Rank Progression - Chapter 7 Season 1</h2>
+          <h2 class="section-title">📈 Rank progression (stored history)</h2>
           <div class="ranked-chart-controls">
             <div class="ranked-chart-modes">
               ${modeButtons}
@@ -4146,25 +4426,57 @@
       chartContent.innerHTML = '<div class="chart-loading">Loading rank history...</div>';
       
       try {
-        // Use CH7S1 history endpoint
-        const limitMap = { '7d': 50, '30d': 100, 'all': 500 };
+        const limitMap = { '7d': 80, '30d': 200, 'all': 500 };
         const limit = limitMap[range] || 100;
-        
-        const response = await fetch(`https://fortnite.gdb.gg/ranked/ch7s1/${accountId}/history?type=${rankingType}&limit=${limit}`);
+
+        const response = await fetch(
+          FAPI_BASE +
+            '/v1/ranked/' +
+            encodeURIComponent(accountId) +
+            '/history?type=' +
+            encodeURIComponent(rankingType) +
+            '&limit=' +
+            limit
+        );
         if (!response.ok) {
           throw new Error('Failed to load rank chart data');
         }
-        
+
         const historyData = await response.json();
-        
-        // Transform CH7S1 history format to chart format
-        if (!historyData.history || historyData.history.length === 0) {
+        const rawHistory = historyData.history || historyData.entries || [];
+        const normalizedHistory = rawHistory
+          .map(function (h) {
+            const recorded =
+              h.recorded_at != null
+                ? typeof h.recorded_at === 'number'
+                  ? h.recorded_at < 1e12
+                    ? h.recorded_at * 1000
+                    : h.recorded_at
+                  : new Date(h.recorded_at).getTime()
+                : h.timestamp != null
+                  ? typeof h.timestamp === 'number'
+                    ? h.timestamp < 1e12
+                      ? h.timestamp * 1000
+                      : h.timestamp
+                    : new Date(h.timestamp).getTime()
+                  : 0;
+            const division = h.division ?? h.current_division ?? h.currentDivision ?? 0;
+            let prog = h.promotion_progress ?? h.promotionProgress ?? 0;
+            if (prog > 0 && prog <= 1) prog = prog * 100;
+            return { recorded_at: recorded, division: division, promotion_progress: prog / 100 };
+          })
+          .filter(function (h) {
+            return h.recorded_at;
+          });
+
+        if (!normalizedHistory.length) {
           chartContent.innerHTML = '<div class="chart-error">No rank history available for this period</div>';
           return;
         }
-        
-        // Sort by recorded_at ascending (oldest first) for chart
-        const sortedHistory = [...historyData.history].sort((a, b) => a.recorded_at - b.recorded_at);
+
+        const sortedHistory = [...normalizedHistory].sort(function (a, b) {
+          return a.recorded_at - b.recorded_at;
+        });
         
         // Get actual current rank from main ranked API (not from history end)
         let currentRankName = 'Unknown';
@@ -4183,17 +4495,19 @@
         
         // Build chart data structure
         currentRankedChartData = {
-          accountId: historyData.accountId,
-          season: historyData.season,
-          rankingType: historyData.rankingType,
-          count: historyData.count,
-          chart_data: sortedHistory.map(entry => ({
-            date: new Date(entry.recorded_at).toISOString(),
-            timestamp: entry.recorded_at,
-            division: entry.division,
-            progress: Math.round((entry.promotion_progress || 0) * 100),
-            rank_name: DIVISION_NAMES[entry.division] || 'Unknown'
-          })),
+          accountId: historyData.accountId || accountId,
+          season: historyData.season || null,
+          rankingType: historyData.rankingType || rankingType,
+          count: sortedHistory.length,
+          chart_data: sortedHistory.map(function (entry) {
+            return {
+              date: new Date(entry.recorded_at).toISOString(),
+              timestamp: entry.recorded_at,
+              division: entry.division,
+              progress: Math.round((entry.promotion_progress || 0) * 100),
+              rank_name: DIVISION_NAMES[entry.division] || 'Unknown'
+            };
+          }),
           summary: {
             start_rank: DIVISION_NAMES[sortedHistory[0].division] || 'Unknown',
             current_rank: currentRankName,
@@ -4417,6 +4731,13 @@
       const canvas = document.getElementById('mini-progress-chart');
       if (!canvas) return;
 
+      if (miniChart) {
+        try {
+          miniChart.destroy();
+        } catch (e) {}
+        miniChart = null;
+      }
+
       // Show loading state
       canvas.style.display = 'none';
       const container = canvas.parentElement;
@@ -4430,10 +4751,12 @@
       loadingDiv.style.display = 'flex';
 
       try {
-        const response = await fetch(`https://fortnite.gdb.gg/progress/${accountId}/chart?range=7d`);
+        const response = await fetch(
+          FAPI_BASE + '/v1/progress/' + encodeURIComponent(accountId) + '/chart?range=7d'
+        );
         if (!response.ok) throw new Error('Failed to load chart data');
-        
-        miniChartData = await response.json();
+
+        miniChartData = normalizeProgressChartResponse(await response.json());
         
         // Check if we have any data
         if (!miniChartData?.chart_data || miniChartData.chart_data.length === 0) {
@@ -4484,7 +4807,7 @@
         wins: { label: 'Total Wins', color: '#34d399', key: 'total_wins' }
       };
 
-      const config = statConfig[currentMiniStat];
+      const config = statConfig[currentMiniStat] || statConfig.kills;
       const dataPoints = miniChartData.chart_data.map(point => point[config.key]);
 
       miniChart = new Chart(canvas, {
@@ -4572,12 +4895,14 @@
       chartContent.innerHTML = '<div class="chart-loading">Loading chart data...</div>';
       
       try {
-        const response = await fetch(`https://fortnite.gdb.gg/progress/${accountId}/chart?range=${range}`);
+        const response = await fetch(
+          FAPI_BASE + '/v1/progress/' + encodeURIComponent(accountId) + '/chart?range=' + encodeURIComponent(range)
+        );
         if (!response.ok) {
           throw new Error('Failed to load chart data');
         }
-        
-        currentChartData = await response.json();
+
+        currentChartData = normalizeProgressChartResponse(await response.json());
         renderChart(currentChartData);
       } catch (error) {
         console.error('Chart data error:', error);
@@ -4592,6 +4917,8 @@
         return;
       }
 
+      if (currentChartStat === 'time_played') currentChartStat = 'wins';
+
       chartContent.innerHTML = `
         <div class="chart-container">
           <canvas id="progress-chart"></canvas>
@@ -4601,7 +4928,6 @@
           <button class="chart-stat-btn ${currentChartStat === 'matches' ? 'active' : ''}" data-stat="matches">Matches</button>
           <button class="chart-stat-btn ${currentChartStat === 'kills' ? 'active' : ''}" data-stat="kills">Kills</button>
           <button class="chart-stat-btn ${currentChartStat === 'win_rate' ? 'active' : ''}" data-stat="win_rate">Win Rate</button>
-          <button class="chart-stat-btn ${currentChartStat === 'time_played' ? 'active' : ''}" data-stat="time_played">Time Played</button>
           <button class="chart-mode-btn ${showGainsMode ? 'active' : ''}" id="gains-toggle" title="Toggle between showing gains vs totals">${showGainsMode ? '📈 Gains' : '📊 Totals'}</button>
         </div>
         <div class="chart-summary">
@@ -4616,16 +4942,6 @@
           <div class="chart-summary-stat">
             <div class="chart-summary-label">Period Kills</div>
             <div class="chart-summary-value">${data.summary?.period_kills?.toLocaleString() || 0}</div>
-          </div>
-          <div class="chart-summary-stat">
-            <div class="chart-summary-label">Period Time Played</div>
-            <div class="chart-summary-value">${(() => {
-              if (!data.chart_data || data.chart_data.length < 2) return '0h';
-              const firstMinutes = data.chart_data[0].total_minutes || 0;
-              const lastMinutes = data.chart_data[data.chart_data.length - 1].total_minutes || 0;
-              const periodMinutes = lastMinutes - firstMinutes;
-              return Math.round(periodMinutes / 60) + 'h';
-            })()}</div>
           </div>
           <div class="chart-summary-stat">
             <div class="chart-summary-label">Win Rate</div>
@@ -4680,66 +4996,40 @@
         wins: { label: 'Wins', color: '#34d399', key: 'total_wins' },
         matches: { label: 'Matches', color: '#00d4ff', key: 'total_matches' },
         kills: { label: 'Kills', color: '#f87171', key: 'total_kills' },
-        win_rate: { label: 'Win Rate %', color: '#f7c948', key: 'win_rate' },
-        time_played: { label: 'Hours Played Per Day', color: '#a855f7', key: 'total_minutes' }
+        win_rate: { label: 'Win Rate %', color: '#f7c948', key: 'win_rate' }
       };
 
-      const config = statConfig[currentChartStat];
+      const config = statConfig[currentChartStat] || statConfig.wins;
       let chartLabels = labels;
-      let dataPoints;
-      
-      // Special handling for time_played: show daily hours as bar chart
-      if (currentChartStat === 'time_played') {
-        // Calculate deltas between consecutive snapshots and group by day
-        const dailyMinutes = {};
-        
-        for (let i = 1; i < data.chart_data.length; i++) {
-          const current = data.chart_data[i];
-          const previous = data.chart_data[i - 1];
-          const minutesDelta = (current.total_minutes || 0) - (previous.total_minutes || 0);
-          
-          const date = new Date(current.timestamp);
-          const dateKey = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          
-          dailyMinutes[dateKey] = (dailyMinutes[dateKey] || 0) + minutesDelta;
-        }
-        
-        // Convert to arrays for chart
-        chartLabels = Object.keys(dailyMinutes);
-        dataPoints = Object.values(dailyMinutes).map(mins => mins / 60); // Convert to hours
-        
-      } else {
-        dataPoints = data.chart_data.map(point => {
-          return point[config.key];
-        });
-        
-        // In gains mode, show change from first data point (except for win_rate)
-        if (showGainsMode && currentChartStat !== 'win_rate' && dataPoints.length > 0) {
-          const baseline = dataPoints[0];
-          dataPoints = dataPoints.map(val => val - baseline);
-          config.label = config.label + ' Gained';
-        } else if (!showGainsMode) {
-          config.label = 'Total ' + config.label;
-        }
+      let dataPoints = data.chart_data.map(point => {
+        return point[config.key];
+      });
+
+      if (showGainsMode && currentChartStat !== 'win_rate' && dataPoints.length > 0) {
+        const baseline = dataPoints[0];
+        dataPoints = dataPoints.map(val => val - baseline);
+        config.label = config.label + ' Gained';
+      } else if (!showGainsMode) {
+        config.label = 'Total ' + config.label;
       }
 
       return {
-        type: currentChartStat === 'time_played' ? 'bar' : 'line',
+        type: 'line',
         data: {
           labels: chartLabels,
           datasets: [{
             label: config.label,
             data: dataPoints,
             borderColor: config.color,
-            backgroundColor: currentChartStat === 'time_played' ? config.color + '80' : config.color + '20',
+            backgroundColor: config.color + '20',
             tension: 0.3,
             fill: true,
-            pointRadius: currentChartStat === 'time_played' ? 0 : 4,
-            pointHoverRadius: currentChartStat === 'time_played' ? 0 : 6,
+            pointRadius: 4,
+            pointHoverRadius: 6,
             pointBackgroundColor: config.color,
             pointBorderColor: '#1a1a2e',
             pointBorderWidth: 2,
-            borderWidth: currentChartStat === 'time_played' ? 0 : 2
+            borderWidth: 2
           }]
         },
         options: {
@@ -4768,9 +5058,6 @@
                   if (currentChartStat === 'win_rate') {
                     return `${value.toFixed(2)}%`;
                   }
-                  if (currentChartStat === 'time_played') {
-                    return `${value.toFixed(1)} hours`;
-                  }
                   return value.toLocaleString();
                 }
               }
@@ -4787,7 +5074,7 @@
               }
             },
             y: {
-              beginAtZero: showGainsMode || currentChartStat === 'win_rate' || currentChartStat === 'time_played',
+              beginAtZero: showGainsMode || currentChartStat === 'win_rate',
               grid: {
                 color: 'rgba(255, 255, 255, 0.05)'
               },
@@ -4796,9 +5083,6 @@
                 callback: function(value) {
                   if (currentChartStat === 'win_rate') {
                     return value.toFixed(1) + '%';
-                  }
-                  if (currentChartStat === 'time_played') {
-                    return value.toFixed(0) + 'h';
                   }
                   if (showGainsMode) {
                     return (value >= 0 ? '+' : '') + (Math.abs(value) >= 1000 ? (value / 1000).toFixed(1) + 'k' : value);
@@ -4815,84 +5099,51 @@
     function updateChartDataset(data) {
       if (!progressChart || !data.chart_data) return;
 
+      if (currentChartStat === 'time_played') currentChartStat = 'wins';
+
       const statConfig = {
         wins: { label: 'Wins', color: '#34d399', key: 'total_wins' },
         matches: { label: 'Matches', color: '#00d4ff', key: 'total_matches' },
         kills: { label: 'Kills', color: '#f87171', key: 'total_kills' },
-        win_rate: { label: 'Win Rate %', color: '#f7c948', key: 'win_rate' },
-        time_played: { label: 'Hours Played Per Day', color: '#a855f7', key: 'total_minutes' }
+        win_rate: { label: 'Win Rate %', color: '#f7c948', key: 'win_rate' }
       };
 
-      const config = statConfig[currentChartStat];
-      let chartLabels;
-      let dataPoints;
-      
-      // Special handling for time_played: show daily hours as bar chart
-      if (currentChartStat === 'time_played') {
-        // Calculate deltas between consecutive snapshots and group by day
-        const dailyMinutes = {};
-        
-        for (let i = 1; i < data.chart_data.length; i++) {
-          const current = data.chart_data[i];
-          const previous = data.chart_data[i - 1];
-          const minutesDelta = (current.total_minutes || 0) - (previous.total_minutes || 0);
-          
-          const date = new Date(current.timestamp);
-          const dateKey = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          
-          dailyMinutes[dateKey] = (dailyMinutes[dateKey] || 0) + minutesDelta;
-        }
-        
-        // Convert to arrays for chart
-        chartLabels = Object.keys(dailyMinutes);
-        dataPoints = Object.values(dailyMinutes).map(mins => mins / 60); // Convert to hours
-        
-        // Update labels
-        progressChart.data.labels = chartLabels;
-        
-      } else {
-        dataPoints = data.chart_data.map(point => point[config.key]);
-        
-        // In gains mode, show change from first data point (except for win_rate)
-        if (showGainsMode && currentChartStat !== 'win_rate' && dataPoints.length > 0) {
-          const baseline = dataPoints[0];
-          dataPoints = dataPoints.map(val => val - baseline);
-          config.label = config.label + ' Gained';
-        } else if (!showGainsMode) {
-          config.label = 'Total ' + config.label;
-        }
-        
-        // Update labels to original
-        progressChart.data.labels = data.chart_data.map(point => {
-          const date = new Date(point.timestamp);
-          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        });
+      const config = statConfig[currentChartStat] || statConfig.wins;
+      let dataPoints = data.chart_data.map(point => point[config.key]);
+
+      if (showGainsMode && currentChartStat !== 'win_rate' && dataPoints.length > 0) {
+        const baseline = dataPoints[0];
+        dataPoints = dataPoints.map(val => val - baseline);
+        config.label = config.label + ' Gained';
+      } else if (!showGainsMode) {
+        config.label = 'Total ' + config.label;
       }
 
-      progressChart.config.type = currentChartStat === 'time_played' ? 'bar' : 'line';
-      
+      progressChart.config.type = 'line';
+      progressChart.data.labels = data.chart_data.map(point => {
+        const date = new Date(point.timestamp);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      });
+
       progressChart.data.datasets[0] = {
         label: config.label,
         data: dataPoints,
         borderColor: config.color,
-        backgroundColor: currentChartStat === 'time_played' ? config.color + '80' : config.color + '20',
+        backgroundColor: config.color + '20',
         tension: 0.3,
         fill: true,
-        pointRadius: currentChartStat === 'time_played' ? 0 : 4,
-        pointHoverRadius: currentChartStat === 'time_played' ? 0 : 6,
+        pointRadius: 4,
+        pointHoverRadius: 6,
         pointBackgroundColor: config.color,
         pointBorderColor: '#1a1a2e',
         pointBorderWidth: 2,
-        borderWidth: currentChartStat === 'time_played' ? 0 : 2
+        borderWidth: 2
       };
 
-      progressChart.options.scales.y.beginAtZero = showGainsMode || currentChartStat === 'win_rate' || currentChartStat === 'time_played';
+      progressChart.options.scales.y.beginAtZero = showGainsMode || currentChartStat === 'win_rate';
       progressChart.options.scales.y.ticks.callback = function(value) {
         if (currentChartStat === 'win_rate') {
           return value.toFixed(1) + '%';
-        }
-        if (currentChartStat === 'time_played') {
-          return value.toFixed(0) + 'h';
         }
         if (showGainsMode) {
           return (value >= 0 ? '+' : '') + (Math.abs(value) >= 1000 ? (value / 1000).toFixed(1) + 'k' : value);
@@ -4953,10 +5204,12 @@
               <div class="stat-label">Win Rate</div>
               <div class="stat-value">${(aggregate.overall_win_rate || 0).toFixed(1)}%</div>
             </div>
+            ${aggregate.total_score != null ? `
             <div class="stat-card">
-              <div class="stat-label">Time Played</div>
-              <div class="stat-value">${Math.round(aggregate.hours_played || 0).toLocaleString()}h</div>
+              <div class="stat-label">Score</div>
+              <div class="stat-value">${(aggregate.total_score || 0).toLocaleString()}</div>
             </div>
+            ` : ''}
           </div>
         </div>
       `);
@@ -5001,10 +5254,6 @@
                 <div class="stat-card">
                   <div class="stat-label">Win Rate</div>
                   <div class="stat-value">${(modeStats.win_rate || 0).toFixed(1)}%</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-label">Time Played</div>
-                  <div class="stat-value">${Math.round(modeStats.hours_played || 0).toLocaleString()}h</div>
                 </div>
               </div>
             </div>
@@ -5360,8 +5609,8 @@
         html.push(`
           <div class="no-progress">
             <div class="no-progress-icon">📊</div>
-            <p>No progress history yet</p>
-            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Stats will be tracked each time you refresh this profile</p>
+            <p>No progression snapshots in our database yet</p>
+            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Charts and history populate when this profile is loaded on gdb.gg (D1), then update over time.</p>
           </div>
         `);
       } else {
@@ -5489,453 +5738,27 @@
       return html.join('');
     }
 
-    // ==================== ACHIEVEMENTS SYSTEM ==
-    
-    let achievementsCache = {
-      userData: null,
-      allDefinitions: null,
-      loading: false
-    };
-    
-    // Helper function to get achievement icon URL from R2
-    function getAchievementIcon(achievementKey, fallbackUrl) {
-      // Map achievement keys to R2 URLs
-      const iconBaseUrl = 'https://assets.gdb.gg';
-      const iconMap = {
-        'beta_tester': `${iconBaseUrl}/beta_tester.svg`,
-        'community_helper': `${iconBaseUrl}/community_helper.svg`,
-        'feedback_legend': `${iconBaseUrl}/feedback_legend.svg`,
-        'bug_hunter': `${iconBaseUrl}/bug_hunter.svg`,
-        'early_adopter': `${iconBaseUrl}/early_adopter.svg`,
-        'rnk_champion': `${iconBaseUrl}/rnk_champion.svg`,
-        'content_creator': `${iconBaseUrl}/content_creator.svg`
-      };
-      
-      return iconMap[achievementKey] || fallbackUrl || `${iconBaseUrl}/${achievementKey}.svg`;
-    }
-    
-    async function loadAchievements(accountId, displayName) {
-      const container = document.getElementById('tab-achievements');
-      if (!container || achievementsCache.loading) return;
-      
-      achievementsCache.loading = true;
-      container.innerHTML = '<div class="achievements-loading">Loading achievements...</div>';
-      
-      try {
-        // Fetch user achievements and all definitions in parallel
-        const [userResponse, defsResponse] = await Promise.all([
-          fetch(`https://xp.gdb.gg/user/${accountId}`),
-          fetch('https://xp.gdb.gg/definitions')
-        ]);
-        
-        let userData = null;
-        if (userResponse.ok) {
-          userData = await userResponse.json();
-        } else {
-          console.warn(`User achievement data returned ${userResponse.status}: ${userResponse.statusText}`);
-        }
-        
-        if (!defsResponse.ok) {
-          throw new Error(`Definitions API returned ${defsResponse.status}: ${defsResponse.statusText}`);
-        }
-        
-        const defsData = await defsResponse.json();
-        
-        achievementsCache.userData = userData;
-        achievementsCache.allDefinitions = defsData.achievements || [];
-        
-        // Apply prestige effects to profile header if user data exists
-        if (userData) {
-          applyPrestigeEffects(userData);
-        }
-        
-        // Build and display achievements UI
-        container.innerHTML = buildAchievementsSection(userData, defsData.achievements, displayName);
-        
-      } catch (error) {
-        console.error('Failed to load achievements - Full error:', error);
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        if (error.name === 'TypeError' && error.message.includes('fetch')) {
-          console.error('This is likely a CORS or network connectivity issue');
-          console.error('Check: 1) CORS headers on xp.gdb.gg, 2) Network tab in DevTools, 3) Server is running');
-        }
-        container.innerHTML = `
-          <div class="achievements-error">
-            <p>Unable to load achievements at this time.</p>
-            <p style="font-size: 0.85rem; color: #9ca3af; margin-top: 0.5rem;">Error: ${error.message}</p>
-            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.5rem;">Check browser console for details</p>
-            <button onclick="loadAchievements('${accountId}', '${displayName}')" class="retry-btn">Retry</button>
-          </div>
-        `;
-      } finally {
-        achievementsCache.loading = false;
-      }
-    }
-    
-    // Load prestige data separately and apply effects
-    async function loadPrestigeData(accountId) {
-      try {
-        const response = await fetch(`https://xp.gdb.gg/user/${accountId}`);
-        if (!response.ok) {
-          console.warn(`Prestige data returned ${response.status}: ${response.statusText}`);
-          return;
-        }
-        const userData = await response.json();
-        applyPrestigeEffects(userData);
-      } catch (error) {
-        // Silently fail - prestige effects are optional
-        console.error('Failed to load prestige data:', error);
-      }
-    }
-    
-    // Apply prestige visual effects to profile header based on XP level
-    function applyPrestigeEffects(userData) {
-      if (!userData || !currentAccount) return;
-      
-      const level = userData.currentLevel;
-      const title = userData.currentTitle;
-      const xp = userData.totalXP;
-      const nextLevel = userData.nextLevel;
-      
-      // Determine tier based on title from API
-      let tier = 'newcomer';
-      const titleLower = title.toLowerCase();
-      
-      if (titleLower.includes('legendary')) tier = 'legendary';
-      else if (titleLower.includes('elite')) tier = 'elite';
-      else if (titleLower.includes('gold')) tier = 'gold';
-      else if (titleLower.includes('silver')) tier = 'silver';
-      else if (titleLower.includes('bronze')) tier = 'bronze';
-      
-      const tierClass = `xp-${tier}`;
-      
-      // Apply XP tier to avatar container (outer ring)
-      const avatarContainer = document.querySelector('.player-avatar-container');
-      if (avatarContainer) {
-        // Remove existing XP tier classes from container
-        avatarContainer.classList.remove('xp-newcomer', 'xp-bronze', 'xp-silver', 'xp-gold', 'xp-elite', 'xp-legendary');
-        avatarContainer.classList.add(tierClass);
-      }
-      
-      // Apply avatar effects (keep inner rank ring unchanged)
-      const avatar = document.querySelector('.player-avatar');
-      if (avatar) {
-        // Don't remove rank classes - keep the inner ring showing rank
-        // Only add prestige badge
-        let badge = avatarContainer?.querySelector('.prestige-badge');
-        if (!badge && avatarContainer) {
-          badge = document.createElement('div');
-          badge.className = 'prestige-badge';
-          avatarContainer.appendChild(badge);
-        }
-        if (badge) {
-          badge.className = `prestige-badge ${tierClass}`;
-          badge.textContent = level;
-        }
-        
-        // Add particle effects for Elite and Legendary tiers
-        if (tier === 'elite' || tier === 'legendary') {
-          let particles = avatarContainer?.querySelector('.prestige-particles');
-          if (!particles && avatarContainer) {
-            particles = document.createElement('div');
-            particles.className = 'prestige-particles';
-            
-            // Create particles
-            const particleCount = tier === 'legendary' ? 12 : 8;
-            const colors = tier === 'legendary' 
-              ? ['#ffd700', '#00ffff', '#a855f7', '#ff6b35']
-              : ['#ff6b35', '#a855f7', '#00d4aa'];
-            
-            for (let i = 0; i < particleCount; i++) {
-              const particle = document.createElement('div');
-              particle.className = 'particle';
-              particle.style.backgroundColor = colors[i % colors.length];
-              
-              // Random position around circle
-              const angle = (i / particleCount) * Math.PI * 2;
-              const distance = 65 + Math.random() * 20;
-              const tx = Math.cos(angle) * distance;
-              const ty = Math.sin(angle) * distance;
-              
-              particle.style.setProperty('--tx', `${tx}px`);
-              particle.style.setProperty('--ty', `${ty}px`);
-              particle.style.animationDelay = `${(i / particleCount) * 3}s`;
-              
-              particles.appendChild(particle);
-            }
-            
-            avatarContainer.appendChild(particles);
-          }
-        }
-      }
-      
-      // Don't apply name styling - keep default gradient
-      // User feedback: name theming is too much
-      
-      // Add player title below name
-      const playerInfo = document.querySelector('.player-info');
-      if (playerInfo && title) {
-        let playerTitle = playerInfo.querySelector('.player-title');
-        if (!playerTitle) {
-          playerTitle = document.createElement('div');
-          playerTitle.className = 'player-title';
-          playerInfo.querySelector('h1').after(playerTitle);
-        }
-        playerTitle.className = `player-title ${tierClass}`;
-        playerTitle.textContent = title;
-        
-        // Add XP progress bar
-        let xpBar = playerInfo.querySelector('.xp-progress-bar');
-        if (!xpBar) {
-          const barContainer = document.createElement('div');
-          barContainer.className = 'xp-progress-bar';
-          
-          const barFill = document.createElement('div');
-          barFill.className = `xp-progress-fill ${tierClass}`;
-          barFill.style.width = `${nextLevel.progressPercent}%`;
-          
-          barContainer.appendChild(barFill);
-          
-          const progressText = document.createElement('div');
-          progressText.className = 'xp-progress-text';
-          progressText.innerHTML = `
-            <span class="xp-level-label">Level ${level}</span>
-            <span>${nextLevel.xpRemaining.toLocaleString()} XP to Level ${nextLevel.level}</span>
-          `;
-          
-          playerInfo.appendChild(barContainer);
-          playerInfo.appendChild(progressText);
-        } else {
-          // Update existing bar
-          const barFill = xpBar.querySelector('.xp-progress-fill');
-          if (barFill) {
-            barFill.className = `xp-progress-fill ${tierClass}`;
-            barFill.style.width = `${nextLevel.progressPercent}%`;
-          }
-          
-          const progressText = playerInfo.querySelector('.xp-progress-text');
-          if (progressText) {
-            progressText.innerHTML = `
-              <span class="xp-level-label">Level ${level}</span>
-              <span>${nextLevel.xpRemaining.toLocaleString()} XP to Level ${nextLevel.level}</span>
-            `;
-          }
-        }
-      }
-    }
-    
-    function buildAchievementsSection(userData, allAchievements, displayName) {
-      const html = [];
-      
-      // If user has no achievements data, show starter message
-      if (!userData) {
-        html.push(`
-          <div class="achievements-empty">
-            <div class="empty-icon">🏆</div>
-            <h2>No Achievements Yet</h2>
-            <p>${displayName} hasn't unlocked any achievements yet.</p>
-            <p class="empty-hint">Play matches, rank up, and contribute to the community to earn achievements and XP!</p>
-          </div>
-        `);
-        return html.join('');
-      }
-      
-      // Calculate rarity distribution
-      const rarityCount = {
-        common: 0,
-        rare: 0,
-        epic: 0,
-        legendary: 0
-      };
-      
-      userData.achievements.forEach(a => {
-        if (rarityCount[a.rarity] !== undefined) {
-          rarityCount[a.rarity]++;
-        }
-      });
-      
-      // User Profile Summary - Compact single-line design
-      html.push(`
-        <div class="achievements-header-compact">
-          <div class="achievement-summary-bar">
-            <div class="summary-item">
-              <span class="summary-label">Level</span>
-              <span class="summary-value">${userData.currentLevel}</span>
-            </div>
-            <div class="summary-divider"></div>
-            <div class="summary-item">
-              <span class="summary-label">Unlocked</span>
-              <span class="summary-value">${userData.stats.totalAchievements}/${userData.stats.totalPossible}</span>
-            </div>
-            <div class="summary-divider"></div>
-            <div class="summary-item rarity-breakdown">
-              <span class="summary-label">Collection</span>
-              <div class="rarity-inline">
-                ${rarityCount.legendary > 0 ? `<span class="rarity-dot legendary" title="Legendary">${rarityCount.legendary}🟡</span>` : ''}
-                ${rarityCount.epic > 0 ? `<span class="rarity-dot epic" title="Epic">${rarityCount.epic}🟣</span>` : ''}
-                ${rarityCount.rare > 0 ? `<span class="rarity-dot rare" title="Rare">${rarityCount.rare}🔵</span>` : ''}
-                ${rarityCount.common > 0 ? `<span class="rarity-dot common" title="Common">${rarityCount.common}⚪</span>` : ''}
-              </div>
-            </div>
-          </div>
-        </div>
-      `);
-      
-      // Featured Achievements (if any)
-      const featured = userData.achievements.filter(a => a.featured).slice(0, 3);
-      if (featured.length > 0) {
-        html.push(`
-          <div class="featured-achievements-section">
-            <h3 class="section-subtitle">⭐ Featured Achievements</h3>
-            <div class="featured-achievements-grid">
-        `);
-        
-        featured.forEach(achievement => {
-          const iconUrl = getAchievementIcon(achievement.key, achievement.icon);
-          html.push(`
-            <div class="featured-achievement rarity-${achievement.rarity}">
-              <img src="${iconUrl}" alt="${achievement.name}" class="featured-icon">
-              <div class="featured-info">
-                <div class="featured-name">${achievement.name}</div>
-                <div class="featured-rarity">${achievement.rarity.toUpperCase()}</div>
-              </div>
-            </div>
-          `);
-        });
-        
-        html.push(`
-            </div>
-          </div>
-        `);
-      }
-      
-      // All Achievements Grid
-      html.push(`
-        <div class="all-achievements-section">
-          <h3 class="section-subtitle">🎯 All Achievements</h3>
-          
-          <div class="achievement-filters">
-            <button class="filter-button active" onclick="filterAchievements('all')">All</button>
-            <button class="filter-button" onclick="filterAchievements('community')">Community</button>
-            <button class="filter-button" onclick="filterAchievements('stats')">Stats-Based</button>
-            <button class="filter-button" onclick="filterAchievements('special')">Special</button>
-          </div>
-          
-          <div class="achievements-grid" id="achievements-grid">
-      `);
-      
-      const unlockedKeys = new Set(userData.achievements.map(a => a.key));
-      
-      // Sort achievements by XP value (highest first)
-      const sortedAchievements = [...allAchievements].sort((a, b) => b.xpValue - a.xpValue);
-      
-      sortedAchievements.forEach(achievement => {
-        const isUnlocked = unlockedKeys.has(achievement.key);
-        const userAchievement = userData.achievements.find(a => a.key === achievement.key);
-        const iconUrl = getAchievementIcon(achievement.key, achievement.icon);
-        
-        // Determine category based on achievement properties
-        const category = achievement.category || (
-          achievement.key.includes('bug') || achievement.key.includes('feedback') || achievement.key.includes('community') 
-            ? 'community' 
-            : achievement.key.includes('early') || achievement.key.includes('beta') 
-              ? 'special' 
-              : 'stats'
-        );
-        
-        html.push(`
-          <div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'} rarity-${achievement.rarity}" data-category="${category}">
-            <div class="achievement-icon-wrapper">
-              <img src="${iconUrl}" alt="${achievement.name}" class="achievement-icon ${!isUnlocked ? 'grayscale' : ''}">
-              ${isUnlocked ? '<div class="unlock-check">✓</div>' : ''}
-            </div>
-            <div class="achievement-content">
-              <h4 class="achievement-name">${achievement.name}</h4>
-              <p class="achievement-description">${achievement.description}</p>
-              <div class="achievement-meta">
-                <span class="achievement-rarity rarity-${achievement.rarity}">${achievement.rarity.toUpperCase()}</span>
-                <span class="achievement-xp">+${achievement.xpValue} XP</span>
-              </div>
-              ${isUnlocked && userAchievement ? `
-                <div class="achievement-unlock-date">
-                  Unlocked ${new Date(userAchievement.unlockedAt).toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric', 
-                    year: 'numeric' 
-                  })}
-                </div>
-              ` : ''}
-              ${!isUnlocked && achievement.progress !== undefined ? `
-                <div class="achievement-progress">
-                  <div class="achievement-progress-label">
-                    <span>Progress</span>
-                    <span>${achievement.progress.current}/${achievement.progress.required}</span>
-                  </div>
-                  <div class="achievement-progress-bar">
-                    <div class="achievement-progress-fill" style="width: ${Math.min(100, (achievement.progress.current / achievement.progress.required) * 100)}%"></div>
-                  </div>
-                </div>
-              ` : ''}
-            </div>
-          </div>
-        `);
-      });
-      
-      html.push(`
-          </div>
-        </div>
-      `);
-      
-      return html.join('');
-    }
-    
-    // Filter achievements by category
-    function filterAchievements(category) {
-      const cards = document.querySelectorAll('.achievement-card');
-      const buttons = document.querySelectorAll('.filter-button');
-      
-      // Update button states
-      buttons.forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.textContent.toLowerCase().includes(category) || (category === 'all' && btn.textContent === 'All')) {
-          btn.classList.add('active');
-        }
-      });
-      
-      // Show/hide cards based on category
-      cards.forEach(card => {
-        if (category === 'all') {
-          card.style.display = '';
-        } else {
-          const cardCategory = card.getAttribute('data-category');
-          card.style.display = cardCategory === category ? '' : 'none';
-        }
-      });
-    }
-
     // Load and display historic ranked data
     async function loadHistoricRanked(accountId) {
       const container = document.getElementById('tab-historic-ranked');
       if (!container) return;
-      
+
+      container.innerHTML =
+        '<div class="historic-ranked-loading" style="text-align: center; padding: 3rem; color: #9ca3af;">Loading historic ranked data...</div>';
+
       try {
-        // Show loading state
-        container.innerHTML = '<div class="historic-ranked-loading" style="text-align: center; padding: 3rem; color: #9ca3af;">Loading historic ranked data...</div>';
-        
-        // Fetch all seasons data
-        const response = await fetch(`https://fortnite.gdb.gg/ranked/${accountId}/all-seasons?enrich=true`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to load historic ranked data');
+        let data = currentHistoricRanked;
+        if (!data || !data.by_ranking_type) {
+          const response = await fetch(
+            FAPI_PROFILE_BASE + '/' + encodeURIComponent(accountId) + '?ranked_history=true'
+          );
+          if (!response.ok) throw new Error('Failed to load historic ranked data');
+          const bundle = await response.json();
+          data = bundle.ranked && bundle.ranked.historical;
+          currentHistoricRanked = data;
         }
-        
-        const data = await response.json();
-        
-        // Build the historic ranked HTML
-        const html = buildHistoricRankedContent(data);
-        container.innerHTML = html;
-        
+
+        container.innerHTML = buildHistoricRankedContent(data || {});
       } catch (error) {
         console.error('Error loading historic ranked:', error);
         container.innerHTML = `
@@ -5947,51 +5770,89 @@
       }
     }
     
-    // Build historic ranked content from all-seasons API data
+    /** One row from ranked.historical.by_ranking_type → mode shape for historic cards */
+    function historicApiRowToMode(season, rankingType) {
+      const curDiv = season.currentDivision;
+      const highDiv = season.highestDivision != null ? season.highestDivision : curDiv;
+      const curRankObj =
+        season.currentRank && typeof season.currentRank === 'object' && Object.keys(season.currentRank).length
+          ? season.currentRank
+          : null;
+      const highRankObj =
+        season.highestRank && typeof season.highestRank === 'object' && Object.keys(season.highestRank).length
+          ? season.highestRank
+          : null;
+      let rankName = curRankObj && curRankObj.name;
+      if (!rankName && curDiv != null) rankName = DIVISION_NAMES[curDiv] || 'Unknown';
+      let highName = highRankObj && highRankObj.name;
+      if (!highName && highDiv != null) highName = DIVISION_NAMES[highDiv] || rankName;
+      const isUnreal = rankName === 'Unreal';
+      const unrealRank = curRankObj && curRankObj.unrealRank != null ? curRankObj.unrealRank : null;
+      return {
+        rankingType: rankingType,
+        rankingTypeName: season.rankingTypeName || getRankingTypeDisplayName(rankingType),
+        currentRank: {
+          name: rankName,
+          tier: curRankObj && curRankObj.tier,
+          isUnreal: isUnreal,
+          unrealRank: unrealRank
+        },
+        highestRank: { name: highName },
+        currentDivision: curDiv,
+        highestDivision: highDiv,
+        promotionProgress: (function () {
+          let pp = season.promotionProgress != null ? Number(season.promotionProgress) : 0;
+          if (pp > 1) pp = pp / 100;
+          return pp;
+        })(),
+        lastUpdated: season.lastUpdated
+      };
+    }
+
+    // Build historic ranked from GET /v1/profile → ranked.historical (or legacy enrich shape)
     function buildHistoricRankedContent(data) {
       if (!data || !data.by_ranking_type) {
         return `
           <div style="text-align: center; padding: 3rem; color: #9ca3af;">
             <p>No historic ranked data available.</p>
+            ${currentMeta && currentMeta.partial ? '<p style="font-size:0.85rem;margin-top:0.5rem;">Some data may be missing (partial response).</p>' : ''}
           </div>
         `;
       }
-      
-      // Get unique seasons sorted by date (most recent first)
+
       const seasonMap = new Map();
-      
-      // Collect all seasons with their metadata
+
       for (const [rankingType, seasons] of Object.entries(data.by_ranking_type)) {
         if (!Array.isArray(seasons)) continue;
-        
-        seasons.forEach(season => {
-          const seasonKey = season.trackGuid;
-          if (!seasonKey) return;
-          
-          // Skip current/active seasons (we show those on the main Ranked tab)
+
+        seasons.forEach(function (season) {
           if (season.seasonEnded === false) return;
-          
+
+          const seasonKey =
+            season.trackGuid ||
+            rankingType +
+              '::' +
+              (season.seasonName || 'season') +
+              '::' +
+              (season.lastUpdated || '');
+
           if (!seasonMap.has(seasonKey)) {
             seasonMap.set(seasonKey, {
               trackGuid: seasonKey,
-              seasonName: season.seasonName || `Season ${seasonKey}`,
-              beginTime: season.trackMetadata?.beginTime || season.trackMetadata?.timestamps?.begin,
-              endTime: season.trackMetadata?.endTime || season.trackMetadata?.timestamps?.end,
+              seasonName: season.seasonName || 'Ranked season',
+              beginTime:
+                season.trackMetadata?.beginTime ||
+                season.trackMetadata?.timestamps?.begin ||
+                season.beginTime,
+              endTime:
+                season.trackMetadata?.endTime ||
+                season.trackMetadata?.timestamps?.end ||
+                season.endTime,
               modes: []
             });
           }
-          
-          // Add this mode to the season
-          seasonMap.get(seasonKey).modes.push({
-            rankingType: rankingType,
-            rankingTypeName: season.rankingTypeName || getRankingTypeDisplayName(rankingType),
-            currentRank: season.currentRank,
-            highestRank: season.highestRank,
-            currentDivision: season.currentDivision,
-            highestDivision: season.highestDivision,
-            promotionProgress: season.promotionProgress,
-            lastUpdated: season.lastUpdated
-          });
+
+          seasonMap.get(seasonKey).modes.push(historicApiRowToMode(season, rankingType));
         });
       }
       
