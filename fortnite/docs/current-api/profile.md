@@ -10,10 +10,19 @@ For the **search → profile page** flow: after you resolve an Epic **account id
 |-------|---------|-------------|
 | `raw` | omitted | If `true`, includes full Epic statsproxy JSON under `stats.raw` (large; use only for debugging) |
 | `stats_debug` | `false` | If `true`, adds `stats.parser_debug`: Epic key count, how many `br_*` rows were parsed, full sorted `unique_playlists` list, and any `br_*` keys that still fail parsing (should be empty after fixes) |
+| `stats_by_input` | `true` | If `false`, omits **`stats.by_input`** (smaller JSON). When enabled, splits BR stats by Epic input: keyboard+mouse, gamepad, touch (from `br_*_keyboardmouse_` / `_gamepad_` / `_touch_` in keys). **Ranked is unchanged** — Habanero has no per-input breakdown in this API. |
 | `ranked_history` | `true` | If `false`, skips the all-seasons Habanero fetch (smaller / faster; `ranked.historical` is `null`) |
 | `ranked_history_enrich` | `false` | If `true`, enriches historical rows with track metadata (heavier; same idea as `?enrich=true` on `/ranked/{id}/all-seasons`) |
+| `cache_first` | `false` | If `true`, serves **stats** from D1 when the player row has **`parsed_data`** and `last_updated` is within **`cache_max_age`** (skips Epic statsproxy for that request). Account + ranked still load from Epic. See [progression-leaderboards.md](./progression-leaderboards.md). |
+| `cache_max_age` | `3600` | Seconds (60–86400) for `cache_first` freshness. |
+| `persist_min_interval` | `900` | Minimum seconds between **D1 persist** runs for this account (**default 15 minutes**). If `player_profiles.last_updated` or the latest `player_ranks.cached_at` is newer than this window, **`storeProfile` / `storePlayerRank`** are skipped for this view (response is still fresh from Epic). Range 60–3600. |
+| `persist_force` | `false` | If `true`, bypasses **`persist_min_interval`** and always runs D1 persist (ops / debugging). |
 
 `{accountId}` must be **32 hex characters** (Epic account id).
+
+### D1 persistence (background)
+
+On each profile view, the response is built from **Epic** (unless `cache_first` applies to stats). Separately, **`ctx.waitUntil`** may upsert **`player_profiles`** / **`profile_history`** (when stats exist) and **`player_ranks`** / **`rank_history`** for **`ranked.current`**. That persist runs **at most once per `persist_min_interval` seconds** per account (default **900** = 15 minutes), using `player_profiles.last_updated` and `MAX(player_ranks.cached_at)` so repeat refreshes do not spam D1. **`upsertDisplayName`** still runs every time when a display name is present (lightweight). Use **`persist_force=true`** to write immediately. Failures do not change HTTP status. Details: [progression-leaderboards.md](./progression-leaderboards.md).
 
 ### Examples
 
@@ -41,6 +50,21 @@ curl -sS "https://fapi.gdb.gg/v1/profile/956f46275d1c45949038ee0017190934"
 | `by_mode` | object | Per team size: `solo`, `duo`, `trio`, `squad`, **`octet`** — each `{ matches, wins, kills, win_rate }` |
 | `by_build_variant` | object | Heuristic: **`build`**, **`nobuild`**, **`unknown`** — same shape as a mode row |
 | `competitive` | object | `arena_matches`, `tournament_matches`, `tournament_wins` |
+
+### `stats.by_input` (default: included)
+
+Same rollup shape as **`stats.summary`** for each device Epic tracks in statsv2:
+
+| Key | Meaning |
+|-----|---------|
+| `keyboard_mouse` | Epic segment `keyboardmouse` (KBM) |
+| `gamepad` | Controller |
+| `touch` | Mobile / touch |
+
+Each value includes: `total_matches`, `total_wins`, `total_kills`, `total_outlived`, `total_minutes`, `win_rate`, `kills_per_match`, `hours_played`, `top_3_finishes`, `top_5_finishes`, `total_score`, **`by_mode`**, **`by_build_variant`**, **`competitive`** — all scoped to that input only.
+
+- **`stats.summary`** remains the **all-input combined** view (sum of every `br_*` row regardless of device).
+- Playlists that do not use the standard `br_*_{input}_m0_playlist_*` pattern are not in this split (same as parser rules).
 
 ### JSON example (trimmed)
 
@@ -77,6 +101,11 @@ curl -sS "https://fapi.gdb.gg/v1/profile/956f46275d1c45949038ee0017190934"
         "unknown": { "matches": 0, "wins": 0, "kills": 0, "win_rate": 0 }
       },
       "competitive": { "arena_matches": 0, "tournament_matches": 0, "tournament_wins": 0 }
+    },
+    "by_input": {
+      "keyboard_mouse": { "total_matches": 0, "by_mode": {}, "by_build_variant": {}, "competitive": {} },
+      "gamepad": {},
+      "touch": {}
     },
     "stat_count": 1234
   },
@@ -176,7 +205,7 @@ If a slice fails, **`meta.partial`** is `true` and **`meta.errors`** is an array
 ## Frontend flow
 
 1. Search: `GET /user/search?username=…&platform=epic` → pick `accountId` (or exact match).
-2. Profile: `GET /v1/profile/{accountId}` → render header from `account`, KPIs from `stats.summary`, current rank cards from `ranked.current.modes`, history tables from `ranked.historical.by_ranking_type`.
+2. Profile: `GET /v1/profile/{accountId}` → render header from `account`, KPIs from `stats.summary` (all inputs) or **`stats.by_input.{keyboard_mouse|gamepad|touch}`** for input-specific tabs, current rank cards from `ranked.current.modes`, history tables from `ranked.historical.by_ranking_type`.
 
 ## Older / heavier endpoints
 

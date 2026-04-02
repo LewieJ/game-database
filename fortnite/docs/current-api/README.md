@@ -12,7 +12,7 @@ Share **this entire folder** (`docs/current-api/`): it is the up-to-date contrac
 | [profile.md](./profile.md) | **`GET /v1/profile/{accountId}`** — stats summary, ranked current + historical, query flags |
 | [auth.md](./auth.md) | Only if they operate the Worker (Epic login, secrets). **App developers** calling **`https://fapi.gdb.gg`** only need the routes above; auth is server-side. |
 
-**Minimal integration path:** `GET /user/search?username=…` → `GET /v1/profile/{accountId}` (32-hex id from search). Handle **`meta.partial`** and **`meta.errors`** when any slice fails.
+**Minimal integration path:** `GET /user/search?username=…` → `GET /v1/profile/{accountId}` (32-hex id from search). Handle **`meta.partial`** and **`meta.errors`** when any slice fails. Use **`stats.summary`** for combined BR stats and **`stats.by_input`** for KBM vs controller vs touch (same response; omit with `?stats_by_input=false` if you need a smaller payload). Profile views **persist** to D1 in the background for charts and leaderboards — see [progression-leaderboards.md](./progression-leaderboards.md).
 
 ## Base URLs
 
@@ -30,6 +30,7 @@ All paths below are relative to the base (e.g. `GET https://fapi.gdb.gg/health`)
 | [auth.md](./auth.md) | Epic OAuth, service account, token refresh |
 | [users.md](./users.md) | User search, account lookup |
 | [profile.md](./profile.md) | **`GET /v1/profile/{accountId}`** — stats + ranked bundle |
+| [progression-leaderboards.md](./progression-leaderboards.md) | Time-series (`/v1/progress`, `/v1/ranked`), global + ranked leaderboards, D1 scope |
 
 ## Epic upstream reference
 
