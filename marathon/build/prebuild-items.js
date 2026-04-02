@@ -33,13 +33,13 @@ function escapeHtml(text) {
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"//marathon/g, '&quot;')
-        .replace(/'//marathon/g, '&#39;');
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 function escapeAttr(text) {
     if (!text) return '';
-    return String(text).replace(/"/g, '&quot;').replace(/'//marathon/g, '&#39;');
+    return String(text).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 function capitalizeFirst(str) {
@@ -71,7 +71,7 @@ function buildCardHtml(item) {
     const imgSrc  = item.image_url ? `https://items.marathondb.gg${item.image_url}` : '';
 
     const verifiedBadge = item.verified
-        ? '<svg class="item-verified-icon" viewBox="0 0 24 24" fill="currentColor" width="13" height="13" title="Verified"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"//marathon/></svg>'
+        ? '<svg class="item-verified-icon" viewBox="0 0 24 24" fill="currentColor" width="13" height="13" title="Verified"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
         : '';
 
     const imgHtml = imgSrc
@@ -97,7 +97,7 @@ function buildCardHtml(item) {
                         <div class="core-name">${name}${verifiedBadge}</div>${descHtml}
                     </div>
                     <div class="core-card-footer">
-                        <span class="core-card-cta">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"//marathon/><path d="m12 5 7 7-7 7"//marathon/></svg></span>
+                        <span class="core-card-cta">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
                     </div>
                 </div>`;
 }

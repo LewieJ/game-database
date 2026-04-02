@@ -28,6 +28,15 @@
         unavailable: false
     };
 
+    /** Deep-link / share: same query key as weapon skins hub */
+    const SKIN_URL_PARAM = 'skin';
+    const RUNNER_SKINS_LIST_CSS = '/marathon/css/weapon-skins-list.css';
+
+    let shellModalEl = null;
+    let shellModalContentEl = null;
+    let _rsImageLightboxEl = null;
+    let _shellGridModalBound = false;
+
     // DOM Elements
     const elements = {
         // Header
@@ -71,11 +80,420 @@
         'prestige': 11
     };
 
+    function ensureRunnerSkinsHubAssets() {
+        if (!document.querySelector(`link[href="${RUNNER_SKINS_LIST_CSS}"]`)) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = RUNNER_SKINS_LIST_CSS;
+            document.head.appendChild(link);
+        }
+
+        let modal = document.getElementById('skinModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'skinModal';
+            modal.className = 'skin-modal-overlay skin-modal--rnk';
+            modal.setAttribute('aria-hidden', 'true');
+            modal.innerHTML = `
+        <div class="skin-modal skin-modal--rnk" role="dialog" aria-modal="true" aria-labelledby="runner-skin-modal-title">
+            <button type="button" id="closeRunnerShellModal" class="skin-modal-close" aria-label="Close detail">&times;</button>
+            <div id="modalContent" class="skin-modal-content"></div>
+        </div>`;
+            document.body.appendChild(modal);
+        }
+
+        shellModalEl = document.getElementById('skinModal');
+        shellModalContentEl = document.getElementById('modalContent');
+
+        const main = document.querySelector('main');
+        if (main) {
+            main.classList.add('ws-skins-page', 'rs-skins-page');
+        }
+    }
+
+    function getShellQueryParam() {
+        return new URLSearchParams(window.location.search).get(SKIN_URL_PARAM);
+    }
+
+    function buildShellShareUrl(slug) {
+        const u = new URL(window.location.href);
+        u.searchParams.set(SKIN_URL_PARAM, slug);
+        return u.toString();
+    }
+
+    function attrSafeUrl(u) {
+        if (!u) return '';
+        return String(u).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    }
+
+    function resolveRunnerCdnUrl(path) {
+        if (!path) return '';
+        const s = String(path);
+        if (/^https?:\/\//i.test(s)) return s;
+        return `${SKINS_API}/${s.replace(/^\//, '')}`;
+    }
+
+    function collectRunnerModalSlides(detail) {
+        const slides = [];
+        const pushSlide = (thumb, preview, full, caption) => {
+            const t = resolveRunnerCdnUrl(thumb);
+            const p = resolveRunnerCdnUrl(preview || thumb);
+            const f = resolveRunnerCdnUrl(full || preview || thumb);
+            if (!p && !f) return;
+            slides.push({
+                thumb: t || p,
+                preview: p,
+                full: f,
+                caption: caption || ''
+            });
+        };
+
+        const primary = detail.images && detail.images.primary;
+        if (primary) {
+            pushSlide(
+                primary.path_thumbnail,
+                primary.path_card || primary.path_thumbnail,
+                primary.path_full || primary.path_card,
+                primary.image_name
+            );
+        }
+
+        const gallery = detail.images && detail.images.gallery;
+        if (Array.isArray(gallery)) {
+            gallery.forEach((img) => {
+                if (!img) return;
+                pushSlide(
+                    img.path_thumbnail,
+                    img.path_card || img.path_thumbnail,
+                    img.path_full || img.path_card,
+                    img.image_name
+                );
+            });
+        }
+
+        if (slides.length === 0 && detail.image) {
+            const im = detail.image;
+            pushSlide(im.thumbnail, im.card || im.thumbnail, im.full || im.card || im.thumbnail, '');
+        }
+
+        const seen = new Set();
+        const deduped = [];
+        for (const s of slides) {
+            const key = [s.preview, s.full, s.thumb].filter(Boolean).map((u) => String(u).split('?')[0].replace(/\/$/, ''))[0];
+            if (!key) {
+                deduped.push(s);
+                continue;
+            }
+            if (seen.has(key)) continue;
+            seen.add(key);
+            deduped.push(s);
+        }
+        return deduped;
+    }
+
+    function getSourceClassRunner(source) {
+        if (!source) return 'source-unknown';
+        const s = String(source).toLowerCase();
+        if (s.includes('pre_order') || s.includes('preorder')) return 'source-preorder';
+        if (s.includes('deluxe')) return 'source-deluxe';
+        if (s.includes('battle')) return 'source-battlepass';
+        if (s.includes('store')) return 'source-store';
+        if (s.includes('event')) return 'source-event';
+        if (s.includes('twitch')) return 'source-twitch';
+        if (s === 'default') return 'source-default';
+        return 'source-default';
+    }
+
+    function getSourceIconRunner(source) {
+        if (!source) return '';
+        const s = String(source).toLowerCase();
+        if (s.includes('pre_order') || s.includes('preorder')) {
+            return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+        }
+        if (s.includes('deluxe')) {
+            return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+        }
+        if (s.includes('battle')) {
+            return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg>';
+        }
+        if (s.includes('store')) {
+            return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
+        }
+        return '';
+    }
+
+    function closeRsImageLightbox() {
+        if (!_rsImageLightboxEl) return;
+        _rsImageLightboxEl.classList.remove('ws-image-lightbox--open');
+        const el = _rsImageLightboxEl;
+        _rsImageLightboxEl = null;
+        setTimeout(() => el.remove(), 200);
+    }
+
+    function openRsImageLightbox(src, alt) {
+        if (!src) return;
+        closeRsImageLightbox();
+        const wrap = document.createElement('div');
+        wrap.className = 'ws-image-lightbox';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'ws-image-lightbox-close';
+        btn.setAttribute('aria-label', 'Close preview');
+        btn.innerHTML = '&times;';
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = alt || 'Skin preview';
+        wrap.appendChild(btn);
+        wrap.appendChild(img);
+        wrap.addEventListener('click', (ev) => {
+            if (ev.target === wrap || ev.target === btn) closeRsImageLightbox();
+        });
+        document.body.appendChild(wrap);
+        _rsImageLightboxEl = wrap;
+        requestAnimationFrame(() => wrap.classList.add('ws-image-lightbox--open'));
+    }
+
+    function renderRunnerShellModalContent(detail) {
+        const slug = detail.slug || '';
+        const name = detail.display_name || detail.name || slug;
+        const runner = detail.runner || {};
+        const runnerSlug = runner.slug || '';
+        const runnerName = runner.name || formatName(runnerSlug);
+        const rarity = detail.rarity || 'common';
+        const slides = collectRunnerModalSlides(detail);
+        const first = slides[0] || { preview: '', full: '', thumb: '' };
+        const imageUrl = first.preview;
+        const fullSizeUrl = first.full || first.preview;
+        const showThumbs = slides.length > 1;
+
+        const avail = detail.availability || {};
+        const isLimited = avail.is_limited ?? detail.is_limited;
+        const isUnavailable = avail.is_available === false || detail.is_available === false;
+
+        const collectionName = (detail.collection && detail.collection.name) || '';
+        const bp = detail.battlepass || {};
+        const bpLevel = bp.in_battlepass && bp.level ? bp.level : null;
+        const release = detail.release || {};
+        const releaseDate = release.date || detail.release_date || '';
+
+        const questNotes = Array.isArray(detail.quest_notes) ? detail.quest_notes : [];
+        const questBlock = questNotes.length
+            ? `<div class="rs-modal-quest">
+                <h4>Master challenges</h4>
+                <ol>${questNotes.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
+               </div>`
+            : '';
+
+        const metaRows = [];
+        if (bpLevel) {
+            metaRows.push(`<div class="skin-modal-meta-row"><span class="skin-modal-meta-label">Battle pass</span><span>Level ${bpLevel}</span></div>`);
+        }
+        if (releaseDate) {
+            metaRows.push(`<div class="skin-modal-meta-row"><span class="skin-modal-meta-label">Released</span><span>${escapeHtml(releaseDate)}</span></div>`);
+        }
+        if (release.season_added) {
+            metaRows.push(`<div class="skin-modal-meta-row"><span class="skin-modal-meta-label">Season</span><span>${escapeHtml(release.season_added)}</span></div>`);
+        }
+        if (isUnavailable) {
+            metaRows.push('<div class="skin-modal-meta-row skin-modal-meta-row--warn"><span class="skin-modal-meta-label">Availability</span><span>No longer available</span></div>');
+        }
+
+        const sourceRaw = detail.source || '';
+        const sourceDisplay = formatSource(sourceRaw) || 'Unknown';
+
+        shellModalContentEl.innerHTML = `
+        <div class="skin-modal-grid">
+            <div class="skin-modal-gallery">
+                <div class="skin-modal-main-image skin-modal-main-image--zoomable rs-runner-modal-hero" data-rarity="${escapeHtml(rarity)}">
+                    ${imageUrl ? `<img src="${attrSafeUrl(imageUrl)}" alt="${escapeHtml(name)}" data-full-src="${attrSafeUrl(fullSizeUrl || imageUrl)}">` : ''}
+                    ${isLimited ? '<span class="modal-limited-badge">LIMITED TIME</span>' : ''}
+                </div>
+                ${showThumbs ? `
+                    <div class="skin-modal-thumbnails rs-runner-thumbs">
+                        ${slides.map((sld, i) => `
+                            <button type="button" class="skin-thumb ${i === 0 ? 'active' : ''}" data-src="${attrSafeUrl(sld.preview)}" data-full-src="${attrSafeUrl(sld.full || sld.preview)}">
+                                <img src="${attrSafeUrl(sld.thumb || sld.preview)}" alt="${escapeHtml(sld.caption || name)}" loading="lazy">
+                            </button>`).join('')}
+                    </div>` : ''}
+            </div>
+            <div class="skin-modal-details">
+                <div class="skin-modal-header">
+                    <span class="skin-modal-rarity rarity-${escapeHtml(rarity)}">${String(rarity).toUpperCase()}</span>
+                    ${collectionName ? `<span class="skin-modal-collection">${escapeHtml(collectionName)}</span>` : ''}
+                </div>
+                <h2 class="skin-modal-title" id="runner-skin-modal-title">${escapeHtml(name)}</h2>
+                <div class="skin-modal-applies-to">
+                    <span class="applies-label">Runner:</span>
+                    ${runnerSlug
+            ? `<a href="/marathon/runners/${escapeHtml(runnerSlug)}/" class="applies-weapon">${escapeHtml(runnerName)}</a>`
+            : `<span class="applies-weapon">${escapeHtml(runnerName)}</span>`}
+                </div>
+                ${metaRows.join('')}
+                ${detail.description ? `<p class="skin-modal-description">${escapeHtml(detail.description)}</p>` : ''}
+                <div class="skin-modal-section">
+                    <h4>Acquisition</h4>
+                    <div class="skin-modal-acquisition">
+                        <div class="acq-source ${getSourceClassRunner(sourceRaw)}">
+                            ${getSourceIconRunner(sourceRaw)}
+                            <span>${escapeHtml(sourceDisplay)}</span>
+                        </div>
+                        ${detail.source_detail ? `<p class="acq-detail">${escapeHtml(detail.source_detail)}</p>` : ''}
+                        ${detail.acquisition_note ? `
+                            <div class="acq-note">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                                </svg>
+                                ${escapeHtml(detail.acquisition_note)}
+                            </div>` : ''}
+                    </div>
+                </div>
+                ${questBlock}
+                <div class="skin-modal-actions skin-modal-actions--split">
+                    <button type="button" class="modal-action-btn primary" id="runnerShellModalCopyLink" data-shell-slug="${escapeHtml(slug)}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        <span class="skin-modal-copy-label">Copy link</span>
+                    </button>
+                    ${runnerSlug ? `
+                    <a href="/marathon/runners/${escapeHtml(runnerSlug)}/" class="modal-action-btn modal-action-btn--ghost">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        View runner
+                    </a>` : ''}
+                </div>
+            </div>
+        </div>`;
+
+        shellModalContentEl.querySelectorAll('.skin-thumb').forEach((thumb) => {
+            thumb.addEventListener('click', () => {
+                shellModalContentEl.querySelectorAll('.skin-thumb').forEach((t) => t.classList.remove('active'));
+                thumb.classList.add('active');
+                const mainImg = shellModalContentEl.querySelector('.skin-modal-main-image img');
+                if (mainImg) {
+                    const ts = thumb.dataset.src;
+                    const tf = thumb.dataset.fullSrc || ts;
+                    mainImg.src = ts;
+                    mainImg.dataset.fullSrc = tf;
+                }
+            });
+        });
+
+        const mainWrap = shellModalContentEl.querySelector('.skin-modal-main-image');
+        const mainImg = mainWrap && mainWrap.querySelector('img');
+        if (mainWrap && mainImg) {
+            mainWrap.addEventListener('click', () => {
+                const src = mainImg.dataset.fullSrc || mainImg.src;
+                openRsImageLightbox(src, name);
+            });
+        }
+
+        const copyBtn = shellModalContentEl.querySelector('#runnerShellModalCopyLink');
+        const copyLabel = copyBtn && copyBtn.querySelector('.skin-modal-copy-label');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', async () => {
+                const s = copyBtn.dataset.shellSlug || slug;
+                const text = buildShellShareUrl(s);
+                try {
+                    await navigator.clipboard.writeText(text);
+                    if (copyLabel) {
+                        const prev = copyLabel.textContent;
+                        copyLabel.textContent = 'Copied!';
+                        setTimeout(() => { copyLabel.textContent = prev; }, 1600);
+                    }
+                } catch (err) {
+                    window.prompt('Copy link:', text);
+                }
+            });
+        }
+    }
+
+    async function openShellModal(slug, skipPush) {
+        if (!slug) return;
+        ensureRunnerSkinsHubAssets();
+        shellModalEl = document.getElementById('skinModal');
+        shellModalContentEl = document.getElementById('modalContent');
+        if (!shellModalEl || !shellModalContentEl) return;
+
+        if (skipPush !== true) {
+            const url = new URL(window.location.href);
+            url.searchParams.set(SKIN_URL_PARAM, slug);
+            history.pushState({ runnerSkinSlug: slug }, '', url);
+        }
+
+        shellModalEl.classList.add('active');
+        shellModalEl.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        shellModalContentEl.innerHTML = `
+            <div class="skin-modal-loading">
+                <div class="loading-spinner"></div>
+                <p>Loading skin details...</p>
+            </div>`;
+
+        try {
+            const response = await skinsApiFetch(`/api/skins/${encodeURIComponent(slug)}`);
+            const data = await response.json();
+            if (data.success && data.data) {
+                renderRunnerShellModalContent(data.data);
+            } else {
+                throw new Error('Invalid response');
+            }
+        } catch (err) {
+            console.error('Runner skin detail failed:', err);
+            shellModalContentEl.innerHTML = '<div class="skin-modal-error"><p>Failed to load skin details</p></div>';
+        }
+    }
+
+    function closeShellModal(skipPush) {
+        closeRsImageLightbox();
+        shellModalEl = document.getElementById('skinModal');
+        if (!shellModalEl || !shellModalEl.classList.contains('active')) return;
+        shellModalEl.classList.remove('active');
+        shellModalEl.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+
+        if (skipPush !== true) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete(SKIN_URL_PARAM);
+            const qs = url.searchParams.toString();
+            history.pushState({}, '', url.pathname + (qs ? `?${qs}` : '') + url.hash);
+        }
+    }
+
+    function attachShellGridModalDelegation() {
+        const grid = document.getElementById('shellsGrid');
+        if (!grid || _shellGridModalBound) return;
+        _shellGridModalBound = true;
+
+        grid.addEventListener('click', (e) => {
+            if (e.target.closest('.cw-heat-emoji')) return;
+            const card = e.target.closest('.cw-skin-card');
+            if (!card || !card.dataset.slug) return;
+            if (e.metaKey || e.ctrlKey || e.button === 1) {
+                window.open(buildShellShareUrl(card.dataset.slug), '_blank', 'noopener,noreferrer');
+                return;
+            }
+            e.preventDefault();
+            openShellModal(card.dataset.slug);
+        });
+
+        grid.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            if (e.target.closest('.cw-heat-emoji')) return;
+            const card = e.target.closest('.cw-skin-card');
+            if (!card || !card.dataset.slug) return;
+            e.preventDefault();
+            openShellModal(card.dataset.slug);
+        });
+    }
+
     /**
      * Initialize the page
      */
     async function init() {
         try {
+            ensureRunnerSkinsHubAssets();
+
             // Allow sub-pages to pre-set a runner filter via window variable
             if (window.RUNNER_SKINS_FILTER) {
                 currentFilters.runner = window.RUNNER_SKINS_FILTER;
@@ -95,6 +513,13 @@
 
             // Enrich newest skins with release dates (list API omits them)
             enrichNewestSkins();
+
+            attachShellGridModalDelegation();
+
+            const skinFromUrl = getShellQueryParam();
+            if (skinFromUrl) {
+                openShellModal(skinFromUrl, true);
+            }
 
             // Tick countdown badges every second
             setInterval(() => {
@@ -430,6 +855,38 @@
         if (elements.resetFilters) {
             elements.resetFilters.addEventListener('click', resetAllFilters);
         }
+
+        const closeRunnerBtn = document.getElementById('closeRunnerShellModal');
+        if (closeRunnerBtn) {
+            closeRunnerBtn.addEventListener('click', () => closeShellModal());
+        }
+
+        shellModalEl = document.getElementById('skinModal');
+        if (shellModalEl) {
+            shellModalEl.addEventListener('click', (e) => {
+                if (e.target === shellModalEl) closeShellModal();
+            });
+        }
+
+        window.addEventListener('popstate', (e) => {
+            const slugParam = getShellQueryParam();
+            if (e.state && e.state.runnerSkinSlug) {
+                openShellModal(e.state.runnerSkinSlug, true);
+            } else if (slugParam) {
+                openShellModal(slugParam, true);
+            } else {
+                closeShellModal(true);
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            if (_rsImageLightboxEl) {
+                closeRsImageLightbox();
+                return;
+            }
+            closeShellModal();
+        });
     }
 
     /**
@@ -572,15 +1029,7 @@
     }
 
     /**
-     * Get the detail page URL for a runner skin
-     * Uses clean URLs when SSG pages are available
-     */
-    function getRunnerSkinDetailUrl(slug) {
-        return `/runner-skins/${slug}/`;
-    }
-
-    /**
-     * Create shell card HTML - Matching weapon skins card design
+     * Create shell card HTML - Matching weapon skins card design (opens in-page modal on click)
      */
     function createShellCard(shell) {
         // Images from the new API are always full absolute WebP URLs
@@ -603,7 +1052,8 @@
         const newBadge = isNew ? `<span class="cw-new-badge">✦ NEW</span>` : '';
 
         return `
-            <a href="${getRunnerSkinDetailUrl(shell.slug)}" class="cw-skin-card sticker-card-simple" data-rarity="${shell.rarity}" data-slug="${shell.slug}"${isUnavailable ? ' data-unavailable' : ''}>
+            <div tabindex="0" role="button" aria-label="View details for ${escapeHtml(shell.name)}"
+                 class="cw-skin-card sticker-card-simple" data-rarity="${shell.rarity}" data-slug="${shell.slug}"${isUnavailable ? ' data-unavailable' : ''}>
                 <span class="cw-hot-badge">🔥 Hot</span>
                 ${newBadge}
                 <div class="cw-skin-image">
@@ -653,7 +1103,7 @@
                         </button>
                     </div>
                 </div>
-            </a>
+            </div>
         `;
     }
 
@@ -666,10 +1116,14 @@
             'pre_order': 'Pre-Order',
             'preorder': 'Pre-Order',
             'deluxe_edition': 'Deluxe Edition',
+            'deluxe-edition': 'Deluxe Edition',
             'battle_pass': 'Battle Pass',
+            'battlepass': 'Battle Pass',
             'store': 'Store',
             'event': 'Event',
-            'twitch_drop': 'Twitch Drop'
+            'twitch_drop': 'Twitch Drop',
+            'default': 'Default',
+            'unknown': 'Unknown'
         };
         return map[source.toLowerCase()] || source.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     }

@@ -72,8 +72,8 @@ function escapeHtml(text) {
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"//marathon/g, '&quot;')
-        .replace(/'//marathon/g, '&#039;');
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 function fetchJSON(url) {
@@ -123,7 +123,7 @@ function replaceContainerContent(html, containerId, newInnerHtml, tag) {
     let m;
 
     while ((m = divRe.exec(html)) !== null) {
-        if (m[1] === '//marathon/') {               // closing tag
+        if (m[1] === '/') {               // closing tag
             depth--;
             if (depth === 0) { endIdx = m.index; break; }
         } else {                           // opening tag
@@ -156,7 +156,7 @@ function buildAbilitiesHtml(runner) {
     const abilities = runner.abilities || [];
     if (!abilities.length) return '<p class="no-data">No abilities data</p>';
 
-    const bolt = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"//marathon/></svg>';
+    const bolt = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
 
     // Sort into canonical order, append extras
     const sorted = ABILITY_ORDER
@@ -174,22 +174,22 @@ function buildAbilitiesHtml(runner) {
         const cd = ability.cooldown_seconds ?? ability.cooldown;
         if (cd != null) pills.push(
             `<span class="ability-stat-pill ability-stat-pill--cooldown">`
-            + `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"//marathon/><path d="M12 6v6l4 2"//marathon/></svg>`
+            + `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`
             + `${cd}s CD</span>`
         );
         if (ability.duration != null) pills.push(
             `<span class="ability-stat-pill ability-stat-pill--duration">`
-            + `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"//marathon/><line x1="16" y1="2" x2="16" y2="6"//marathon/><line x1="8" y1="2" x2="8" y2="6"//marathon/><line x1="3" y1="10" x2="21" y2="10"//marathon/></svg>`
+            + `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`
             + `${ability.duration}s</span>`
         );
         if (ability.charges != null) pills.push(
             `<span class="ability-stat-pill ability-stat-pill--charges">`
-            + `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"//marathon/><circle cx="12" cy="12" r="3"//marathon/></svg>`
+            + `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>`
             + `${ability.charges} charge${ability.charges !== 1 ? 's' : ''}</span>`
         );
         if (ability.range != null) pills.push(
             `<span class="ability-stat-pill ability-stat-pill--range">`
-            + `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"//marathon/><path d="M21 21l-4.35-4.35"//marathon/></svg>`
+            + `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>`
             + `${ability.range}m</span>`
         );
 

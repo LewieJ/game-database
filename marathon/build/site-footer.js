@@ -10,7 +10,7 @@ function generateFooter() {
         <div class="container">
             <div class="footer-main">
                 <div class="footer-brand">
-                    <span class="footer-logo">gdb.gg</span><span class="footer-logo-sub">Marathon</span>
+                    <span class="footer-logo">Marathon</span>
                 </div>
                 <div class="footer-nav">
                     <a href="//marathon/weapons/" class="footer-link">Weapons</a>
@@ -44,8 +44,7 @@ function generateFooter() {
                 </div>
             </div>
             <div class="footer-data-partner">
-                <p class="footer-data-partner-label">Data source</p>
-                <p class="footer-data-partner-text">Structured Marathon data on this hub is provided by <a href="https://marathondb.gg/" rel="noopener noreferrer">MarathonDB.gg</a> — operated as a companion database alongside gdb.gg. Visit MarathonDB for APIs, datasets, and the core data pipeline.</p>
+                <p class="footer-data-partner-text">Powered by <a href="https://marathondb.gg/" rel="noopener noreferrer">MarathonDB.GG</a></p>
             </div>
             <div class="footer-legal">
                 <p class="footer-disclaimer">Marathon™ is a trademark of Bungie, Inc. This site is not affiliated with or endorsed by Bungie.</p>

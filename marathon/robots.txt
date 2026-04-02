@@ -15,9 +15,11 @@ Allow: /
 User-agent: adidxbot
 Allow: /
 
-# Sitemap location
-Sitemap: https://marathondb.gg/sitemap.xml
-Sitemap: https://marathondb.gg/news-sitemap.xml
+# gdb.gg deploy: single sitemap (home + /marathon/ only).
+Sitemap: https://gdb.gg/sitemap.xml
+# Legacy MarathonDB host (uncomment if that site is still live and has its own sitemap):
+# Sitemap: https://marathondb.gg/sitemap.xml
+# Sitemap: https://marathondb.gg/news-sitemap.xml
 
 # IndexNow key: d86078e67f7c48eaaccd4c54ece9ab6b
 # Key file served at: https://marathondb.gg/d86078e67f7c48eaaccd4c54ece9ab6b.txt

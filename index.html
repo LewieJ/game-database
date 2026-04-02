@@ -3,8 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Game Database — coming soon · GDB.GG" />
-    <title>Game Database · Coming soon</title>
+    <meta
+      name="description"
+      content="gdb.gg — multi-game item, cosmetics, and stats databases. Marathon is live; more titles on the way. Early development."
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#050508" />
+    <title>GDB.GG — Game Database · Marathon &amp; more</title>
+    <link rel="canonical" href="https://gdb.gg/" />
+    <link rel="icon" href="/logo.png" type="image/png" />
+
+    <!-- After claiming the site: paste verification codes from Google Search Console and Bing Webmaster Tools. -->
+    <!-- <meta name="google-site-verification" content="YOUR_GOOGLE_CODE" /> -->
+    <!-- <meta name="msvalidate.01" content="YOUR_BING_CODE" /> -->
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Game Database" />
+    <meta property="og:title" content="GDB.GG — Game Database · Marathon &amp; more" />
+    <meta
+      property="og:description"
+      content="Multi-game item, cosmetics, and stats databases. Marathon is live; more titles on the way. Early development."
+    />
+    <meta property="og:url" content="https://gdb.gg/" />
+    <meta property="og:image" content="https://gdb.gg/assets/og-default.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Game Database · gdb.gg" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GDB.GG — Game Database · Marathon &amp; more" />
+    <meta
+      name="twitter:description"
+      content="Multi-game item, cosmetics, and stats databases. Marathon is live; more titles on the way."
+    />
+    <meta name="twitter:image" content="https://gdb.gg/assets/og-default.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "Game Database",
+            "alternateName": ["GDB.GG", "gdb.gg"],
+            "url": "https://gdb.gg/",
+            "description": "Multi-game item, cosmetics, and stats databases. Early development."
+          },
+          {
+            "@type": "Organization",
+            "name": "Game Database",
+            "url": "https://gdb.gg/",
+            "logo": "https://gdb.gg/logo.png"
+          }
+        ]
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -37,29 +92,67 @@
         </div>
       </div>
 
-      <main class="core">
-        <div class="glass-panel">
-          <h1 class="brand">
-            <span class="brand-line">Game</span>
-            <span class="brand-line accent">Database</span>
+      <main class="core core--home">
+        <header class="home-hero">
+          <h1 class="brand brand-oneline">
+            <span class="brand-line">Game</span><span class="brand-line accent">Database</span>
           </h1>
-          <p class="brand-tag">Coming soon</p>
-          <div class="load-row" role="status" aria-live="polite" aria-label="Loading">
-            <span class="loader-ring" aria-hidden="true"></span>
-            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <p class="brand-tag">Stats · profiles · cosmetics</p>
+          <p class="home-hero-lead">
+            Building databases for many titles. We're still in early development — check back often.
+            👀
+          </p>
+        </header>
+
+        <section id="games" class="home-games" aria-labelledby="home-games-heading">
+          <h2 id="home-games-heading" class="home-games-heading">Supported titles</h2>
+          <p class="home-games-sub">Marathon is available now; other games roll out as we ship them.</p>
+          <div class="home-games-grid">
+            <a href="marathon/" class="home-game-card">
+              <div class="home-game-cover">
+                <img
+                  src="assets/covers/marathon.png"
+                  alt="Marathon"
+                  width="400"
+                  height="600"
+                  loading="lazy"
+                />
+              </div>
+              <h3 class="home-game-title">Marathon</h3>
+              <p class="home-game-desc">Complete item and cosmetics database for Marathon.</p>
+            </a>
+            <div
+              class="home-game-card home-game-card--disabled"
+              role="group"
+              aria-label="Fortnite — coming soon"
+            >
+              <div class="home-game-cover">
+                <img
+                  src="assets/covers/fortnite.jpg"
+                  alt="Fortnite"
+                  width="400"
+                  height="600"
+                  loading="lazy"
+                />
+              </div>
+              <h3 class="home-game-title">Fortnite</h3>
+              <p class="home-game-desc">Battle Royale stats, leaderboards, shop, and competitive tracking.</p>
+              <span class="home-game-badge">Coming soon</span>
+            </div>
           </div>
-        </div>
+        </section>
       </main>
     </div>
 
     <footer class="home-footer">
       <div class="home-footer-inner">
-        <div class="home-footer-brand">
+        <a href="/" class="home-footer-brand" aria-label="Game Database home">
           <span class="home-footer-logo">GDB</span><span class="home-footer-dot">.</span><span class="home-footer-gg">GG</span>
-        </div>
+        </a>
         <div class="home-footer-links">
           <a href="/marathon/">Marathon</a>
-          <a href="/hub.html">Explore</a>
+          <span class="home-footer-muted" title="Coming soon">Fortnite</span>
+          <a href="/#games">Games</a>
           <a href="/pages/about/">About</a>
           <a href="/pages/contact/">Contact</a>
           <a href="/pages/privacy-policy/">Privacy Policy</a>

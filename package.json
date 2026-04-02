@@ -3,6 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "npx --yes serve . -l 5173",
-    "start": "npx --yes serve . -l 5173"
+    "start": "npx --yes serve . -l 5173",
+    "build:sitemap": "node scripts/build-sitemap.js",
+    "build:marathon": "node marathon/build/rebuild-all.js"
   }
 }

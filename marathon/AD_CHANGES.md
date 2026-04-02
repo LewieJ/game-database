@@ -16,7 +16,7 @@ A record of all ad optimisation changes made to the site, in reverse chronologic
 
 **Why:** All three mobile/below-hero slots were severely underperforming (£0.16–£0.35 RPM, near-zero clicks). Removing to clear the slate for a proper mobile ad strategy rebuild on a dedicated branch.
 
-**Files changed:** All weapon, runner, core, background, charm, contract, emblem, news, population, pc-requirements, and discord-bot pages. Build templates: `build/ssg.js`, `build/ssg-backgrounds.js`, `build/ssg-runner-skins.js`, `build/ssg-weapon-filter-pages.js`.
+**Files changed:** All weapon, runner, core, background, charm, contract, emblem, news, population, pc-requirements, and discord-bot pages. Build templates: `build/ssg.js`, `build/ssg-backgrounds.js`, `build/ssg-weapon-filter-pages.js`.
 
 **How to revert:** Re-add from git history (`git diff HEAD~1`).
 

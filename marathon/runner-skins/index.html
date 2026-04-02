@@ -43,7 +43,7 @@
 <link rel="stylesheet" href="/marathon/css/rnk-theme.css">
 </head>
 <body>
-<div class="rnk-site-rail"><a href="/marathon/" class="rnk-site-rail__brand">gdb.gg</a><span class="rnk-site-rail__sep" aria-hidden="true">/</span><span class="rnk-site-rail__here">Marathon</span></div>
+<div class="rnk-site-rail"><a href="/marathon/" class="rnk-site-rail__brand">Marathon</a></div>
 
     
 
@@ -54,7 +54,7 @@
             <div class="nav-left">
                 <a href="/marathon/" class="nav-logo">
                     <img src="/marathon/Icon.png" alt="" class="logo-icon" width="28" height="28">
-                    <span>gdb<span class="logo-accent">.</span>gg</span>
+                    <span>Marathon</span>
                 </a>
             </div>
 
@@ -226,7 +226,7 @@
         <header class="page-header-compact">
             <div class="page-header-left">
                 <h1 class="page-title-compact">RUNNER SKINS <span class="page-count" id="totalCount"></span></h1>
-                <p class="page-subtitle-seo">Every Marathon runner skin across all classes, with rarity info and unlock sources</p>
+                <p class="page-subtitle-seo">Every Marathon runner skin across all classes—click a card for a full preview (image left, details right) and shareable links.</p>
 
             </div>
             <div class="page-header-right">
@@ -284,6 +284,15 @@
             </div>
         </section>
 
+        <section class="ws-toolbar-wrap content-section-compact" aria-label="Search runner skins">
+            <div class="ws-toolbar">
+                <div class="ws-toolbar__search" style="flex:1;max-width:min(320px,100%);margin-left:auto">
+                    <label class="ws-sr-only" for="searchInput">Search by skin or runner name</label>
+                    <input type="search" id="searchInput" class="ws-search-input" placeholder="Search name or runner…" autocomplete="off" enterkeyhint="search">
+                </div>
+            </div>
+        </section>
+
         
 <!-- Loading State -->
         <section class="cosmetics-loading" id="loadingState">
@@ -335,7 +344,7 @@
                     <details class="site-faq__item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
                         <summary class="site-faq__question" itemprop="name">How do you get runner skins in Marathon?</summary>
                         <div class="site-faq__answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                            <p itemprop="text">Runner skins are available through various sources including pre-order bonuses, deluxe edition bundles, the in-game store, and potentially through contracts or seasonal content. Check each skin's page for its specific acquisition method.</p>
+                            <p itemprop="text">Runner skins are available through various sources including pre-order bonuses, deluxe edition bundles, the in-game store, and potentially through contracts or seasonal content. Open any skin in the catalog for its specific acquisition details.</p>
                         </div>
                     </details>
                     <details class="site-faq__item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
@@ -363,7 +372,7 @@
         <div class="container">
             <div class="footer-main">
                 <div class="footer-brand">
-                    <span class="footer-logo">gdb.gg</span><span class="footer-logo-sub">Marathon</span>
+                    <span class="footer-logo">Marathon</span>
                 </div>
                 <div class="footer-nav">
                     <a href="/marathon/weapons/" class="footer-link">Weapons</a>
@@ -419,15 +428,13 @@
                 <span class="vp-promo-rarity" style="color:#a855f7">Superior</span>
             </div>
             <p class="vp-promo-desc">Hey, did you stumble upon a new feature in testing??? Coming soon 👀</p>
-            <a href="/marathon/runner-skins/achromatic-rush/" class="vp-promo-cta">Watch it in action &rarr;</a>
+            <a href="/marathon/runner-skins/?skin=achromatic-rush" class="vp-promo-cta">Open in catalog &rarr;</a>
         </div>
     </div>
 
     <script src="/marathon/js/api.js"></script>
     <script src="/marathon/js/search.js"></script>
     <script src="/marathon/js/cosmetic-ratings.js"></script>
-    <!-- Enable clean URLs for SSG -->
-    <script>window.SSG_RUNNER_SKINS_URL = true;</script>
     <script src="/marathon/js/cosmetics-runners.js"></script>
     <script src="/marathon/js/mobile-nav.js"></script>
     <script src="/marathon/js/auth.js"></script>

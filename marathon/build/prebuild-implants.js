@@ -23,10 +23,10 @@ const HTML_PATH     = path.resolve(__dirname, '..', 'implants', 'index.html');
 
 // ─── Constants (mirror implants.js) ─────────────────────────
 const SLOT_ICONS_SVG = {
-    head:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="8" r="5"//marathon/><path d="M20 21a8 8 0 0 0-16 0"//marathon/></svg>',
-    torso:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"//marathon/><rect x="8" y="2" width="8" height="12" rx="2"//marathon/></svg>',
-    legs:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M6 2v8l-2 10h4l2-10V2M18 2v8l-2 10h4l2-10V2M14 2v8l-2 10"//marathon/></svg>',
-    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"//marathon/></svg>',
+    head:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>',
+    torso:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><rect x="8" y="2" width="8" height="12" rx="2"/></svg>',
+    legs:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M6 2v8l-2 10h4l2-10V2M18 2v8l-2 10h4l2-10V2M14 2v8l-2 10"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
 };
 
 const SLOT_ICON_URLS = {
@@ -55,12 +55,12 @@ function escapeHtml(text) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
-        .replace(/'//marathon/g, '&#39;');
+        .replace(/'/g, '&#39;');
 }
 
 function escapeAttr(text) {
     if (!text) return '';
-    return String(text).replace(/"//marathon/g, '&quot;').replace(/'//marathon/g, '&#39;');
+    return String(text).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 function capitalizeFirst(str) {
@@ -108,7 +108,7 @@ function buildCardHtml(implant) {
         (implant.traits && implant.traits.some(t => t.name === 'Unique Trait'));
 
     const verifiedSvg = (implant.verified || implant.server_slam_verified)
-        ? '<span class="verified-badge" title="Verified from in-game data"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"//marathon/></svg></span>'
+        ? '<span class="verified-badge" title="Verified from in-game data"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>'
         : '';
 
     // Description snippet
@@ -140,7 +140,7 @@ function buildCardHtml(implant) {
                     </div>
                     <div class="implant-card-footer">
                         ${credits ? `<span class="implant-card-credits"><img src="//marathon/assets/icons/credits.webp" alt="" width="14" height="14">${credits}</span>` : '<span></span>'}
-                        <span class="implant-card-cta">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M5 12h14M12 5l7 7-7 7"//marathon/></svg></span>
+                        <span class="implant-card-cta">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                     </div>
                     <div class="cw-heat-strip" data-slug="${escapeAttr(slug)}">
                         <div class="cw-heat-fill"></div>

@@ -1,4 +1,5 @@
-# gdb.gg — update the Sitemap URL if your canonical domain differs (e.g. www).
+# gdb.gg — canonical origin is https://gdb.gg (apex). If you use www, 301-redirect to apex and
+# keep Sitemap + meta canonicals on a single host.
 User-agent: *
 Allow: /
 

@@ -1603,7 +1603,7 @@ function renderRunnerSkins() {
             ${runnerSkins.map(skin => renderRunnerSkinCard(skin)).join('')}
         </div>
         <div class="skins-view-more">
-            <a href="/runner-skins/?runner=${runner.slug}" class="view-more-btn">
+            <a href="/marathon/runner-skins/${runner.slug}/" class="view-more-btn">
                 <span>View All Runner Skins</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -1626,7 +1626,7 @@ function renderRunnerSkinCard(skin) {
     const rarityLabel = skin.rarity ? skin.rarity.charAt(0).toUpperCase() + skin.rarity.slice(1).toLowerCase() : 'Common';
     
     return `
-        <a href="/runner-skins/${skin.slug}/" class="rd-skin-card" data-rarity="${rarityClass}">
+        <a href="/marathon/runner-skins/?skin=${encodeURIComponent(skin.slug)}" class="rd-skin-card" data-rarity="${rarityClass}">
             <div class="rd-skin-image">
                 ${imageUrl ? `
                     <img src="${imageUrl}" 

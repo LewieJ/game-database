@@ -1990,10 +1990,11 @@ main.container {
 }
 
 .footer-data-partner {
-    margin-top: 1.25rem;
+    margin: 1.25rem auto 0;
     padding-top: 1rem;
     border-top: 1px solid var(--border, rgba(255, 255, 255, 0.08));
     max-width: 42rem;
+    text-align: center;
 }
 
 .footer-data-partner-label {

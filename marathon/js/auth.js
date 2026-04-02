@@ -155,7 +155,7 @@ window.MDBAuth = (function () {
                 <div class="mobile-more-section">
                     <div class="mobile-more-section-title">Account</div>
                     <div class="mobile-more-grid">
-                        <a href="/auth/settings/" class="mobile-more-item">
+                        <a href="/marathon/auth/settings/" class="mobile-more-item">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                             <span>Settings</span>
                         </a>
@@ -167,16 +167,7 @@ window.MDBAuth = (function () {
                 </div>`;
             section.querySelector('#mobileLogoutBtn')?.addEventListener('click', () => logout());
         } else {
-            section.innerHTML = `
-                <div class="mobile-more-section">
-                    <div class="mobile-more-section-title">Account</div>
-                    <div class="mobile-more-grid">
-                        <a href="${LOGIN_URL}" class="mobile-more-item" style="border-color: var(--neon); color: var(--neon);">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                            <span>Login with Bungie</span>
-                        </a>
-                    </div>
-                </div>`;
+            section.innerHTML = '';
         }
     }
 
@@ -208,7 +199,7 @@ window.MDBAuth = (function () {
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M6 9l6 6 6-6"/></svg>
                         </button>
                         <div class="nav-auth-menu">
-                            <a href="/auth/settings/" class="nav-auth-item">
+                            <a href="/marathon/auth/settings/" class="nav-auth-item">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                 Account Settings
                             </a>
@@ -231,11 +222,8 @@ window.MDBAuth = (function () {
 
                 // Logout handler
                 el.querySelector('#navLogoutBtn').addEventListener('click', () => logout());
-            } else {
-                el.innerHTML = `<a href="${LOGIN_URL}" class="nav-auth-login">Login with Bungie</a>`;
+                navRight.appendChild(el);
             }
-
-            navRight.appendChild(el);
         });
     }
 

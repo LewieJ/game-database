@@ -303,6 +303,28 @@ body {
   color: transparent;
 }
 
+/* Home hero: single-line title (visual “GAME DATABASE”) */
+.home-hero .brand-oneline {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.home-hero .brand-oneline .brand-line {
+  display: inline;
+}
+
+.home-hero .brand-oneline .brand-line.accent {
+  margin-left: 0.28em;
+}
+
+@media (max-width: 380px) {
+  .home-hero .brand-oneline {
+    white-space: normal;
+    letter-spacing: 0.05em;
+  }
+}
+
 .brand-tag {
   margin: 0.65rem 0 0;
   text-align: center;
@@ -402,7 +424,180 @@ body.page-home-landing {
 
 body.page-home-landing .stage {
   flex: 1 1 auto;
-  min-height: min(100dvh, 900px);
+  min-height: 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: clamp(3rem, 5vh, 3.75rem) 1.25rem 1.25rem;
+}
+
+.core.core--home {
+  padding: 0.35rem 1rem 0.75rem;
+}
+
+.core--home {
+  width: 100%;
+  max-width: 52rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.35rem;
+}
+
+.home-hero {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+body.page-home-landing .home-hero .brand-tag {
+  margin-top: 0.4rem;
+}
+
+.home-hero-lead {
+  margin: 0.55rem auto 0;
+  max-width: 28rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  font-weight: 500;
+  color: rgba(240, 240, 248, 0.52);
+}
+
+.home-games {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.home-games-heading {
+  margin: 0 0 0.35rem;
+  text-align: center;
+  font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(240, 240, 248, 0.42);
+}
+
+.home-games-sub {
+  margin: 0 0 0.85rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: rgba(240, 240, 248, 0.4);
+}
+
+.home-games-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 67%;
+  margin: 0 auto;
+}
+
+@media (max-width: 520px) {
+  .home-games-grid {
+    grid-template-columns: 1fr;
+    max-width: 10.75rem;
+    margin: 0 auto;
+  }
+}
+
+.home-game-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  overflow: hidden;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 20px 48px -24px rgba(0, 0, 0, 0.55);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.home-game-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(94, 234, 212, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 28px 56px -20px rgba(0, 0, 0, 0.6),
+    0 0 48px -20px rgba(94, 234, 212, 0.12);
+}
+
+.home-game-cover {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.home-game-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.home-game-card:hover .home-game-cover img {
+  transform: scale(1.04);
+}
+
+.home-game-card--disabled {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.5;
+  filter: grayscale(0.8);
+}
+
+.home-game-card--disabled:hover {
+  transform: none;
+  border-color: var(--glass-edge);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 20px 48px -24px rgba(0, 0, 0, 0.55);
+}
+
+.home-game-card--disabled:hover .home-game-cover img {
+  transform: none;
+}
+
+.home-game-badge {
+  display: inline-block;
+  margin: 0 0.85rem 1rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(240, 240, 248, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.home-game-title {
+  margin: 0;
+  padding: 0.85rem 0.75rem 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.home-game-desc {
+  margin: 0;
+  padding: 0 0.85rem 1rem;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: rgba(240, 240, 248, 0.45);
 }
 
 .home-footer {
@@ -431,6 +626,13 @@ body.page-home-landing .stage {
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.06em;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.home-footer-brand:hover {
+  opacity: 0.85;
 }
 
 .home-footer-logo,
@@ -459,6 +661,14 @@ body.page-home-landing .stage {
 
 .home-footer-links a:hover {
   color: var(--accent);
+}
+
+.home-footer-muted {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(240, 240, 248, 0.28);
+  cursor: default;
+  user-select: none;
 }
 
 .home-footer-copy {

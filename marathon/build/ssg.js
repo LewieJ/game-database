@@ -3,9 +3,9 @@
  * 
  * Generates static HTML pages from API data for improved SEO.
  * 
- * Usage: node build/ssg.js --charms
+ * Usage: node build/ssg.js --items --weapons ...
  *        node build/ssg.js --all
- *        node build/ssg.js --redirects --sitemap
+ *        node build/rebuild-all.js   ← full API prebuild + this file
  * 
  * Output: /charms/index.html (listing)
  *         /charms/[slug]/index.html (detail pages)
@@ -67,6 +67,20 @@ const rarityOrder = {
     'legendary': 5,
     'exotic': 6
 };
+
+/** source_table values with their own Marathon section (no duplicate /items/[slug]/ pages) */
+const BESPOKE_ITEM_ROUTES = Object.fromEntries(
+    [
+        'cores',
+        'core',
+        'implants',
+        'implant',
+        'weapon_mods',
+        'weapon_mod',
+        'mods',
+        'equipment',
+    ].map((k) => [k, true])
+);
 
 // ============================================================
 // UTILITY FUNCTIONS
@@ -170,8 +184,20 @@ function escapeHtml(str) {
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"//marathon/g, '&quot;')
-        .replace(/'//marathon/g, '&#039;');
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+/** Low-res weapon icon URL for SSG (matches MarathonAPI.getWeaponIconUrl / getWeaponIconUrlBySlug low) */
+function ssgBuildWeaponIconLow(w) {
+    if (!w) return `${API_BASE}/assets/weapons/placeholder.png`;
+    if (w.icon_path) {
+        const filename = String(w.icon_path).split('/').pop();
+        return `${API_BASE}/assets/weapons/${encodeURIComponent(filename)}`;
+    }
+    const slug = w.slug || w.id || '';
+    if (!slug) return `${API_BASE}/assets/weapons/placeholder.png`;
+    return `${API_BASE}/assets/weapons/${encodeURIComponent(slug)}-180x135.png`;
 }
 
 // ============================================================
@@ -599,11 +625,110 @@ ${tierRowsHtml}
 </html>`;
 }
 
+function ssgGetItemIconUrl(item) {
+    if (item.icon_url && /^https?:\/\//i.test(String(item.icon_url))) {
+        return String(item.icon_url);
+    }
+    if (item.image_url) {
+        const u = String(item.image_url);
+        if (/^https?:\/\//i.test(u)) return u;
+        return u.startsWith('/') ? `https://items.marathondb.gg${u}` : `https://items.marathondb.gg/${u}`;
+    }
+    const p = item.icon_path || item.slug || '';
+    if (!p) return `${API_BASE}/assets/items/placeholder.png`;
+    const ps = String(p);
+    if (ps.startsWith('assets/')) return `${API_BASE}/${ps}`;
+    return `${API_BASE}/assets/items/${encodeURIComponent(ps)}`;
+}
+
+function ssgFormatPropertyLabel(key) {
+    return String(key)
+        .replace(/_/g, ' ')
+        .replace(/([A-Z])/g, ' $1')
+        .trim()
+        .toUpperCase();
+}
+
+function ssgRenderItemProperties(item) {
+    const properties = [];
+    if (item.value !== null && item.value !== undefined) {
+        properties.push({ label: 'VALUE', value: `${item.value} Credits` });
+    }
+    if (item.stack_size !== null && item.stack_size !== undefined) {
+        properties.push({ label: 'STACK SIZE', value: String(item.stack_size) });
+    }
+    if (item.weight !== null && item.weight !== undefined) {
+        properties.push({ label: 'WEIGHT', value: String(item.weight) });
+    }
+    if (item.slot_type) {
+        properties.push({ label: 'SLOT', value: String(item.slot_type).toUpperCase() });
+    }
+    const metadata = item.metadata && typeof item.metadata === 'object' ? item.metadata : {};
+    for (const [key, value] of Object.entries(metadata)) {
+        if (value !== null && value !== undefined && value !== '') {
+            properties.push({ label: ssgFormatPropertyLabel(key), value: String(value) });
+        }
+    }
+    if (properties.length === 0) {
+        return '<p class="no-data">No additional properties</p>';
+    }
+    return properties.map((prop) => `
+        <div class="stat-bar-row stat-no-bar">
+            <div class="stat-bar-label">${escapeHtml(prop.label)}</div>
+            <div class="stat-bar-value">${escapeHtml(prop.value)}</div>
+        </div>`).join('');
+}
+
+function ssgPatchChangeType(text) {
+    const lower = (text || '').toLowerCase();
+    if (lower.includes('increase') || lower.includes('buff') || lower.includes('improved') || lower.includes('added')) {
+        return 'buff';
+    }
+    if (lower.includes('decrease') || lower.includes('nerf') || lower.includes('reduced') || lower.includes('removed')) {
+        return 'nerf';
+    }
+    return 'change';
+}
+
+function ssgPatchChangeIcon(text) {
+    const t = ssgPatchChangeType(text);
+    if (t === 'buff') return '↑';
+    if (t === 'nerf') return '↓';
+    return '•';
+}
+
+function ssgRenderItemPatchHistory(item) {
+    const patchNotes = item.patch_notes || item.changes || [];
+    if (!Array.isArray(patchNotes) || patchNotes.length === 0) return '';
+    return patchNotes.map((patch) => {
+        const rawChanges = patch.changes || (patch.description ? [patch.description] : []);
+        const changes = Array.isArray(rawChanges) ? rawChanges : [];
+        const changeRows = changes.map((change) => {
+            const t = typeof change === 'string' ? change : (change && change.text) || '';
+            return `
+        <div class="patch-change ${ssgPatchChangeType(t)}">
+            <span class="change-icon">${ssgPatchChangeIcon(t)}</span>
+            <span class="change-text">${escapeHtml(t)}</span>
+        </div>`;
+        }).join('');
+        const ver = patch.version || patch.season || '';
+        const dateStr = patch.date ? formatDateShort(patch.date) : '';
+        return `
+        <div class="patch-item">
+            <div class="patch-header">
+                <span class="patch-version">${escapeHtml(ver)}</span>
+                <span class="patch-date">${escapeHtml(dateStr)}</span>
+            </div>
+            <div class="patch-changes">${changeRows}</div>
+        </div>`;
+    }).join('');
+}
+
 /**
  * Generate item detail page (/items/[slug]/index.html)
  * Only generated for items that DON'T have bespoke SSG pages (cores, mods, etc.)
  */
-function generateItemDetailPage(item, allItems) {
+function generateItemDetailPage(item, _allItems) {
     const name = escapeHtml(item.name);
     const itemDescBase = item.description ? `${escapeHtml(item.description)} ` : '';
     const typeLower = (item.type || 'item').toLowerCase();
@@ -731,14 +856,14 @@ ${JSON.stringify(structuredData, null, 2)}
                     </a>
                     <meta itemprop="position" content="1" />
                 </li>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"//marathon/></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                     <a itemprop="item" href="//marathon/items/">
                         <span itemprop="name">Items</span>
                     </a>
                     <meta itemprop="position" content="2" />
                 </li>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"//marathon/></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                     <span itemprop="name" id="breadcrumbName">${name}</span>
                     <meta itemprop="position" content="3" />
@@ -746,12 +871,36 @@ ${JSON.stringify(structuredData, null, 2)}
             </ol>
         </nav>
 
+        <section class="cosmetics-loading" id="loadingState" style="display: none;" aria-hidden="true">
+            <p>Loading item...</p>
+        </section>
+        <section class="cosmetics-error" id="errorState" style="display: none;" aria-live="polite">
+            <p>Could not load this item.</p>
+        </section>
 
-        <!-- Mobile Top Ad -->
+        <div id="itemDetail" class="item-detail-content">
+            <div class="detail-hero">
+                <div class="hero-image-container">
+                    <div class="hero-rarity-glow${rarity ? ` rarity-${rarity}` : ''}"></div>
+                    <img id="itemImage" class="hero-main-image" src="${escapeHtml(iconUrl)}" alt="${name}" loading="eager">
+                </div>
+                <div class="hero-info">
+                    <div class="hero-badges">
+                        <span id="typeBadge" class="badge">${typeName}</span>
+                        <span id="rarityBadge" class="badge badge-rarity ${rarity || 'standard'}"${item.rarity ? '' : ' style="display: none;"'}>${rarityDisplay}</span>
+                    </div>
+                    <h1 id="itemName">${name}</h1>
+                    <p id="itemDescription" class="hero-description">${item.description ? escapeHtml(item.description) : ''}</p>
+                </div>
+            </div>
 
-            <!-- Mid-content ad -->
+            <div class="detail-section" style="margin-top: 24px;">
+                <h2 class="section-title">Properties</h2>
+                <div id="propertiesContainer">
+${propertiesHtml}
+                </div>
+            </div>
 
-            <!-- Patch History -->
             <div id="patchHistory" class="patch-history-section"${hasPatchHistory ? '' : ' style="display: none;"'}>
                 <h2 class="section-header">Patch History</h2>
                 <div id="patchList" class="patch-list">
@@ -759,7 +908,6 @@ ${patchHistoryHtml}
                 </div>
             </div>
 
-            <!-- Metadata -->
             <div class="detail-meta">
                 <div class="meta-item">
                     <span class="meta-label">Added</span>
@@ -821,19 +969,6 @@ async function buildItems() {
         const itemsList = response.data;
         console.log(`  Found ${itemsList.length} items\n`);
 
-        // Fetch item types for listing page tabs
-        console.log('  Fetching item types...');
-        let itemTypes = [];
-        try {
-            const typesResponse = await fetchJSON(`${API_BASE}/api/items/types`);
-            if (typesResponse?.types) {
-                itemTypes = typesResponse.types;
-                console.log(`  Found ${itemTypes.length} item types\n`);
-            }
-        } catch (typesErr) {
-            console.log('  ⚠ Item types fetch failed, tabs will use fallback\n');
-        }
-
         // Separate items: bespoke (have their own SSG pages) vs generic (need /items/[slug]/)
         const bespokeItems = [];
         const genericItems = [];
@@ -872,10 +1007,8 @@ async function buildItems() {
         const itemsDir = path.join(OUTPUT_DIR, 'items');
         ensureDir(itemsDir);
 
-        // Generate listing page (includes ALL items — bespoke + generic)
-        console.log('\n  Generating listing page...');
-        const listingHtml = generateItemsListingPage(itemsList, itemTypes);
-        writeFile(path.join(itemsDir, 'index.html'), listingHtml);
+        // Grid listing is produced by prebuild-items.js in rebuild-all; this step only adds /items/[slug]/ detail pages.
+        console.log('\n  ⏭ Skipped /items/index.html (use prebuild-items.js for the listing grid)');
 
         // Generate individual item detail pages (generic items only)
         console.log('\n  Generating detail pages (generic items only)...');
@@ -886,9 +1019,7 @@ async function buildItems() {
             writeFile(path.join(itemDir, 'index.html'), detailHtml);
         }
 
-        const totalPages = fullGenericItems.length + 1;
-        console.log(`\n✅ Successfully generated ${totalPages} pages`);
-        console.log(`   - 1 listing page: /items/index.html`);
+        console.log(`\n✅ Successfully generated ${fullGenericItems.length} detail page(s)`);
         console.log(`   - ${fullGenericItems.length} detail pages: /items/[slug]/index.html`);
         console.log(`   - ${bespokeItems.length} items route to bespoke SSG pages (cores, mods)`);
 
@@ -1071,7 +1202,7 @@ ${faction.cosmetics.map(c => `
                             </div>`;
     } else {
         cosmeticsBodyHtml = `<div class="fh-coming-soon">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"//marathon/><path d="M12 6v6l4 2"//marathon/></svg>
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                                 <p>Faction cosmetics will be revealed at launch. Check back soon!</p>
                             </div>`;
     }
@@ -1086,12 +1217,12 @@ ${faction.contracts.map(c => `
                                         <div class="fh-contract-name">${escapeHtml(c.name)}</div>
                                         <div class="fh-contract-meta">${escapeHtml(c.type)} &middot; ${escapeHtml(c.difficulty || '')}</div>
                                     </div>
-                                    <svg class="fh-contract-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"//marathon/></svg>
+                                    <svg class="fh-contract-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                                 </a>`).join('')}
                             </div>`;
     } else {
         contractsBodyHtml = `<div class="fh-coming-soon">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"//marathon/><path d="M14 2v6h6"//marathon/></svg>
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
                                 <p>Contracts for ${escapeHtml(faction.name)} will be available at launch. Check back soon!</p>
                             </div>`;
     }
@@ -1136,12 +1267,12 @@ ${faction.contracts.map(c => `
                     <a itemprop="item" href="//marathon/"><span itemprop="name">Home</span></a>
                     <meta itemprop="position" content="1" />
                 </li>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"//marathon/></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                     <a itemprop="item" href="//marathon/factions/"><span itemprop="name">Factions</span></a>
                     <meta itemprop="position" content="2" />
                 </li>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"//marathon/></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                     <span itemprop="name">${escapeHtml(faction.name)}</span>
                     <meta itemprop="position" content="3" />
@@ -1150,7 +1281,7 @@ ${faction.contracts.map(c => `
         </nav>
 
         <a href="//marathon/factions/" class="back-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"//marathon/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             Back to Factions
         </a>
 
@@ -1185,7 +1316,7 @@ ${faction.contracts.map(c => `
                 <!-- About -->
                 <div class="fh-panel">
                     <div class="fh-panel-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"//marathon/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"//marathon/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                         <h2>About ${escapeHtml(faction.name)}</h2>
                     </div>
                     <div class="fh-panel-body">
@@ -1198,7 +1329,7 @@ ${faction.contracts.map(c => `
                 <!-- Faction Perks -->
                 <div class="fh-panel">
                     <div class="fh-panel-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"//marathon/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         <h2>Faction Perks</h2>
                     </div>
                     <div class="fh-panel-body">
@@ -1211,7 +1342,7 @@ ${perksHtml}
                 <!-- Cosmetics -->
                 <div class="fh-panel">
                     <div class="fh-panel-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l4 6-10 13L2 9Z"//marathon/><path d="M11 3l1 6h-9"//marathon/><path d="M13 3l-1 6h9"//marathon/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3l1 6h-9"/><path d="M13 3l-1 6h9"/></svg>
                         <h2>Faction Cosmetics</h2>
                     </div>
                     <div class="fh-panel-body">
@@ -1222,7 +1353,7 @@ ${perksHtml}
                 <!-- Contracts -->
                 <div class="fh-panel">
                     <div class="fh-panel-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"//marathon/><path d="M14 2v6h6"//marathon/><path d="M16 13H8"//marathon/><path d="M16 17H8"//marathon/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
                         <h2>Contracts</h2>
                     </div>
                     <div class="fh-panel-body">
@@ -1238,25 +1369,25 @@ ${perksHtml}
                 <!-- Quick Links -->
                 <div class="fh-panel">
                     <div class="fh-panel-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"//marathon/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"//marathon/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                         <h2>Quick Links</h2>
                     </div>
                     <div class="fh-panel-body">
                         <div class="fh-quick-links">
                             <a href="//marathon/contracts/?faction=${faction.slug}" class="fh-quick-link">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"//marathon/><path d="M14 2v6h6"//marathon/></svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
                                 View All Contracts
                             </a>
                             <a href="/weapon-skins/" class="fh-quick-link">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.37 2.63 14 7l-1.59-1.59a2 2 0 0 0-2.82 0L8 7l9 9 1.59-1.59a2 2 0 0 0 0-2.82L17 10l4.37-4.37a2.12 2.12 0 1 0-3-3Z"//marathon/><path d="M9 8c-2 3-4 3.5-7 4l8 10c2-1 6-5 6-7"//marathon/></svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.37 2.63 14 7l-1.59-1.59a2 2 0 0 0-2.82 0L8 7l9 9 1.59-1.59a2 2 0 0 0 0-2.82L17 10l4.37-4.37a2.12 2.12 0 1 0-3-3Z"/><path d="M9 8c-2 3-4 3.5-7 4l8 10c2-1 6-5 6-7"/></svg>
                                 Weapon Skins
                             </a>
                             <a href="/runner-skins/" class="fh-quick-link">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"//marathon/><circle cx="12" cy="7" r="4"//marathon/></svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 Runner Skins
                             </a>
                             <a href="/charms/" class="fh-quick-link">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l4 6-10 13L2 9Z"//marathon/></svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l4 6-10 13L2 9Z"/></svg>
                                 Charms
                             </a>
                         </div>
@@ -1266,7 +1397,7 @@ ${perksHtml}
                 <!-- Other Factions -->
                 <div class="fh-panel">
                     <div class="fh-panel-header">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"//marathon/><circle cx="9" cy="7" r="4"//marathon/><path d="M22 21v-2a4 4 0 0 0-3-3.87"//marathon/><path d="M16 3.13a4 4 0 0 1 0 7.75"//marathon/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                         <h2>All Factions</h2>
                     </div>
                     <div class="fh-panel-body">
@@ -1322,7 +1453,7 @@ function generateFactionsListingPage() {
                         <div class="fh-listing-name">${escapeHtml(f.name)}</div>
                         <div class="fh-listing-desc">${escapeHtml(f.description)}</div>
                     </div>
-                    <svg class="fh-listing-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"//marathon/></svg>
+                    <svg class="fh-listing-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 </a>`;
     }).join('');
 
@@ -1487,9 +1618,11 @@ function getRewardDetailUrl(reward) {
             'emblem': '//marathon/emblems/',
             'sticker': '//marathon/stickers/',
             'weapon_skin': '//marathon/weapon-skins/',
-            'runner_skin': '//marathon/runner-skins/',
         };
-        return `${pathMap[cosmeticType] || '//marathon/runner-skins/'}${slug}/`;
+        if (cosmeticType === 'runner_skin' || !pathMap[cosmeticType]) {
+            return `/marathon/runner-skins/?skin=${encodeURIComponent(slug)}`;
+        }
+        return `${pathMap[cosmeticType]}${slug}/`;
     }
     if (table === 'cores') return `/marathon/cores/${slug}/`;
     if (table === 'items') return `/marathon/items/${slug}/`;
@@ -1506,18 +1639,18 @@ function renderRewardHtml(reward, compact = false) {
     let amountDisplay = '';
 
     if (reward.reward_type === 'reputation') {
-        iconHtml = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"//marathon/></svg>`;
+        iconHtml = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
         amountDisplay = `+${reward.amount}`;
     } else if (reward.reward_type === 'credits') {
-        iconHtml = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"//marathon/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 0 1 0 4H8"//marathon/><path d="M12 18V6"//marathon/></svg>`;
+        iconHtml = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 0 1 0 4H8"/><path d="M12 18V6"/></svg>`;
         amountDisplay = reward.amount ? reward.amount.toLocaleString() : '';
     } else if (reward.reward_type === 'xp') {
-        iconHtml = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"//marathon/></svg>`;
+        iconHtml = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`;
         amountDisplay = `+${reward.amount} XP`;
     } else {
         iconHtml = reward.icon_url
             ? `<img src="${escapeHtml(reward.icon_url)}" alt="" loading="lazy">`
-            : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"//marathon/></svg>`;
+            : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`;
         if (reward.amount && reward.amount > 1) amountDisplay = `×${reward.amount}`;
     }
 
@@ -1596,7 +1729,7 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
         const stepsInner = steps.map((step, idx) => {
             const locHint = step.location_hint ? `
                 <div class="step-location">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"//marathon/><circle cx="12" cy="10" r="3"//marathon/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     ${escapeHtml(step.location_hint)}
                 </div>` : '';
 
@@ -1606,7 +1739,7 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
             const walkthroughHtml = step.walkthrough ? `
                 <div class="step-walkthrough">
                     <button class="step-walkthrough-toggle" data-step="${step.step_number}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"//marathon/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                         View Guide
                     </button>
                     <div class="step-walkthrough-content">${markdownToHtml(step.walkthrough)}</div>
@@ -1699,9 +1832,9 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
     const prereqHtml = prerequisites.length > 0
         ? `<div class="sidebar-card"><div class="sidebar-card-header">Prerequisites</div><div class="prereq-list">${prerequisites.map(p => {
             if (p.type === 'contract') {
-                return `<div class="prereq-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"//marathon/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"//marathon/></svg><span>Complete <a href="/factions/${factionSlug}/contracts/${p.slug}/">${escapeHtml(p.name)}</a></span></div>`;
+                return `<div class="prereq-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Complete <a href="/factions/${factionSlug}/contracts/${p.slug}/">${escapeHtml(p.name)}</a></span></div>`;
             }
-            return `<div class="prereq-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"//marathon/></svg><span>${escapeHtml(p.description || `Reach Rank ${p.rank_required}`)}</span></div>`;
+            return `<div class="prereq-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>${escapeHtml(p.description || `Reach Rank ${p.rank_required}`)}</span></div>`;
         }).join('')}</div></div>` : '';
 
     // Tips sidebar
@@ -1908,10 +2041,10 @@ function generateFactionContractsListingPage(factionSummary, contracts, allTags)
             <p class="contract-card-desc">${escapeHtml(c.description || '')}</p>
             <div class="contract-card-meta">
                 <span class="contract-meta-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"//marathon/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"//marathon/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                     ${c.step_count || 0} step${(c.step_count || 0) !== 1 ? 's' : ''}
                 </span>
-                ${c.total_reputation ? `<span class="contract-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"//marathon/></svg>+${c.total_reputation} Rep</span>` : ''}
+                ${c.total_reputation ? `<span class="contract-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>+${c.total_reputation} Rep</span>` : ''}
                 ${c.chain_slug ? `<span class="contract-chain-badge">Part ${c.chain_position || '?'} of ${c.chain_total || '?'}</span>` : ''}
             </div>
         </a>`;
@@ -2655,8 +2788,8 @@ function processEmbeds(html, assetLookup = new Map()) {
         const imageHtml = imageUrl
             ? `<img src="${imageUrl}" alt="${escapeHtml(displayName)}" loading="lazy">`
             : `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5">
-            <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"//marathon/>
-            <path d="m3.3 7 8.7 5 8.7-5"//marathon/><path d="M12 22V12"//marathon/>
+            <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+            <path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
         </svg>`;
         
         return `<a href="${embedInfo.path}${slug}/" class="article-embed">
@@ -2942,9 +3075,9 @@ ${JSON.stringify(breadcrumbData, null, 2)}
         <!-- Breadcrumb -->
         <nav class="article-breadcrumb">
             <a href="//marathon/">Home</a>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"//marathon/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             <a href="/news/">News</a>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"//marathon/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             <span>${title}</span>
         </nav>
 
@@ -2991,14 +3124,14 @@ ${JSON.stringify(breadcrumbData, null, 2)}
                     <div class="article-share-buttons">
                         <button class="article-share-btn" onclick="copyArticleLink()" id="copyLinkBtn">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"//marathon/>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"//marathon/>
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                             </svg>
                             Copy Link
                         </button>
                         <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title + ' — MarathonDB')}&url=${encodeURIComponent(canonicalUrl)}" target="_blank" class="article-share-btn">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"//marathon/>
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                             </svg>
                             Share on X
                         </a>
@@ -3029,7 +3162,7 @@ ${JSON.stringify(breadcrumbData, null, 2)}
                 <div class="article-sidebar-section">
                     <a href="//marathon/news/" class="article-share-btn" style="justify-content: center; text-align: center;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 12H5"//marathon/><path d="M12 19l-7-7 7-7"//marathon/>
+                            <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
                         </svg>
                         All Articles
                     </a>
@@ -3056,7 +3189,7 @@ ${JSON.stringify(breadcrumbData, null, 2)}
             navigator.clipboard.writeText(window.location.href).then(() => {
                 const btn = document.getElementById('copyLinkBtn');
                 const original = btn.innerHTML;
-                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"//marathon/></svg> Copied!';
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
                 setTimeout(() => { btn.innerHTML = original; }, 2000);
             });
         }
@@ -3600,54 +3733,21 @@ async function main() {
     console.log('       MarathonDB Static Site Generator     ');
     console.log('═══════════════════════════════════════════');
     
-    if (args.includes('--charms') || args.includes('--all')) {
-        await buildCharms();
-    }
-    
-    if (args.includes('--emblems') || args.includes('--all')) {
-        await buildEmblems();
-    }
-    
-    if (args.includes('--backgrounds') || args.includes('--all')) {
-        await buildBackgrounds();
-    }
-    
-    if (args.includes('--stickers') || args.includes('--all')) {
-        await buildStickers();
-    }
-    
-    if (args.includes('--runner-skins') || args.includes('--all')) {
-        await buildRunnerSkins();
-    }
-    
-    if (args.includes('--weapon-skins') || args.includes('--all')) {
-        await buildWeaponSkins();
-    }
-    
-    if (args.includes('--mods') || args.includes('--all')) {
-        await buildMods();
-    }
-    
-    if (args.includes('--cores') || args.includes('--all')) {
-        await buildCores();
-    }
-    
-    if (args.includes('--runners') || args.includes('--all')) {
-        await buildRunners();
-    }
-    
-    if (args.includes('--weapons') || args.includes('--all')) {
-        await buildWeapons();
-    }
-    
+    // In-repo generators (charms, emblems, backgrounds, stickers, skins, listing prebuilds, etc.)
+    // live in separate scripts — see marathon/build/rebuild-all.js
+
     if (args.includes('--items') || args.includes('--all')) {
         await buildItems();
+    }
+
+    if (args.includes('--weapons') || args.includes('--all')) {
+        await buildWeapons();
     }
 
     if (args.includes('--news') || args.includes('--all')) {
         await buildNews();
     }
-    
+
     if (args.includes('--factions') || args.includes('--all')) {
         await buildFactions();
     }
@@ -3655,12 +3755,11 @@ async function main() {
     if (args.includes('--contracts') || args.includes('--all')) {
         await buildContracts();
     }
-    
+
     if (args.includes('--maps') || args.includes('--all')) {
         await buildMaps();
     }
 
-    // Redirects and sitemap run AFTER all pages are built
     if (args.includes('--redirects') || args.includes('--all')) {
         await buildRedirects();
     }
@@ -3669,27 +3768,22 @@ async function main() {
         await buildSitemap();
     }
 
-    if (!args.includes('--charms') && !args.includes('--emblems') && !args.includes('--backgrounds') && !args.includes('--stickers') && !args.includes('--runner-skins') && !args.includes('--weapon-skins') && !args.includes('--mods') && !args.includes('--cores') && !args.includes('--runners') && !args.includes('--weapons') && !args.includes('--items') && !args.includes('--factions') && !args.includes('--contracts') && !args.includes('--maps') && !args.includes('--news') && !args.includes('--redirects') && !args.includes('--sitemap') && !args.includes('--all')) {
+    const known = ['items', 'weapons', 'news', 'factions', 'contracts', 'maps', 'redirects', 'sitemap', 'all'];
+    const hasKnown = args.some((a) => known.some((k) => a === '--' + k));
+    if (!hasKnown) {
         console.log('\nUsage: node build/ssg.js [options]\n');
-        console.log('Options:');
-        console.log('  --charms        Generate charm pages');
-        console.log('  --emblems       Generate emblem pages');
-        console.log('  --backgrounds   Generate background pages');
-        console.log('  --stickers      Generate sticker pages');
-        console.log('  --runner-skins  Generate runner skin pages');
-        console.log('  --weapon-skins  Generate weapon skin pages');
-        console.log('  --mods          Generate mod pages');
-        console.log('  --cores         Generate core pages');
-        console.log('  --runners       Generate runner pages');
-        console.log('  --weapons       Generate weapon pages');
-        console.log('  --items         Generate item pages');
+        console.log('Options (this file):');
+        console.log('  --items         Generate item listing + /items/[slug]/ detail pages');
+        console.log('  --weapons       Generate weapon listing + detail pages');
         console.log('  --factions      Generate factions page');
         console.log('  --contracts     Generate contract pages (per faction)');
         console.log('  --maps          Generate maps page');
         console.log('  --news          Generate news/article pages from Markdown');
         console.log('  --redirects     Generate SEO redirect stubs + _redirects file');
-        console.log('  --sitemap       Generate sitemap.xml from SSG output');
-        console.log('  --all           Generate all content types + redirects + sitemap');
+        console.log('  --sitemap       Generate marathon/sitemap.xml (marathondb.gg URLs)');
+        console.log('  --all           All of the above');
+        console.log('\nFull API prebuild (implants, cores, grids, cosmetics):');
+        console.log('  node build/rebuild-all.js   (from marathon/)');
         console.log('\nExample: node build/ssg.js --all');
     }
     

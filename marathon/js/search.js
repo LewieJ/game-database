@@ -50,12 +50,12 @@
             { match: /^mods\/(.+)$/, replace: SITE_BASE + '/mods/$1/' },
             { match: /^factions\/(.+)$/, replace: SITE_BASE + '/contracts/' },
             { match: /^cosmetics\/weapons\/(.+)$/, replace: SITE_BASE + '/weapon-skins/$1/' },
-            { match: /^cosmetics\/runners\/(.+)$/, replace: SITE_BASE + '/runner-skins/$1/' },
+            { match: /^cosmetics\/runners\/(.+)$/, replace: SITE_BASE + '/runner-skins/?skin=$1' },
             { match: /^cosmetics\/charms\/(.+)$/, replace: SITE_BASE + '/charms/$1/' },
             { match: /^cosmetics\/emblems\/(.+)$/, replace: SITE_BASE + '/emblems/$1/' },
             { match: /^cosmetics\/backgrounds\/(.+)$/, replace: SITE_BASE + '/backgrounds/$1/' },
             { match: /^cosmetics\/stickers\/(.+)$/, replace: SITE_BASE + '/stickers/$1/' },
-            { match: /^cosmetics\/(.+)$/, replace: SITE_BASE + '/runner-skins/$1/' }
+            { match: /^cosmetics\/(.+)$/, replace: SITE_BASE + '/runner-skins/?skin=$1' }
         ];
         
         for (const pattern of patterns) {

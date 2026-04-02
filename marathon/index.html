@@ -61,7 +61,7 @@
 <link rel="stylesheet" href="/marathon/css/rnk-theme.css">
 </head>
 <body>
-<div class="rnk-site-rail"><a href="/marathon/" class="rnk-site-rail__brand">gdb.gg</a><span class="rnk-site-rail__sep" aria-hidden="true">/</span><span class="rnk-site-rail__here">Marathon</span></div>
+<div class="rnk-site-rail"><a href="/marathon/" class="rnk-site-rail__brand">Marathon</a></div>
 
     <!-- Navigation -->
     <nav class="navbar navbar--edge">
@@ -70,7 +70,7 @@
             <div class="nav-left">
                 <a href="/marathon/" class="nav-logo nav-logo--active">
                     <img src="/marathon/Icon.png" alt="" class="logo-icon" width="28" height="28">
-                    <span>gdb<span class="logo-accent">.</span>gg</span>
+                    <span>Marathon</span>
                 </a>
                 
             </div>
@@ -582,8 +582,7 @@
         <div class="container">
             <div class="footer-main">
                 <div class="footer-brand">
-                    <span class="footer-logo">gdb.gg</span>
-                    <span class="footer-logo-sub">Marathon</span>
+                    <span class="footer-logo">Marathon</span>
                 </div>
                 <div class="footer-nav">
                     <a href="/marathon/weapons/" class="footer-link">Weapons</a>
@@ -617,8 +616,7 @@
                 </div>
             </div>
             <div class="footer-data-partner">
-                <p class="footer-data-partner-label">Data source</p>
-                <p class="footer-data-partner-text">Structured Marathon data on this hub is provided by <a href="https://marathondb.gg/" rel="noopener noreferrer">MarathonDB.gg</a> — operated as a companion database alongside gdb.gg. Visit MarathonDB for APIs, datasets, and the core data pipeline.</p>
+                <p class="footer-data-partner-text">Powered by <a href="https://marathondb.gg/" rel="noopener noreferrer">MarathonDB.GG</a></p>
             </div>
             <div class="footer-legal">
                 <p class="footer-disclaimer">Marathon™ is a trademark of Bungie, Inc. This site is not affiliated with or endorsed by Bungie.</p>
@@ -644,8 +642,10 @@
                     list.innerHTML = recent.map(a => {
                         const d = new Date(a.date + 'T00:00:00');
                         const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                        const thumbHtml = a.thumbnail
-                            ? `<img class="home-news-thumb" src="${a.thumbnail}" alt="" loading="lazy">`
+                        let thumb = a.thumbnail || '';
+                        if (thumb.startsWith('/assets/news/')) thumb = '/marathon' + thumb;
+                        const thumbHtml = thumb
+                            ? `<img class="home-news-thumb" src="${thumb}" alt="" loading="lazy">`
                             : '';
                         return `<a href="/marathon/news/${a.slug}/" class="home-news-card">
                             ${thumbHtml}

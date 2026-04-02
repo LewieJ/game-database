@@ -601,3 +601,54 @@
 .skin-modal--rnk .acq-source.source-preorder {
   color: #93c5fd;
 }
+
+/* Runner skins hub — portrait cards + taller modal preview (same modal chrome as weapons) */
+.rs-skins-page .runner-skins-grid .cw-skin-image,
+.rs-skins-page.runner-skins-grid .cw-skin-image {
+  aspect-ratio: 3 / 4;
+  border-radius: 12px 12px 0 0;
+}
+
+.rs-skins-page .runner-skins-grid .cw-skin-image img,
+.rs-skins-page.runner-skins-grid .cw-skin-image img {
+  object-fit: cover;
+  object-position: top center;
+}
+
+.skin-modal-gallery .skin-modal-main-image.rs-runner-modal-hero[data-rarity] {
+  aspect-ratio: 3 / 4;
+  max-width: min(400px, 46vw);
+}
+
+.skin-modal-gallery .skin-modal-thumbnails.rs-runner-thumbs .skin-thumb img {
+  aspect-ratio: 3 / 4;
+  width: 72px;
+  height: auto;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.rs-modal-quest {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rs-modal-quest h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(240, 240, 245, 0.55);
+}
+
+.rs-modal-quest ol {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: rgba(235, 234, 242, 0.9);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}

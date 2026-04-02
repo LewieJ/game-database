@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="robots" content="noindex,nofollow">
-    
-    
 <meta charset="UTF-8">
 <title>Runner Skin Details | MarathonDB - Page Moved</title>
-
-
-
+<meta name="description" content="This page has moved. Visit the Runner Skins catalog on MarathonDB.">
+<link rel="canonical" href="https://marathondb.gg/marathon/runner-skins/">
+<meta name="robots" content="noindex, follow">
 <script>
-(function(){var s=new URLSearchParams(window.location.search).get('slug');window.location.replace(s?'/runner-skins/'+s+'/':'/runner-skins/');})();
+(function () {
+    var params = new URLSearchParams(window.location.search);
+    var slug = params.get('slug');
+    var target = '/marathon/runner-skins/';
+    if (slug) target += '?skin=' + encodeURIComponent(slug);
+    window.location.replace(target);
+})();
 </script>
-      <script src="/marathon/js/unified-site-nav.js" defer></script>
-<link rel="stylesheet" href="/marathon/css/rnk-theme.css">
 </head>
 <body>
-<div class="rnk-site-rail"><a href="/marathon/" class="rnk-site-rail__brand">gdb.gg</a><span class="rnk-site-rail__sep" aria-hidden="true">/</span><span class="rnk-site-rail__here">Marathon</span></div>
-
 <h1>Page Moved</h1>
-<p>This page has permanently moved to <a href="/marathon/runner-skins/">marathondb.gg/runner-skins/</a></p>
+<p>This page has moved to <a href="/marathon/runner-skins/">marathondb.gg/marathon/runner-skins/</a></p>
 </body>
 </html>
