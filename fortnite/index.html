@@ -105,49 +105,6 @@
       margin-bottom: 1rem;
     }
 
-    /* Search Mode Toggle */
-    .search-mode-toggle {
-      display: flex;
-      justify-content: center;
-      gap: 0.25rem;
-      margin-bottom: 0.75rem;
-      background: var(--bg-elevated);
-      border-radius: 8px;
-      padding: 0.25rem;
-      width: fit-content;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .search-mode-btn {
-      padding: 0.4rem 1rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      background: transparent;
-      border: none;
-      border-radius: 6px;
-      color: var(--text-tertiary);
-      cursor: pointer;
-      transition: all 0.15s ease;
-      font-family: 'Outfit', sans-serif;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .search-mode-btn:hover {
-      color: var(--text-secondary);
-    }
-
-    .search-mode-btn.active {
-      background: var(--fn-yellow);
-      color: #000;
-    }
-
-    .search-mode-btn .mode-icon {
-      font-size: 0.9rem;
-    }
-
     .search-wrapper {
       position: relative;
     }
@@ -177,6 +134,14 @@
 
     .search-input::placeholder {
       color: var(--text-tertiary);
+    }
+
+    .search-hint {
+      margin-top: 0.65rem;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      color: var(--text-tertiary);
+      text-align: left;
     }
 
     .search-btn {
@@ -1118,29 +1083,6 @@
   <script src="/fortnite/js/fortnite-nav.js"></script>
 
   <div class="main-content">
-    <!-- Crown Jam Limited Time Event Banner -->
-    <div class="live-banner visible" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 20, 147, 0.15) 100%); border-color: rgba(255, 215, 0, 0.4);">
-      <div class="live-banner-header">
-        <div class="live-banner-title" style="color: #FFD700;">
-          <span style="font-size: 1.2rem;">👑</span>
-          <span>LIMITED TIME EVENT: Ranked Fall Guys Crown Jam</span>
-        </div>
-        <div class="live-banner-count" style="color: #FF1493; font-weight: 600;">Ends Feb 9th</div>
-      </div>
-      <div class="live-events-scroll">
-        <a href="/fortnite/crown-jam.html" class="live-event-item" style="border-color: rgba(255, 215, 0, 0.3);">
-          <div class="live-event-image" style="background: linear-gradient(135deg, #FFD700, #FF1493); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">👑</div>
-          <div class="live-event-info">
-            <div class="live-event-name" style="color: #FFD700;">View Crown Jam Leaderboard</div>
-            <div class="live-event-meta">
-              <span>Search your stats • Compete for ranks</span>
-            </div>
-          </div>
-          <div class="live-event-arrow">→</div>
-        </a>
-      </div>
-    </div>
-
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="search-column">
@@ -1148,32 +1090,31 @@
           <h1>Find a Player</h1>
         </div>
 
-        <!-- Search Box -->
+        <!-- Search Box (player lookup via fapi.gdb.gg) -->
         <div class="search-box">
-          <!-- Search Mode Toggle -->
-          <div class="search-mode-toggle" id="searchModeToggle">
-            <button class="search-mode-btn active" data-mode="player">
-              <span class="mode-icon">👤</span> Player
-            </button>
-            <button class="search-mode-btn" data-mode="island">
-              <span class="mode-icon">🏝️</span> Island
-            </button>
-          </div>
-
-          <form id="searchForm">
+          <form id="searchForm" role="search" aria-label="Fortnite player lookup">
             <div class="search-wrapper">
               <div class="search-input-group">
                 <input 
-                  type="text" 
+                  type="search" 
                   id="playerInput" 
                   class="search-input"
-                  placeholder="Enter Epic ID..."
+                  placeholder="Epic display name…"
+                  name="q"
                   autocomplete="off"
+                  spellcheck="false"
+                  inputmode="search"
+                  enterkeyhint="search"
+                  aria-label="Epic Games display name or account ID"
+                  aria-autocomplete="list"
+                  aria-controls="autocompleteDropdown"
+                  aria-expanded="false"
                   required
                 >
                 <button type="submit" class="search-btn" id="searchBtn">Search</button>
               </div>
-              <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
+              <div class="autocomplete-dropdown" id="autocompleteDropdown" role="listbox" aria-label="Matching Epic accounts"></div>
+              <p class="search-hint">Start typing at least 2 characters for suggestions, press Enter to open a profile, or paste a 32-character Epic account ID.</p>
             </div>
           </form>
 

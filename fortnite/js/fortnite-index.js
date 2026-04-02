@@ -6,41 +6,69 @@
 (function() {
   'use strict';
 
+  /** Public Fortnite Worker — see /fortnite/docs/current-api/README.md */
+  const FAPI_BASE = 'https://fapi.gdb.gg';
+  const PLAYER_SEARCH_DEBOUNCE_MS = 280;
+  let playerSearchTimer = null;
+  /** Recent + cached suggestions merged into player autocomplete */
+  let localSuggestions = { recent: [], popular: [] };
+
   // ==================== SEARCH MODE ====================
   let currentSearchMode = 'player'; // 'player' or 'island'
   const ISLAND_API_BASE = 'https://fortniteccu.gdb.gg';
 
-  function initSearchModeToggle() {
-    const toggle = document.getElementById('searchModeToggle');
-    const input = document.getElementById('playerInput');
-    if (!toggle || !input) return;
+  function isLikelyEpicAccountId(q) {
+    return /^[a-f0-9]{32}$/i.test((q || '').trim());
+  }
 
-    toggle.querySelectorAll('.search-mode-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const mode = btn.dataset.mode;
-        if (mode === currentSearchMode) return;
+  /**
+   * GET /user/search?username=…&platform=epic → array of { accountId, displayName, matchType, raw }
+   */
+  async function searchEpicAccountsByPrefix(username) {
+    const u = (username || '').trim();
+    if (!u) return [];
+    const res = await fetch(
+      FAPI_BASE + '/user/search?username=' + encodeURIComponent(u) + '&platform=epic'
+    );
+    if (res.status === 503 || res.status === 401) {
+      throw new Error('Player search is temporarily unavailable. Try again later.');
+    }
+    if (!res.ok) {
+      throw new Error('Search failed (' + res.status + ').');
+    }
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  }
 
-        currentSearchMode = mode;
-        toggle.querySelectorAll('.search-mode-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        // Update placeholder and clear input
-        input.placeholder = mode === 'player' ? 'Enter Epic ID...' : 'Search islands by name, creator, or code...';
-        input.value = '';
-        
-        // Hide dropdown
-        const dropdown = document.getElementById('autocompleteDropdown');
-        if (dropdown) dropdown.classList.remove('active');
-
-        // Show/hide recent players
-        const recentContainer = document.getElementById('recentSearches');
-        if (recentContainer) {
-          recentContainer.style.display = mode === 'player' && getRecentPlayers().length > 0 ? 'flex' : 'none';
-        }
-
-        input.focus();
-      });
+  function pickSearchHit(hits, query) {
+    if (!hits.length) return null;
+    const q = (query || '').trim().toLowerCase();
+    const exact = hits.find(function (h) {
+      return (h.displayName || '').toLowerCase() === q;
     });
+    if (exact) return exact;
+    const preferExact = hits.find(function (h) {
+      return (h.matchType || '').toLowerCase() === 'exact';
+    });
+    return preferExact || hits[0];
+  }
+
+  function profileUrl(accountId, displayName) {
+    return (
+      '/fortnite/profile.html?id=' +
+      encodeURIComponent(accountId) +
+      '&name=' +
+      encodeURIComponent(displayName || '') +
+      '&platform=Epic'
+    );
+  }
+
+  function syncAutocompleteAria() {
+    const dropdown = document.getElementById('autocompleteDropdown');
+    const input = document.getElementById('playerInput');
+    if (!input) return;
+    const open = !!(dropdown && dropdown.classList.contains('active'));
+    input.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
 
   // ==================== RECENT PLAYERS ====================
@@ -90,7 +118,7 @@
     
     container.style.display = 'flex';
     list.innerHTML = recent.slice(0, 4).map(player => `
-      <a href="profile.html?id=${player.id}&name=${encodeURIComponent(player.name)}" class="recent-tag">
+      <a href="/fortnite/profile.html?id=${encodeURIComponent(player.id)}&name=${encodeURIComponent(player.name)}&platform=Epic" class="recent-tag">
         ${player.name}
       </a>
     `).join('');
@@ -193,6 +221,7 @@
         </div>
       `;
       dropdown.classList.add('active');
+      syncAutocompleteAria();
       return;
     }
 
@@ -202,6 +231,7 @@
       </div>
     `;
     dropdown.classList.add('active');
+    syncAutocompleteAria();
 
     // Debounce
     if (islandSearchTimeout) clearTimeout(islandSearchTimeout);
@@ -215,6 +245,7 @@
             No islands found matching "${escapeHtml(query)}"
           </div>
         `;
+        syncAutocompleteAria();
         return;
       }
 
@@ -246,6 +277,7 @@
           window.location.href = `playlist.html?code=${code}&type=creative&title=${title}&creator=${creator}`;
         });
       });
+      syncAutocompleteAria();
     }, 250);
   }
 
@@ -262,77 +294,175 @@
     if (!query || query.length < 1) {
       dropdown.classList.remove('active');
       autocompleteItems = [];
+      syncAutocompleteAria();
       return;
     }
 
-    const suggestions = getAutocompleteSuggestions(query);
-    const hasRecent = suggestions.recent.length > 0;
-    const hasPopular = suggestions.popular.length > 0;
-
-    if (!hasRecent && !hasPopular) {
+    if (query.length < 2) {
       dropdown.innerHTML = `
         <div class="autocomplete-empty">
-          No matching players found.<br>
-          <span style="font-size: 0.8rem;">Press Enter to search Epic Games</span>
+          Type at least 2 characters to search players<br>
+          <span style="font-size: 0.8rem;">Or paste a 32-character Epic account ID</span>
         </div>
       `;
       dropdown.classList.add('active');
       autocompleteItems = [];
+      syncAutocompleteAria();
       return;
     }
 
-    let html = '';
-    autocompleteItems = [];
-    let idx = 0;
+    localSuggestions = getAutocompleteSuggestions(query);
+    const hasRecent = localSuggestions.recent.length > 0;
+    const hasPopular = localSuggestions.popular.length > 0;
 
-    if (hasRecent) {
-      html += `<div class="autocomplete-section">
-        <div class="autocomplete-section-title">Recent</div>`;
-      suggestions.recent.forEach(player => {
-        autocompleteItems.push(player);
-        html += `
-          <div class="autocomplete-item" data-index="${idx}" data-id="${player.id}" data-name="${player.name}">
-            <div class="autocomplete-avatar">${player.name.charAt(0).toUpperCase()}</div>
-            <div class="autocomplete-info">
-              <div class="autocomplete-name">${highlightMatch(player.name, query)}</div>
-              ${player.wins ? `<div class="autocomplete-stats"><span class="wins">${player.wins.toLocaleString()}</span> wins</div>` : ''}
-            </div>
-            <span class="autocomplete-badge recent">Recent</span>
-          </div>
-        `;
-        idx++;
-      });
-      html += `</div>`;
-    }
-
-    if (hasPopular) {
-      html += `<div class="autocomplete-section">
-        <div class="autocomplete-section-title">Top Players</div>`;
-      suggestions.popular.forEach(player => {
-        autocompleteItems.push(player);
-        html += `
-          <div class="autocomplete-item" data-index="${idx}" data-id="${player.id}" data-name="${player.name}">
-            <div class="autocomplete-avatar">${player.name.charAt(0).toUpperCase()}</div>
-            <div class="autocomplete-info">
-              <div class="autocomplete-name">${highlightMatch(player.name, query)}</div>
-              <div class="autocomplete-stats"><span class="wins">${player.wins.toLocaleString()}</span> wins • Rank #${player.rank}</div>
-            </div>
-          </div>
-        `;
-        idx++;
-      });
-      html += `</div>`;
-    }
-
-    dropdown.innerHTML = html;
+    dropdown.innerHTML = `
+      <div class="autocomplete-empty" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+        <span class="loading"></span> Searching players…
+      </div>
+    `;
     dropdown.classList.add('active');
+    autocompleteItems = [];
     selectedIndex = -1;
+    syncAutocompleteAria();
 
-    dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
-      item.addEventListener('click', () => {
-        selectAutocompleteItem(item.dataset.id, item.dataset.name);
+    if (playerSearchTimer) clearTimeout(playerSearchTimer);
+    playerSearchTimer = setTimeout(async function () {
+      let apiHits = [];
+      try {
+        apiHits = await searchEpicAccountsByPrefix(query);
+      } catch (e) {
+        dropdown.innerHTML =
+          '<div class="autocomplete-empty">' + escapeHtml(e.message || 'Search failed') + '</div>';
+        syncAutocompleteAria();
+        return;
+      }
+
+      let html = '';
+      let idx = 0;
+      autocompleteItems = [];
+
+      if (hasRecent) {
+        html += `<div class="autocomplete-section">
+        <div class="autocomplete-section-title"> Recent</div>`;
+        localSuggestions.recent.forEach(function (player) {
+          autocompleteItems.push({ id: player.id, name: player.name });
+          html +=
+            '<div class="autocomplete-item" data-index="' +
+            idx +
+            '" data-id="' +
+            escapeHtml(player.id) +
+            '" data-name="' +
+            escapeHtml(player.name) +
+            '">' +
+            '<div class="autocomplete-avatar">' +
+            player.name.charAt(0).toUpperCase() +
+            '</div>' +
+            '<div class="autocomplete-info">' +
+            '<div class="autocomplete-name">' +
+            highlightMatch(escapeHtml(player.name), query) +
+            '</div>';
+          if (player.wins) {
+            html +=
+              '<div class="autocomplete-stats"><span class="wins">' +
+              player.wins.toLocaleString() +
+              '</span> wins</div>';
+          }
+          html +=
+            '</div><span class="autocomplete-badge recent">Recent</span></div>';
+          idx++;
+        });
+        html += '</div>';
+      }
+
+      if (hasPopular) {
+        html += `<div class="autocomplete-section">
+        <div class="autocomplete-section-title"> Suggested (cached)</div>`;
+        localSuggestions.popular.forEach(function (player) {
+          autocompleteItems.push({ id: player.id, name: player.name });
+          html +=
+            '<div class="autocomplete-item" data-index="' +
+            idx +
+            '" data-id="' +
+            escapeHtml(player.id) +
+            '" data-name="' +
+            escapeHtml(player.name) +
+            '">' +
+            '<div class="autocomplete-avatar">' +
+            player.name.charAt(0).toUpperCase() +
+            '</div>' +
+            '<div class="autocomplete-info">' +
+            '<div class="autocomplete-name">' +
+            highlightMatch(escapeHtml(player.name), query) +
+            '</div>' +
+            '<div class="autocomplete-stats"><span class="wins">' +
+            player.wins.toLocaleString() +
+            '</span> wins • Rank #' +
+            player.rank +
+            '</div></div></div>';
+          idx++;
+        });
+        html += '</div>';
+      }
+
+      if (apiHits.length) {
+        html += `<div class="autocomplete-section">
+          <div class="autocomplete-section-title">Epic search</div>`;
+        apiHits.slice(0, 12).forEach(function (hit) {
+          var id = hit.accountId || hit.account_id;
+          var name = hit.displayName || hit.display_name || 'Player';
+          if (!id) return;
+          autocompleteItems.push({ id: id, name: name });
+          html +=
+            '<div class="autocomplete-item" data-index="' +
+            idx +
+            '" data-id="' +
+            escapeHtml(id) +
+            '" data-name="' +
+            escapeHtml(name) +
+            '">' +
+            '<div class="autocomplete-avatar">' +
+            name.charAt(0).toUpperCase() +
+            '</div>' +
+            '<div class="autocomplete-info">' +
+            '<div class="autocomplete-name">' +
+            highlightMatch(escapeHtml(name), query) +
+            '</div>' +
+            '<div class="autocomplete-stats">' +
+            escapeHtml(id.substring(0, 8)) +
+            '…</div></div>';
+          if (hit.matchType) {
+            html +=
+              '<span class="autocomplete-badge">' +
+              escapeHtml(String(hit.matchType)) +
+              '</span>';
+          }
+          html += '</div>';
+          idx++;
+        });
+        html += '</div>';
+      }
+
+      if (!html) {
+        dropdown.innerHTML = `
+          <div class="autocomplete-empty">
+            No matching players.<br>
+            <span style="font-size: 0.8rem;">Press Enter to run a full search</span>
+          </div>
+        `;
+        syncAutocompleteAria();
+        return;
+      }
+
+      dropdown.innerHTML = html;
+      dropdown.classList.add('active');
+      selectedIndex = -1;
+      syncAutocompleteAria();
+      dropdown.querySelectorAll('.autocomplete-item').forEach(function (item) {
+        item.addEventListener('click', function () {
+          selectAutocompleteItem(item.dataset.id, item.dataset.name);
+        });
       });
-    });
+    }, PLAYER_SEARCH_DEBOUNCE_MS);
   }
 
   function selectAutocompleteItem(id, name) {
@@ -340,9 +470,10 @@
     if (input) input.value = name;
     const dropdown = document.getElementById('autocompleteDropdown');
     if (dropdown) dropdown.classList.remove('active');
+    syncAutocompleteAria();
     const cleanId = (id || '').trim();
     if (!cleanId) return;
-    window.location.href = `profile.html?id=${encodeURIComponent(cleanId)}&name=${encodeURIComponent(name)}&platform=Epic`;
+    window.location.href = profileUrl(cleanId, name);
   }
 
   function updateSelectedItem() {
@@ -593,6 +724,7 @@
           selectAutocompleteItem(item.id, item.name);
         } else if (e.key === 'Escape') {
           dropdown.classList.remove('active');
+          syncAutocompleteAria();
         }
       });
     }
@@ -603,6 +735,7 @@
       const wrapper = document.querySelector('.search-wrapper');
       if (dropdown && wrapper && !wrapper.contains(e.target)) {
         dropdown.classList.remove('active');
+        syncAutocompleteAria();
       }
     });
 
@@ -618,71 +751,38 @@
         const query = input.value.trim();
         if (!query) return;
 
-        // Handle island mode
-        if (currentSearchMode === 'island') {
-          searchBtn.disabled = true;
-          searchBtn.innerHTML = '<span class="loading"></span>';
-          
-          try {
-            const data = await searchIslands(query);
-            if (data && data.success && data.islands && data.islands.length > 0) {
-              // Navigate to first result
-              const island = data.islands[0];
-              window.location.href = `playlist.html?code=${island.code}&type=creative&title=${encodeURIComponent(island.title)}&creator=${encodeURIComponent(island.creator || '')}`;
-            } else {
-              if (resultContainer) {
-                resultContainer.innerHTML = `
-                  <div class="result error">
-                    <h2>No Islands Found</h2>
-                    <p>We couldn't find any islands matching <strong>${escapeHtml(query)}</strong>.</p>
-                    <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-tertiary);">
-                      Try searching by island name, creator name, or island code.
-                    </p>
-                  </div>
-                `;
-              }
-            }
-          } catch (error) {
-            displayError('Failed to search islands. Please try again.');
-          } finally {
-            searchBtn.disabled = false;
-            searchBtn.textContent = 'Search';
-          }
-          return;
-        }
-
-        // Player mode (existing logic)
+        // Epic player search via fapi.gdb.gg (see fortnite/docs/current-api/users.md)
         searchBtn.disabled = true;
         searchBtn.innerHTML = '<span class="loading"></span>';
         if (resultContainer) resultContainer.innerHTML = '';
 
         try {
-          const accountResponse = await fetch(
-            `https://fortnitesearch.gdb.gg/lookup?username=${encodeURIComponent(query)}`
-          );
-
-          if (!accountResponse.ok) {
-            if (accountResponse.status === 404) {
-              displayNoAccounts(query);
-              return;
-            }
-            throw new Error('Player lookup failed');
+          if (isLikelyEpicAccountId(query)) {
+            const id = query.trim().toLowerCase();
+            saveRecentPlayer({ id: id, name: 'Epic player', wins: null });
+            window.location.href = profileUrl(id, 'Player');
+            return;
           }
 
-          const lookupData = await accountResponse.json();
-          const account = lookupData?.account;
+          const hits = await searchEpicAccountsByPrefix(query);
+          if (!hits.length) {
+            displayNoAccounts(query);
+            return;
+          }
 
-          if (!account?.id) throw new Error('Invalid response from user search');
+          const hit = pickSearchHit(hits, query);
+          const accountId = (hit.accountId || hit.account_id || '').trim();
+          const displayName = hit.displayName || hit.display_name || query;
 
-          const displayName = account.displayName || query;
+          if (!accountId) throw new Error('Invalid response from user search');
 
           saveRecentPlayer({
-            id: account.id,
+            id: accountId,
             name: displayName,
             wins: null
           });
 
-          window.location.href = `profile.html?id=${encodeURIComponent((account.id || '').trim())}&name=${encodeURIComponent(displayName)}&platform=Epic`;
+          window.location.href = profileUrl(accountId, displayName);
 
         } catch (error) {
           displayError(error.message);
@@ -692,9 +792,6 @@
         }
       });
     }
-
-    // Initialize search mode toggle
-    initSearchModeToggle();
 
     // Load carousel and season widget
     loadLeaderboardCarousel();

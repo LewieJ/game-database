@@ -30,7 +30,6 @@
     function getActivePage() {
         const path = window.location.pathname.toLowerCase();
         
-        if (path.includes('crown-jam')) return 'crown-jam';
         if (path.includes('competitive') && !path.includes('event')) return 'competitive-rankings';
         if (path.includes('leaderboards')) return 'leaderboards';
         if (path.includes('event')) return 'competitive';
@@ -102,11 +101,6 @@
                             ${ICONS.leaderboard}
                             <span>Leaderboards</span>
                         </a>
-                        <a href="/fortnite/crown-jam.html" class="${activePage === 'crown-jam' ? 'active' : ''}" style="position: relative;">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C13.1 2 14 2.9 14 4V5H19C19.55 5 20 5.45 20 6V9C20 11.21 18.21 13 16 13H15.72C15.37 14.39 14.34 15.5 13 15.86V18H15C15.55 18 16 18.45 16 19V21C16 21.55 15.55 22 15 22H9C8.45 22 8 21.55 8 21V19C8 18.45 8.45 18 9 18H11V15.86C9.66 15.5 8.63 14.39 8.28 13H8C5.79 13 4 11.21 4 9V6C4 5.45 4.45 5 5 5H10V4C10 2.9 10.9 2 12 2ZM6 7V9C6 10.1 6.9 11 8 11H8.28C8.63 9.61 9.66 8.5 11 8.14V7H6ZM18 7H13V8.14C14.34 8.5 15.37 9.61 15.72 11H16C17.1 11 18 10.1 18 9V7Z"/></svg>
-                            <span>Crown Jam</span>
-                            <span style="position: absolute; top: -4px; right: -4px; background: linear-gradient(135deg, #FFD700, #FF1493); color: #000; font-size: 0.6rem; padding: 0.15rem 0.35rem; border-radius: 4px; font-weight: 700;">LTM</span>
-                        </a>
                         <a href="/fortnite/events.html" class="${activePage === 'competitive' ? 'active' : ''}">
                             ${ICONS.trophy}
                             <span>Competitive Events</span>
@@ -168,10 +162,6 @@
             <div class="fortnite-more-menu-section">
                 <div class="fortnite-more-menu-title">More Fortnite</div>
                 <div class="fortnite-more-menu-grid">
-                    <a href="/fortnite/crown-jam.html" class="${activePage === 'crown-jam' ? 'active' : ''}" style="position: relative;">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C13.1 2 14 2.9 14 4V5H19C19.55 5 20 5.45 20 6V9C20 11.21 18.21 13 16 13H15.72C15.37 14.39 14.34 15.5 13 15.86V18H15C15.55 18 16 18.45 16 19V21C16 21.55 15.55 22 15 22H9C8.45 22 8 21.55 8 21V19C8 18.45 8.45 18 9 18H11V15.86C9.66 15.5 8.63 14.39 8.28 13H8C5.79 13 4 11.21 4 9V6C4 5.45 4.45 5 5 5H10V4C10 2.9 10.9 2 12 2ZM6 7V9C6 10.1 6.9 11 8 11H8.28C8.63 9.61 9.66 8.5 11 8.14V7H6ZM18 7H13V8.14C14.34 8.5 15.37 9.61 15.72 11H16C17.1 11 18 10.1 18 9V7Z"/></svg>
-                        <span>Crown Jam <span style="background: linear-gradient(135deg, #FFD700, #FF1493); color: #000; font-size: 0.6rem; padding: 0.15rem 0.35rem; border-radius: 4px; font-weight: 700; margin-left: 0.25rem;">LTM</span></span>
-                    </a>
                     <a href="/fortnite/calendar.html" class="${activePage === 'calendar' ? 'active' : ''}">
                         ${ICONS.calendar}
                         <span>Calendar</span>

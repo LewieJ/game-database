@@ -3039,6 +3039,130 @@
     let currentPlaylistStats = null;
     let currentPlaylistsAvailable = null;
     let currentMeta = null;
+
+    const FAPI_PROFILE_BASE = 'https://fapi.gdb.gg/v1/profile';
+
+    /** Map GET /v1/profile bundle to legacy shapes used by displayProfile (overview, byMode, ranked.modes). */
+    function adaptV1ProfileBundle(bundle, fallbackName) {
+      const summary = bundle.stats && bundle.stats.summary;
+      const overview = summary
+        ? {
+            placetop1: summary.total_wins ?? 0,
+            kills: summary.total_kills ?? 0,
+            matchesplayed: summary.total_matches ?? 0,
+            kills_per_match: summary.kills_per_match ?? 0,
+            win_rate: summary.win_rate ?? 0,
+            placetop3: summary.top_3_finishes ?? 0,
+            placetop5: summary.top_5_finishes ?? 0,
+            placetop10: 0,
+            hours_played: summary.hours_played ?? 0
+          }
+        : {};
+
+      const byMode = {};
+      const bm = summary && summary.by_mode;
+      if (bm) {
+        ['solo', 'duo', 'trio', 'squad', 'octet'].forEach(function (key) {
+          const row = bm[key];
+          if (!row) return;
+          const matches = row.matches ?? 0;
+          const kills = row.kills ?? 0;
+          byMode[key] = {
+            placetop1: row.wins ?? 0,
+            kills: kills,
+            matchesplayed: matches,
+            matches: matches,
+            kills_per_match: matches > 0 ? kills / matches : 0,
+            win_rate: row.win_rate ?? 0,
+            hours_played: 0
+          };
+        });
+      }
+
+      const statsData = { parsed: { overview: overview, byMode: byMode } };
+
+      const RANK_NAME_TO_TIER = {
+        'Bronze 1': 1,
+        'Bronze 2': 2,
+        'Bronze 3': 3,
+        'Silver 1': 4,
+        'Silver 2': 5,
+        'Silver 3': 6,
+        'Gold 1': 7,
+        'Gold 2': 8,
+        'Gold 3': 9,
+        'Platinum 1': 10,
+        'Platinum 2': 11,
+        'Platinum 3': 12,
+        'Diamond 1': 13,
+        'Diamond 2': 14,
+        'Diamond 3': 15,
+        'Elite': 16,
+        'Champion': 17,
+        'Unreal': 18
+      };
+
+      let rankedData = null;
+      const current = bundle.ranked && bundle.ranked.current;
+      if (current && current.hasRankedData) {
+        let list = current.modes;
+        if (!list || !list.length) {
+          const by = current.by_mode || {};
+          list = Object.keys(by).map(function (rankingType) {
+            const row = by[rankingType];
+            return {
+              rankingType: rankingType,
+              name: row.name,
+              shortName: row.shortName,
+              currentRank: row.currentRank,
+              progress: row.progress,
+              lastUpdated: row.lastUpdated
+            };
+          });
+        }
+        if (list && list.length) {
+          const modes = {};
+          list.forEach(function (m) {
+            const key = m.rankingType;
+            if (!key) return;
+            let rankName = m.currentRank;
+            if (typeof rankName !== 'string') rankName = 'Unranked';
+            let tier = RANK_NAME_TO_TIER[rankName];
+            if (tier === undefined) tier = 0;
+            const lastUp = m.lastUpdated || new Date().toISOString();
+            modes[key] = {
+              active: true,
+              modeName: m.name,
+              modeShortName: m.shortName,
+              seasonName: current.seasonName,
+              daysRemaining: current.daysRemaining != null ? current.daysRemaining : 0,
+              playerRank: {
+                currentDivision: tier,
+                divisionName: rankName,
+                progressPercentage: m.progress != null ? m.progress : 0,
+                lastUpdated: lastUp,
+                highestDivision: tier,
+                highestDivisionName: rankName,
+                currentPlayerRanking: null
+              }
+            };
+          });
+          if (Object.keys(modes).length) rankedData = { modes: modes };
+        }
+      }
+
+      const acc = bundle.account || {};
+      const id = acc.id || bundle.accountId || '';
+      const display = acc.displayName || fallbackName || 'Player';
+      const account = { id: id, displayName: display };
+
+      return {
+        account: account,
+        statsData: statsData,
+        rankedData: rankedData,
+        meta: bundle.meta || null
+      };
+    }
     
     // Load server status
     async function loadServerStatus() {
@@ -3088,111 +3212,51 @@
 
     async function loadPlayerProfile(accountId, displayName, platform) {
       try {
-        // Update page title
         if (displayName) {
           document.title = `${displayName} - Fortnite Stats - gdb.gg`;
-          
-          // Update SEO meta tags dynamically
           updateMetaTags(displayName, null);
         }
 
-        // Fetch profile data from V2 API
-        const profileResponse = await fetch(`https://fortnite.gdb.gg/profile/v2/${accountId}`);
+        const profileResponse = await fetch(
+          `${FAPI_PROFILE_BASE}/${encodeURIComponent(accountId)}?ranked_history=false`
+        );
 
         if (!profileResponse.ok) {
           throw new Error('Player not found');
         }
 
-        const profile = await profileResponse.json();
-        
-        // Extract data from V2 API response
-        const account = profile.account;
-        const statsData = profile.parsed ? { parsed: profile.parsed } : null;
-        const playlistStats = profile.playlist_stats;
-        const playlistsAvailable = profile.playlists_available;
-        const meta = profile.meta;
-        
-        // Fetch ranked data separately - using CH7S1 API
-        let rankedData = null;
-        try {
-          const rankedResponse = await fetch(`https://fortnite.gdb.gg/ranked/ch7s1/${accountId}`);
-          if (rankedResponse.ok) {
-            rankedData = await rankedResponse.json();
-          }
-        } catch (error) {
-          // Ranked data fetch failed - will show empty ranked section
-        }
-        
-        // Fetch progress history data
-        let progressData = null;
-        try {
-          const progressResponse = await fetch(`https://fortnite.gdb.gg/progress/${accountId}?limit=10`);
-          if (progressResponse.ok) {
-            progressData = await progressResponse.json();
-          }
-        } catch (error) {
-          // Progress data fetch failed - will show "no progress yet" message
-        }
+        const bundle = await profileResponse.json();
+        const { account, statsData, rankedData, meta } = adaptV1ProfileBundle(bundle, displayName);
 
-        // Store data globally for filtering
         currentAccount = account;
         currentStatsData = statsData;
-        currentProgressData = progressData;
+        currentProgressData = null;
         currentRankedData = rankedData;
         currentPlatform = platform;
-        currentPlaylistStats = playlistStats;
-        currentPlaylistsAvailable = playlistsAvailable;
+        currentPlaylistStats = null;
+        currentPlaylistsAvailable = null;
         currentMeta = meta;
-        
-        // Reset previous seasons cache when loading new player
+
         previousSeasonsData = null;
         previousSeasonsLoaded = false;
 
-        // Update recent players with wins data
         const totalWins = statsData?.parsed?.overview?.placetop1 || 0;
         const totalKills = statsData?.parsed?.overview?.kills || 0;
         const kd = statsData?.parsed?.overview?.kills_per_match || 0;
-        
+
         saveRecentPlayer({
           id: accountId,
           name: account.displayName || displayName,
           wins: totalWins
         });
-        
-        // Update SEO meta tags with stats
+
         updateMetaTags(account.displayName || displayName, {
           wins: totalWins,
           kills: totalKills,
           kd: kd
         });
 
-        displayProfile(account, statsData, progressData, rankedData, platform, playlistStats, playlistsAvailable, meta, 'all', 'reload');
-        
-        // Load XP data and apply prestige effects immediately
-        loadPrestigeData(accountId);
-        
-        // Initialize mini chart on overview tab
-        setTimeout(() => {
-          initMiniChart(accountId);
-        }, 100);
-        
-        // Initialize charts after profile is displayed (only if on progression tab)
-        setTimeout(() => {
-          const currentTab = window.currentProfileTab || 'overview';
-          
-          if (currentTab === 'progression') {
-            initChartRangeButtons(accountId);
-            loadChartData(accountId, '7d');
-          }
-          
-          // Initialize ranked chart if player has ranked data and on ranked tab
-          if (currentTab === 'ranked' && hasRankedData(rankedData)) {
-            initRankedChartControls(accountId);
-            if (selectedRankedMode) {
-              loadRankedChartData(accountId, selectedRankedMode, '30d');
-            }
-          }
-        }, 100);
+        displayProfile(account, statsData, null, rankedData, platform, null, null, meta, 'all', 'reload');
       } catch (error) {
         showError(error.message);
       }
@@ -3217,39 +3281,25 @@
       btn.classList.add('spinning');
       
       try {
-        // Force refresh from Epic API using V2 endpoint
-        const profileResponse = await fetch(`https://fortnite.gdb.gg/profile/v2/${accountId}?refresh=true`);
-        
+        const profileResponse = await fetch(
+          `${FAPI_PROFILE_BASE}/${encodeURIComponent(accountId)}?ranked_history=false`
+        );
+
         if (profileResponse.ok) {
-          const profile = await profileResponse.json();
-          currentStatsData = profile.parsed ? { parsed: profile.parsed } : null;
-          currentPlaylistStats = profile.playlist_stats;
-          currentPlaylistsAvailable = profile.playlists_available;
-          currentMeta = profile.meta;
+          const bundle = await profileResponse.json();
+          const adapted = adaptV1ProfileBundle(bundle, displayName);
+          currentStatsData = adapted.statsData;
+          currentRankedData = adapted.rankedData;
+          currentMeta = adapted.meta;
           currentProgressData = null;
-          
-          // Refresh ranked data - using CH7S1 API
-          try {
-            const rankedResponse = await fetch(`https://fortnite.gdb.gg/ranked/ch7s1/${accountId}`);
-            if (rankedResponse.ok) {
-              currentRankedData = await rankedResponse.json();
-            }
-          } catch (error) {
-            // Ranked data refresh failed - will keep existing data
-            currentRankedData = null;
-          }
+          currentPlaylistStats = null;
+          currentPlaylistsAvailable = null;
+          if (adapted.account) currentAccount = adapted.account;
         }
-        
+
         displayProfile(currentAccount, currentStatsData, currentProgressData, currentRankedData, currentPlatform, currentPlaylistStats, currentPlaylistsAvailable, currentMeta, currentInputFilter, currentPlaylistFilter);
-        
-        // Store refresh timestamp
+
         localStorage.setItem(`lastRefresh_${accountId}`, Date.now().toString());
-        
-        // Reload chart data after refresh
-        setTimeout(() => {
-          initChartRangeButtons(accountId);
-          loadChartData(accountId, '7d');
-        }, 100);
       } catch (error) {
         console.error('Refresh failed:', error);
       } finally {
