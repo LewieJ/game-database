@@ -785,6 +785,8 @@
     let currentFilter = 'all';
     let currentSearch = '';
     let currentView = 'sections';
+    /** Set from fapi `expiration` when present; else countdown uses UTC midnight. */
+    let shopExpirationMs = null;
 
     // V-Bucks icon SVG
     const VBUCKS_ICON = `<svg class="vbucks-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#00d4ff"/><text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#fff">V</text></svg>`;
@@ -792,14 +794,16 @@
     // ==================== COUNTDOWN ====================
     function updateCountdown() {
       const now = new Date();
-      const utcMidnight = new Date(Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate() + 1,
-        0, 0, 0
-      ));
-      
-      const diff = utcMidnight - now;
+      const target = shopExpirationMs
+        ? new Date(shopExpirationMs)
+        : new Date(Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() + 1,
+            0, 0, 0
+          ));
+
+      const diff = Math.max(0, target - now);
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
@@ -812,24 +816,273 @@
     setInterval(updateCountdown, 1000);
 
     // ==================== CONSTANTS ====================
-    const API_BASE = 'https://fortnitestore.gdb.gg';
+    /** gdb.gg Worker — see /fortnite/docs/current-api/store.md */
+    const FAPI_STORE_BR = 'https://fapi.gdb.gg/v1/store/br';
+
+    /** Inline SVG — never 404s; avoids onerror → placeholder → onerror loops (placeholder.png is not shipped). */
+    const SHOP_IMAGE_PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><rect fill="#1c2128" width="128" height="128"/><path fill="none" stroke="#5c6370" stroke-width="4" stroke-linecap="round" d="M36 92L92 36"/><rect x="24" y="24" width="80" height="80" rx="12" fill="none" stroke="#5c6370" stroke-width="3" opacity="0.35"/></svg>'
+    );
+    /** Use with onerror='…' (single-quoted attr) so JSON.stringify’s double quotes stay valid. */
+    const SHOP_IMG_ONERROR = 'this.onerror=null;this.src=' + JSON.stringify(SHOP_IMAGE_PLACEHOLDER);
+
+    const EPIC_STOREFRONT_ORDER = [
+      'BRDailyStorefront',
+      'BRWeeklyStorefront',
+      'BRSpecialFeatured',
+      'BRSpecialDaily',
+      'BRStandaloneStorefront',
+      'BRStarterKits'
+    ];
+
+    function epicStorefrontLayoutIndex(name) {
+      const i = EPIC_STOREFRONT_ORDER.indexOf(name);
+      if (i >= 0) return i;
+      if (/^BRSeason\d+$/.test(name)) return 40;
+      return 100;
+    }
+
+    function epicStorefrontTitle(name) {
+      const labels = {
+        BRDailyStorefront: 'Daily Items',
+        BRWeeklyStorefront: 'Featured',
+        BRSpecialFeatured: 'Special Featured',
+        BRSpecialDaily: 'Special Offers',
+        BRStandaloneStorefront: 'More Offers',
+        BRStarterKits: 'Starter Kits'
+      };
+      if (labels[name]) return labels[name];
+      const m = /^BRSeason(\d+)$/.exec(name);
+      if (m) return 'Season ' + m[1];
+      return name.replace(/^BR/, '').replace(/([a-z])([A-Z])/g, '$1 $2');
+    }
+
+    function currentNumericSeasonName(storefronts) {
+      let maxN = 0;
+      (storefronts || []).forEach(function (sf) {
+        const m = /^BRSeason(\d+)$/.exec(sf.name || '');
+        if (m) maxN = Math.max(maxN, parseInt(m[1], 10));
+      });
+      return maxN ? 'BRSeason' + maxN : null;
+    }
+
+    function getMtxPrice(entry) {
+      if (entry.prices && entry.prices.length) {
+        const p = entry.prices.find(function (x) {
+          return x.currencyType === 'MtxCurrency';
+        }) || entry.prices[0];
+        if (p.currencyType !== 'MtxCurrency') return null;
+        return { final: p.finalPrice, regular: p.regularPrice };
+      }
+      if (entry.dynamicBundleInfo && entry.dynamicBundleInfo.bundleItems) {
+        const db = entry.dynamicBundleInfo;
+        if (db.currencyType && db.currencyType !== 'MtxCurrency') return null;
+        let fin = 0;
+        let reg = 0;
+        db.bundleItems.forEach(function (bi) {
+          fin += bi.discountedPrice || 0;
+          reg += bi.regularPrice || 0;
+        });
+        return { final: fin, regular: reg };
+      }
+      return null;
+    }
+
+    function primaryTemplateId(entry) {
+      const meta = entry.meta || {};
+      if (meta.PrimaryTemplateId) return meta.PrimaryTemplateId;
+      if (meta.templateId) return meta.templateId;
+      if (entry.itemGrants && entry.itemGrants[0]) return entry.itemGrants[0].templateId;
+      return null;
+    }
+
+    function typeFromTemplateId(tid) {
+      if (!tid || typeof tid !== 'string') return 'Item';
+      const ns = tid.split(':')[0];
+      const map = {
+        AthenaCharacter: 'Outfit',
+        AthenaBackpack: 'Back Bling',
+        AthenaPickaxe: 'Pickaxe',
+        AthenaGlider: 'Glider',
+        AthenaDance: 'Emote',
+        AthenaItemWrap: 'Wrap',
+        AthenaLoadingScreen: 'Loading Screen',
+        AthenaSpray: 'Spray',
+        AthenaMusicPack: 'Music Pack',
+        CosmicshuffleTrack: 'Jam Track',
+        SparksSong: 'Jam Track',
+        SparksInstrument: 'Instrument',
+        CosmeticMimosa: 'Companion',
+        VehicleCosmetics_Body: 'Vehicle Body',
+        VehicleCosmetics_Skin: 'Vehicle Decal',
+        VehicleCosmetics_Wheel: 'Wheels',
+        VehicleCosmetics_Booster: 'Booster',
+        VehicleCosmetics_DriftTrail: 'Trails',
+        AthenaSkyDiveContrail: 'Contrail',
+        AthenaCharacterVariantToken: 'Style',
+        AthenaBuiltInEmote: 'Built-In Emote',
+        HomebaseBannerIcon: 'Banner',
+        AthenaPetCarrier: 'Pet',
+        AthenaReactiveGlyph: 'Glyph'
+      };
+      return map[ns] || ns.replace(/_/g, ' ');
+    }
+
+    function cosmeticIconUrl(templateId) {
+      if (!templateId || typeof templateId !== 'string') return null;
+      const id = templateId.split(':')[1];
+      if (!id) return null;
+      return 'https://fortnite-api.com/images/cosmetics/br/' + encodeURIComponent(id) + '/icon.png';
+    }
+
+    function epicOfferDisplayName(entry) {
+      if (entry.title && String(entry.title).trim()) return String(entry.title).trim();
+      const d = entry.devName || '';
+      const stripped = d.replace(/^\[VIRTUAL\]/i, '').trim();
+      const forMatch = stripped.match(/^(.+?)\s+for\s+/i);
+      const left = forMatch ? forMatch[1] : stripped;
+      const parts = left.split(/,\s*(?=\d+\s*x\s*)/i);
+      const names = parts
+        .map(function (chunk) {
+          return chunk.replace(/^\d+\s*x\s*/i, '').trim();
+        })
+        .filter(Boolean);
+      if (names.length) return names.join(' + ');
+      return 'Item Shop Offer';
+    }
+
+    function epicBundleItemsForModal(entry) {
+      const out = [];
+      if (entry.dynamicBundleInfo && entry.dynamicBundleInfo.bundleItems) {
+        entry.dynamicBundleInfo.bundleItems.forEach(function (bi) {
+          const tid = bi.item && bi.item.templateId;
+          if (!tid) return;
+          out.push({
+            name: typeFromTemplateId(tid) + ': ' + tid.split(':')[1],
+            image: cosmeticIconUrl(tid)
+          });
+        });
+        return out;
+      }
+      if (entry.itemGrants && entry.itemGrants.length > 1) {
+        entry.itemGrants.forEach(function (g) {
+          out.push({
+            name: typeFromTemplateId(g.templateId) + ': ' + (g.templateId.split(':')[1] || ''),
+            image: cosmeticIconUrl(g.templateId)
+          });
+        });
+      }
+      return out;
+    }
+
+    function unwrapEnrichedShopPayload(payload) {
+      if (!payload || !payload.data) return null;
+      const d = payload.data;
+      if (d.data && Array.isArray(d.data.entries)) return d.data;
+      if (d.status === 200 && d.data && Array.isArray(d.data.entries)) return d.data;
+      if (Array.isArray(d.entries)) return d;
+      return null;
+    }
+
+    function processEpicStorefronts(payload) {
+      allShopItems = [];
+      allEntries = [];
+      const storefronts = payload.storefronts || [];
+      const seasonName = currentNumericSeasonName(storefronts);
+      const allowed = new Set(EPIC_STOREFRONT_ORDER);
+      if (seasonName) allowed.add(seasonName);
+
+      const seenOffer = new Set();
+
+      storefronts.forEach(function (sf) {
+        const name = sf.name || '';
+        if (!allowed.has(name)) return;
+        const entries = sf.catalogEntries || [];
+        if (!entries.length) return;
+
+        const layoutName = epicStorefrontTitle(name);
+        const layoutIndex = epicStorefrontLayoutIndex(name);
+
+        entries.forEach(function (entry) {
+          const price = getMtxPrice(entry);
+          if (!price || price.final < 0) return;
+          const oid = entry.offerId || entry.devName;
+          if (!oid || seenOffer.has(oid)) return;
+          seenOffer.add(oid);
+
+          const tid = primaryTemplateId(entry);
+          const itemType = typeFromTemplateId(tid);
+          const imageUrl = cosmeticIconUrl(tid);
+          const meta = entry.meta || {};
+          const tileSize = meta.TileSize || 'Size_1_x_1';
+          const inDate = meta.inDate || null;
+          const bundlePieces = epicBundleItemsForModal(entry);
+          const isBundle =
+            bundlePieces.length > 1 ||
+            (entry.itemGrants && entry.itemGrants.length > 1) ||
+            entry.offerType === 'DynamicBundle';
+
+          const processedItem = {
+            name: epicOfferDisplayName(entry),
+            type: itemType,
+            rarity: { value: 'rare', displayValue: 'Rare' },
+            series: null,
+            set: null,
+            description: entry.shortDescription || entry.description || null,
+            imageUrl: imageUrl,
+            price: price.final,
+            regularPrice: price.regular,
+            isBundle: isBundle,
+            isNew: isNewItem(inDate),
+            hasSale: price.regular > price.final,
+            isJamTrack: itemType === 'Jam Track',
+            layoutName: layoutName,
+            layoutIndex: layoutIndex,
+            tileSize: tileSize,
+            bundleItems: bundlePieces,
+            bundleName: isBundle ? epicOfferDisplayName(entry) : null,
+            category: getCategory(itemType, itemType === 'Jam Track'),
+            offerId: oid,
+            _sortPriority: typeof entry.sortPriority === 'number' ? entry.sortPriority : 0
+          };
+
+          allShopItems.push(processedItem);
+          allEntries.push({ entry: entry, processedItem: processedItem });
+        });
+      });
+
+      allShopItems.sort(function (a, b) {
+        if (a.layoutIndex !== b.layoutIndex) return a.layoutIndex - b.layoutIndex;
+        return (a._sortPriority || 0) - (b._sortPriority || 0);
+      });
+
+      document.getElementById('totalItems').textContent = allShopItems.length.toLocaleString();
+      buildFilterTabs();
+      renderShop();
+    }
 
     // ==================== LOAD SHOP ====================
     async function loadShop() {
       try {
-        const response = await fetch(`${API_BASE}/shop/enriched`);
+        const response = await fetch(FAPI_STORE_BR);
         if (!response.ok) throw new Error('Failed to fetch shop');
-        
-        const responseData = await response.json();
-        
-        // New API wraps fortnite-api.com response in data property
-        const data = responseData.data;
-        
-        if (data.status !== 200 || !data.data) {
-          throw new Error('Invalid shop data');
+
+        const payload = await response.json();
+
+        shopExpirationMs = payload.expiration ? new Date(payload.expiration).getTime() : null;
+
+        if (Array.isArray(payload.storefronts)) {
+          processEpicStorefronts(payload);
+          return;
         }
 
-        processShopData(data.data);
+        const enriched = unwrapEnrichedShopPayload(payload);
+        if (enriched && Array.isArray(enriched.entries)) {
+          processShopData(enriched);
+          return;
+        }
+
+        throw new Error('Unrecognized shop response');
       } catch (error) {
         console.error('Shop error:', error);
         document.getElementById('shopContent').innerHTML = `
@@ -1231,12 +1484,12 @@
         ? `<span class="price-original">${item.regularPrice.toLocaleString()}</span><span class="price-current">${VBUCKS_ICON}${item.price.toLocaleString()}</span>`
         : `<span class="price-current">${VBUCKS_ICON}${item.price.toLocaleString()}</span>`;
 
-      const imageUrl = item.imageUrl || '/assets/icons/placeholder.png';
+      const imageUrl = item.imageUrl || SHOP_IMAGE_PLACEHOLDER;
 
       return `
         <div class="item-card ${rarityClass} ${seriesClass} ${sizeClass}" data-item-id="${item.offerId}" data-is-bundle="${item.isBundle}">
           <div class="item-image-wrapper">
-            <img class="item-image" src="${imageUrl}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.src='/assets/icons/placeholder.png'">
+            <img class="item-image" src="${imageUrl}" alt="${escapeHtml(item.name)}" loading="lazy" onerror='${SHOP_IMG_ONERROR}'>
             ${badges ? `<div class="item-badges">${badges}</div>` : ''}
           </div>
           <div class="item-info">
@@ -1264,7 +1517,7 @@
     function showBundleModal(item) {
       document.getElementById('modalTitle').textContent = item.bundleName || item.name;
       
-      const imageUrl = item.imageUrl || '/assets/icons/placeholder.png';
+      const imageUrl = item.imageUrl || SHOP_IMAGE_PLACEHOLDER;
       const priceHtml = item.hasSale 
         ? `<span class="price-original">${item.regularPrice.toLocaleString()}</span><span class="price-current">${VBUCKS_ICON}${item.price.toLocaleString()}</span>`
         : `<span class="price-current">${VBUCKS_ICON}${item.price.toLocaleString()}</span>`;
@@ -1276,7 +1529,7 @@
           <div class="bundle-items-grid">
             ${item.bundleItems.map(bi => `
               <div class="bundle-item">
-                <img src="${bi.image || '/assets/icons/placeholder.png'}" alt="${escapeHtml(bi.name)}" onerror="this.src='/assets/icons/placeholder.png'">
+                <img src="${bi.image || SHOP_IMAGE_PLACEHOLDER}" alt="${escapeHtml(bi.name)}" onerror='${SHOP_IMG_ONERROR}'>
                 <div class="bundle-item-name">${escapeHtml(bi.name)}</div>
               </div>
             `).join('')}
@@ -1286,7 +1539,7 @@
 
       document.getElementById('modalBody').innerHTML = `
         <div class="modal-item-preview">
-          <img class="modal-item-image" src="${imageUrl}" alt="${escapeHtml(item.name)}">
+          <img class="modal-item-image" src="${imageUrl}" alt="${escapeHtml(item.name)}" onerror='${SHOP_IMG_ONERROR}'>
           <div class="modal-item-details">
             <h3>${escapeHtml(item.name)}</h3>
             <p>${escapeHtml(item.type)}${item.set ? ` • ${escapeHtml(item.set)}` : ''}</p>

@@ -16,7 +16,6 @@
         search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>',
         leaderboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>',
         shop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>',
-        calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>',
         metrics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>',
         trophy: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C13.1 2 14 2.9 14 4V5H19C19.55 5 20 5.45 20 6V9C20 11.21 18.21 13 16 13H15.72C15.37 14.39 14.34 15.5 13 15.86V18H15C15.55 18 16 18.45 16 19V21C16 21.55 15.55 22 15 22H9C8.45 22 8 21.55 8 21V19C8 18.45 8.45 18 9 18H11V15.86C9.66 15.5 8.63 14.39 8.28 13H8C5.79 13 4 11.21 4 9V6C4 5.45 4.45 5 5 5H10V4C10 2.9 10.9 2 12 2ZM6 7V9C6 10.1 6.9 11 8 11H8.28C8.63 9.61 9.66 8.5 11 8.14V7H6ZM18 7H13V8.14C14.34 8.5 15.37 9.61 15.72 11H16C17.1 11 18 10.1 18 9V7Z"/></svg>',
         playlists: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
@@ -30,11 +29,9 @@
     function getActivePage() {
         const path = window.location.pathname.toLowerCase();
         
-        if (path.includes('competitive') && !path.includes('event')) return 'competitive-rankings';
         if (path.includes('leaderboards')) return 'leaderboards';
         if (path.includes('event')) return 'competitive';
         if (path.includes('shop')) return 'shop';
-        if (path.includes('calendar')) return 'calendar';
         if (path.includes('playlists')) return 'playlists';
         if (path.includes('streams')) return 'streams';
         if (path.includes('profile-pro')) return 'profile-pro';
@@ -105,17 +102,9 @@
                             ${ICONS.trophy}
                             <span>Competitive Events</span>
                         </a>
-                        <a href="/fortnite/competitive.html" class="${activePage === 'competitive-rankings' ? 'active' : ''}">
-                            ${ICONS.trophy}
-                            <span>Competitive Leaderboards</span>
-                        </a>
                         <a href="/fortnite/shop.html" class="${activePage === 'shop' ? 'active' : ''}">
                             ${ICONS.shop}
                             <span>Item Shop</span>
-                        </a>
-                        <a href="/fortnite/calendar.html" class="${activePage === 'calendar' ? 'active' : ''}">
-                            ${ICONS.calendar}
-                            <span>Calendar</span>
                         </a>
                         <a href="/fortnite/playlists.html" class="${activePage === 'playlists' ? 'active' : ''}">
                             ${ICONS.playlists}
@@ -162,14 +151,6 @@
             <div class="fortnite-more-menu-section">
                 <div class="fortnite-more-menu-title">More Fortnite</div>
                 <div class="fortnite-more-menu-grid">
-                    <a href="/fortnite/calendar.html" class="${activePage === 'calendar' ? 'active' : ''}">
-                        ${ICONS.calendar}
-                        <span>Calendar</span>
-                    </a>
-                    <a href="/fortnite/competitive.html" class="${activePage === 'competitive-rankings' ? 'active' : ''}">
-                        ${ICONS.trophy}
-                        <span>Competitive Leaderboards</span>
-                    </a>
                     <a href="/fortnite/playlists.html" class="${activePage === 'playlists' ? 'active' : ''}">
                         ${ICONS.playlists}
                         <span>Playlists</span>
@@ -207,7 +188,8 @@
 
     // Initialize the sub-nav
     function initFortniteSubNav() {
-        const container = document.getElementById('fortnite-sub-nav');
+        const container = document.getElementById('fortnite-sub-nav')
+            || document.getElementById('fortnite-nav');
         if (container) {
             container.innerHTML = generateFortniteSubNav() + generateMobileNav();
             
@@ -271,12 +253,46 @@
         const submitBtn = container.querySelector('#fortniteNavSearchSubmit');
         const autocomplete = container.querySelector('#fortniteNavAutocomplete');
 
-        if (!wrapper || !trigger || !expanded || !input) return;
+        if (!wrapper || !trigger || !expanded || !input || !autocomplete) return;
 
         let autocompleteItems = [];
         let selectedIndex = -1;
         let debounceTimer;
-        const USER_SEARCH_API = 'https://fortnitesearch.gdb.gg';
+        /** Public Fortnite Worker — see /fortnite/docs/current-api/users.md */
+        const FAPI_BASE = 'https://fapi.gdb.gg';
+
+        function isLikelyEpicAccountId(q) {
+            return /^[a-f0-9]{32}$/i.test((q || '').trim());
+        }
+
+        async function searchEpicAccountsByPrefix(username) {
+            const u = (username || '').trim();
+            if (!u) return [];
+            const res = await fetch(
+                FAPI_BASE + '/user/search?username=' + encodeURIComponent(u) + '&platform=epic'
+            );
+            if (res.status === 503 || res.status === 401) {
+                throw new Error('Player search is temporarily unavailable. Try again later.');
+            }
+            if (!res.ok) {
+                throw new Error('Search failed (' + res.status + ').');
+            }
+            const data = await res.json();
+            return Array.isArray(data) ? data : [];
+        }
+
+        function pickSearchHit(hits, query) {
+            if (!hits.length) return null;
+            const q = (query || '').trim().toLowerCase();
+            const exact = hits.find(function (h) {
+                return (h.displayName || '').toLowerCase() === q;
+            });
+            if (exact) return exact;
+            const preferExact = hits.find(function (h) {
+                return (h.matchType || '').toLowerCase() === 'exact';
+            });
+            return preferExact || hits[0];
+        }
 
         // Open search
         trigger.addEventListener('click', (e) => {
@@ -289,16 +305,21 @@
         function closeSearch() {
             wrapper.classList.remove('expanded');
             input.value = '';
-            autocomplete.innerHTML = '';
-            autocomplete.classList.remove('active');
+            if (autocomplete) {
+                autocomplete.innerHTML = '';
+                autocomplete.classList.remove('active');
+            }
             autocompleteItems = [];
             selectedIndex = -1;
         }
 
-        closeBtn.addEventListener('click', closeSearch);
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeSearch);
+        }
 
-        // Close on click outside
+        // Close on click outside (only while expanded — avoids touching DOM on every page click)
         document.addEventListener('click', (e) => {
+            if (!wrapper.classList.contains('expanded')) return;
             if (!wrapper.contains(e.target)) {
                 closeSearch();
             }
@@ -338,16 +359,16 @@
             }
         }
 
-        // Autocomplete
+        // Autocomplete (same API as fortnite-index.js — GET /user/search)
         input.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 fetchAutocomplete(input.value.trim());
-            }, 150);
+            }, 280);
         });
 
         async function fetchAutocomplete(query) {
-            if (!query || query.length < 3) {
+            if (!query || query.length < 2) {
                 autocomplete.innerHTML = '';
                 autocomplete.classList.remove('active');
                 autocompleteItems = [];
@@ -355,19 +376,10 @@
             }
 
             try {
-                const res = await fetch(`${USER_SEARCH_API}/search?username=${encodeURIComponent(query)}`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-                const data = await res.json();
-                const results = Array.isArray(data.results) ? data.results.slice(0, 12) : [];
-                const epicResults = results.filter(r => {
-                    const matches = Array.isArray(r.matches) ? r.matches : [];
-                    return matches.some(m => (m.platform || '').toLowerCase() === 'epic');
-                });
-
-                autocompleteItems = epicResults.slice(0, 6).map(result => ({
-                    id: result.accountId,
-                    name: getDisplayNameFromResult(result, query)
+                const hits = await searchEpicAccountsByPrefix(query);
+                autocompleteItems = hits.slice(0, 6).map(hit => ({
+                    id: (hit.accountId || hit.account_id || '').trim(),
+                    name: (hit.displayName || hit.display_name || query || '').trim()
                 })).filter(item => item.id && item.name);
 
                 if (autocompleteItems.length === 0) {
@@ -393,44 +405,55 @@
 
             } catch (err) {
                 console.error('Autocomplete error:', err);
-                autocomplete.innerHTML = '';
-                autocomplete.classList.remove('active');
+                autocomplete.innerHTML = `<div class="fn-nav-ac-error">${escapeHtml(err.message || 'Search failed')}</div>`;
+                autocomplete.classList.add('active');
+                autocompleteItems = [];
+                selectedIndex = -1;
             }
         }
 
-        // Form submit
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = input.value.trim();
-            if (!username) return;
+        // Form submit (prefix search + best hit — same as fortnite homepage)
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = input.value.trim();
+                if (!username) return;
 
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="fn-nav-loading"></span>';
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="fn-nav-loading"></span>';
+                }
 
-            try {
-                const res = await fetch(`${USER_SEARCH_API}/lookup?username=${encodeURIComponent(username)}`);
-                
-                if (!res.ok) {
-                    if (res.status === 404) {
+                try {
+                    if (isLikelyEpicAccountId(username)) {
+                        const id = username.trim().toLowerCase();
+                        navigateToProfile(id, 'Player');
+                        return;
+                    }
+
+                    const hits = await searchEpicAccountsByPrefix(username);
+                    if (!hits.length) {
                         showNavSearchError('Player not found');
                         return;
                     }
-                    throw new Error('Search failed');
+
+                    const hit = pickSearchHit(hits, username);
+                    const accountId = (hit.accountId || hit.account_id || '').trim();
+                    const displayName = hit.displayName || hit.display_name || username;
+                    if (!accountId) throw new Error('Invalid response from user search');
+
+                    navigateToProfile(accountId, displayName);
+
+                } catch (err) {
+                    showNavSearchError(err.message || 'Search failed. Try again.');
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = ICONS.search;
+                    }
                 }
-
-                const data = await res.json();
-                const account = data?.account;
-                if (!account?.id) throw new Error('Invalid response');
-
-                navigateToProfile(account.id, account.displayName || username);
-
-            } catch (err) {
-                showNavSearchError('Search failed. Try again.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = ICONS.search;
-            }
-        });
+            });
+        }
 
         function navigateToProfile(id, name) {
             const cleanId = (id || '').trim();
@@ -439,7 +462,7 @@
         }
 
         function showNavSearchError(msg) {
-            autocomplete.innerHTML = `<div class="fn-nav-ac-error">${msg}</div>`;
+            autocomplete.innerHTML = `<div class="fn-nav-ac-error">${escapeHtml(msg || 'Error')}</div>`;
             autocomplete.classList.add('active');
         }
 
@@ -448,15 +471,6 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
-        }
-
-        function getDisplayNameFromResult(result, fallback) {
-            const matches = Array.isArray(result?.matches) ? result.matches : [];
-            const epicMatch = matches.find(m => (m.platform || '').toLowerCase() === 'epic');
-            if (epicMatch?.value?.trim()) return epicMatch.value;
-            if (matches[0]?.value?.trim()) return matches[0].value;
-            if (typeof result?.displayName === 'string' && result.displayName.trim()) return result.displayName;
-            return fallback || result?.accountId || '';
         }
     }
 

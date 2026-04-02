@@ -1471,8 +1471,10 @@
   </style>
 </head>
 <body>
-  <!-- Navigation -->
-  <nav id="fortnite-nav"></nav>
+  <div id="global-nav"></div>
+  <script src="/assets/global.js"></script>
+  <div id="fortnite-sub-nav"></div>
+  <script src="/fortnite/js/fortnite-nav.js"></script>
 
   <main>
     <!-- Back Link -->
@@ -1606,17 +1608,15 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="/fortnite/js/fortnite-nav.js"></script>
-  <script src="/assets/global.js"></script>
   <script src="/assets/error-handler.js"></script>
   <script>
     (function() {
       'use strict';
 
       // ===========================================
-      // CONFIGURATION
+      // CONFIGURATION — see /fortnite/docs/current-api/tournaments.md
       // ===========================================
-      const API_BASE = 'https://fortnite-events-api.dbrnk.workers.dev';
+      const FAPI_BASE = 'https://fapi.gdb.gg';
       
       // Get URL params
       const urlParams = new URLSearchParams(window.location.search);
@@ -1893,8 +1893,8 @@
           statusHtml = `<div class="event-status-badge completed">✓ Completed</div>`;
         }
 
-        // Region badge
-        const regionHtml = `<span class="meta-badge region">${event.region}</span>`;
+        const regionLabel = event.region || (event.regions && event.regions.length ? event.regions.join(' · ') : '');
+        const regionHtml = regionLabel ? `<span class="meta-badge region">${regionLabel}</span>` : '';
 
         // Platforms
         const platformsHtml = (event.platforms || []).slice(0, 6).map(p => 
@@ -2100,6 +2100,15 @@
               </div>
             `);
           }
+        }
+
+        if (event.description && event.description.length > 200) {
+          sections.push(`
+              <div class="info-group">
+                <div class="info-group-title">About this event</div>
+                <p class="empty-text" style="text-align:left;line-height:1.55;">${event.description.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+              </div>
+            `);
         }
 
         // Metadata info
@@ -2482,134 +2491,21 @@
         const breakdownEl = document.getElementById(`breakdown-${rowId}`);
         if (!breakdownEl) return;
 
-        try {
-          const response = await fetch(`${API_BASE}/v2/matches/${encodeURIComponent(currentWindowId)}?accountId=${encodeURIComponent(accountId)}`);
-          
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
-
-          const data = await response.json();
-          const matches = data.matches || [];
-
-          if (matches.length === 0) {
-            breakdownEl.innerHTML = `
-              <div class="match-breakdown-header">
-                <span class="match-breakdown-title">Match History</span>
-              </div>
-              <p style="color: var(--text-tertiary); font-size: 0.85rem;">No match data available.</p>
-            `;
-            return;
-          }
-
-          // Get player's leaderboard entry for point breakdown
-          const entry = currentWindowData?.entries?.find(e => e.accountId === accountId);
-          const pointBreakdown = entry?.pointBreakdown || {};
-
-          // Render matches
-          const matchesHtml = matches.map((match, i) => {
-            const placement = match.placement || match.rawStats?.PLACEMENT_STAT_INDEX || '-';
-            const elims = match.eliminations || match.rawStats?.TEAM_ELIMS_STAT_INDEX || 0;
-            const timeAlive = match.timeAlive || match.rawStats?.TIME_ALIVE_STAT || 0;
-            const isVictory = match.isVictory || match.rawStats?.VICTORY_ROYALE_STAT === 1;
-            
-            const placementClass = placement === 1 ? 'top-1' : placement <= 3 ? 'top-3' : placement <= 5 ? 'top-5' : '';
-            
-            return `
-              <div class="match-card ${isVictory ? 'victory' : ''}">
-                <div class="match-header">
-                  <span class="match-number">Game ${i + 1}</span>
-                  <span class="match-placement ${placementClass}">#${placement}</span>
-                </div>
-                <div class="match-stats">
-                  <div class="match-stat">
-                    <span class="match-stat-value">${elims}</span>
-                    <span class="match-stat-label">Elims</span>
-                  </div>
-                  <div class="match-stat">
-                    <span class="match-stat-value">${formatTimeAlive(timeAlive)}</span>
-                    <span class="match-stat-label">Alive</span>
-                  </div>
-                  ${isVictory ? '<div class="match-stat"><span class="match-stat-value">🏆</span><span class="match-stat-label">Victory!</span></div>' : ''}
-                </div>
-              </div>
-            `;
-          }).join('');
-
-          // Render point breakdown if available
-          let pointBreakdownHtml = '';
-          if (Object.keys(pointBreakdown).length > 0) {
-            const breakdownItems = Object.entries(pointBreakdown).map(([key, val]) => {
-              let label = key;
-              if (key.startsWith('PLACEMENT_STAT_INDEX:')) {
-                const pos = key.split(':')[1];
-                label = `#${pos} Finish`;
-              } else if (key.startsWith('TEAM_ELIMS_STAT_INDEX:')) {
-                const count = key.split(':')[1];
-                label = `${count} Elims`;
-              }
-              return `
-                <div class="point-breakdown-item">
-                  <span class="label">${label}:</span>
-                  <span class="value">${val.timesAchieved}× = +${val.pointsEarned}</span>
-                </div>
-              `;
-            }).join('');
-
-            pointBreakdownHtml = `
-              <div class="point-breakdown">
-                <div class="point-breakdown-title">Point Breakdown</div>
-                <div class="point-breakdown-grid">${breakdownItems}</div>
-              </div>
-            `;
-          }
-
-          breakdownEl.innerHTML = `
-            <div class="match-breakdown-header">
-              <span class="match-breakdown-title">Match History (${matches.length} games)</span>
-            </div>
-            <div class="matches-grid">${matchesHtml}</div>
-            ${pointBreakdownHtml}
-          `;
-
-        } catch (error) {
-          console.error('Failed to fetch matches:', error);
-          breakdownEl.innerHTML = `
-            <div class="match-breakdown-header">
-              <span class="match-breakdown-title">Match History</span>
-            </div>
-            <p style="color: var(--text-tertiary); font-size: 0.85rem;">Failed to load match data.</p>
-          `;
-        }
+        breakdownEl.innerHTML = `
+          <div class="match-breakdown-header">
+            <span class="match-breakdown-title">Match History</span>
+          </div>
+          <p style="color: var(--text-tertiary); font-size: 0.85rem;">Per-match breakdown is not available on gdb.gg for tournament windows yet.</p>
+        `;
       }
 
       // ===========================================
       // LIVE DATA FUNCTIONS
       // ===========================================
 
-      // Fetch live data from the /v2/live endpoint
+      /** Legacy live overlay used an external /v2/live feed; fapi tournament viewer has no equivalent yet. */
       async function fetchLiveData() {
-        try {
-          const response = await fetch(`${API_BASE}/v2/live`);
-          if (!response.ok) return null;
-          
-          const data = await response.json();
-          
-          // Find the window that matches our current window
-          const allWindows = [...(data.grouped?.live || []), ...(data.grouped?.upcoming || [])];
-          const matchingWindow = allWindows.find(w => w.windowId === currentWindowId || w.eventId === eventId);
-          
-          if (matchingWindow) {
-            liveWindowData = matchingWindow;
-            updateLiveBanner(matchingWindow);
-            return matchingWindow;
-          }
-          
-          return null;
-        } catch (error) {
-          console.error('Failed to fetch live data:', error);
-          return null;
-        }
+        return null;
       }
 
       // Update the live match banner with data
@@ -2638,8 +2534,8 @@
           liveEventTitleEl.textContent = currentEvent.title || currentEvent.short_title || 'Event';
         }
         liveStatDurationEl.textContent = durationDisplay;
-        liveStatPlayersEl.textContent = data.stats?.participants?.toLocaleString() || '--';
-        liveStatProgressEl.textContent = `${data.progressPercent?.toFixed(0) || 0}%`;
+        liveStatPlayersEl.textContent = data.stats?.participants?.toLocaleString() || '—';
+        liveStatProgressEl.textContent = data.progressPercent != null ? data.progressPercent.toFixed(0) + '%' : '—';
         liveStatTimeLeftEl.textContent = formatCountdown(endTime) || 'Soon';
         liveLastUpdatedEl.textContent = `Auto-refresh • ${new Date().toLocaleTimeString()}`;
       }
@@ -2769,49 +2665,115 @@
       }
 
       // ===========================================
-      // DATA FETCHING
+      // DATA FETCHING (fapi tournament viewer — D1 sync, no per-request Epic)
       // ===========================================
 
-      // Fetch event details using v2 API
+      function hexColor(c, fallback) {
+        if (!c) return fallback || 'f7c948';
+        const s = String(c).trim();
+        return s.startsWith('#') ? s.slice(1) : s;
+      }
+
+      function normalizeFapiEvent(raw) {
+        if (!raw) return null;
+        const colors = raw.images && raw.images.colors ? raw.images.colors : {};
+        const titleObj = raw.images && raw.images.title ? raw.images.title : {};
+        const title = [titleObj.line1, titleObj.line2].filter(Boolean).join(' — ') ||
+          (raw.images && raw.images.description) || raw.web_id || raw.display_data_id || raw.event_id;
+        const description = (raw.images && raw.images.detailsDescription) ||
+          (raw.images && raw.images.description) || '';
+        const region = raw.regions && raw.regions.length ? raw.regions[0] : '';
+        return {
+          event_id: raw.event_id,
+          title: title,
+          short_title: title,
+          description: description,
+          begin_time: raw.begin_time,
+          end_time: raw.end_time,
+          region: region,
+          regions: raw.regions || [],
+          platforms: raw.platforms || [],
+          metadata: raw.metadata || {},
+          poster_image: raw.images && raw.images.poster,
+          background_image: (raw.images && raw.images.background) || (raw.images && raw.images.poster),
+          primary_color: hexColor(colors.primary, 'f7c948'),
+          background_left_color: hexColor(colors.left, hexColor(colors.primary, 'f7c948')),
+          background_right_color: hexColor(colors.right, hexColor(colors.primary, 'f7c948')),
+          participant_count: raw.participant_count,
+          window_count: raw.window_count
+        };
+      }
+
+      function normalizeFapiWindows(list) {
+        if (!Array.isArray(list) || !list.length) return [];
+        return list.map(function (w) {
+          const row = {
+            window_id: w.window_id,
+            begin_time: w.begin_time,
+            end_time: w.end_time,
+            round: w.round,
+            name: w.round_type
+              ? w.round_type + (w.round ? ' · R' + w.round : '')
+              : ('Round ' + (w.round || 1)),
+            total_participants: typeof w.entry_count === 'number' ? w.entry_count : 0
+          };
+          row.status = getWindowStatus(row);
+          return row;
+        });
+      }
+
       async function fetchEventDetails() {
         try {
-          const response = await fetch(`${API_BASE}/v2/event/${encodeURIComponent(eventId)}`);
-          
+          liveWindowData = null;
+          const response = await fetch(
+            FAPI_BASE + '/v1/tournaments/events/' + encodeURIComponent(eventId)
+          );
+
           if (!response.ok) {
-            throw new Error(`Event not found (${response.status})`);
+            if (response.status === 404) {
+              throw new Error('This event is not in the gdb.gg tournament cache yet, or the id is invalid.');
+            }
+            throw new Error('Request failed (' + response.status + ')');
           }
-          
+
           const data = await response.json();
-          
-          currentEvent = data.event;
-          currentWindows = data.windows || [];
-          
-          if (!currentEvent) {
+          const rawEvent = data.event;
+          if (!rawEvent) {
             throw new Error('Event data not found');
           }
-          
+
+          const mergedWindows =
+            Array.isArray(data.windows) && data.windows.length
+              ? data.windows
+              : (Array.isArray(rawEvent.windows) ? rawEvent.windows : []);
+
+          currentEvent = normalizeFapiEvent(rawEvent);
+          currentWindows = normalizeFapiWindows(mergedWindows);
+          if (currentEvent) {
+            currentEvent.windows = currentWindows;
+          }
+
           renderHero(currentEvent);
           renderWindowTabs(currentWindows);
           renderEventInfo(currentEvent, null);
-          
-          // If no windows, show message
+
           if (currentWindows.length === 0) {
             leaderboardContainerEl.innerHTML = `
               <div class="leaderboard-container">
                 <div class="empty-state">
                   <div class="empty-icon">📅</div>
-                  <h3 class="empty-title">No rounds available yet</h3>
-                  <p class="empty-text">Event rounds will appear here once they are scheduled.</p>
+                  <h3 class="empty-title">Round times aren't available here yet</h3>
+                  <p class="empty-text">We don't have the session schedule for this event on the site right now. Check back later, or open the Compete tab in Fortnite for the latest times.</p>
                 </div>
               </div>
             `;
+            stopLivePolling();
+            exitLiveMode();
             return;
           }
 
-          // Fetch leaderboard for current window
           fetchLeaderboard();
 
-          // Auto-refresh for live events or recently ended
           if (isLive || isRecentlyEnded) {
             startAutoRefresh();
             startCountdownTimer();
@@ -2820,7 +2782,6 @@
             stopLivePolling();
             exitLiveMode();
           }
-
         } catch (error) {
           console.error('Failed to fetch event:', error);
           eventHeroEl.innerHTML = `
@@ -2836,7 +2797,47 @@
         }
       }
 
-      // Fetch leaderboard
+      function renderLeaderboardPlaceholder() {
+        const w = currentWindows.find(function (x) {
+          return x.window_id === currentWindowId;
+        });
+        const entries = w && typeof w.total_participants === 'number' ? w.total_participants : null;
+        const entryLine = entries !== null && entries > 0
+          ? '<p class="empty-text" style="margin-top:0.5rem;">About <strong>' + entries.toLocaleString() + '</strong> players linked to this round so far.</p>'
+          : '';
+
+        leaderboardContainerEl.innerHTML = `
+          <div class="leaderboard-container">
+            <div class="empty-state">
+              <div class="empty-icon">📊</div>
+              <h3 class="empty-title">Leaderboard coming later</h3>
+              <p class="empty-text">Live scores and full standings for this round aren't on gdb.gg yet. Use the round tabs above to see when it runs.</p>
+              ${entryLine}
+            </div>
+          </div>
+        `;
+        jumpToRankEl.style.display = 'none';
+        renderStatsSummary(null);
+        if (w) {
+          statsSummaryEl.innerHTML = `
+            <div class="stats-summary-bar">
+              <div class="stat-item">
+                <div class="stat-value">${(w.total_participants || 0).toLocaleString()}</div>
+                <div class="stat-label">Players tracked</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${w.name || 'Round'}</div>
+                <div class="stat-label">Window</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${currentEvent && currentEvent.region ? currentEvent.region : '—'}</div>
+                <div class="stat-label">Region</div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
       async function fetchLeaderboard() {
         if (!currentWindowId) {
           leaderboardContainerEl.innerHTML = `
@@ -2849,35 +2850,8 @@
           return;
         }
 
-        try {
-          leaderboardContainerEl.innerHTML = `
-            <div class="loading-container">
-              <div class="loading-spinner"></div>
-              <p class="loading-text">Loading leaderboard...</p>
-            </div>
-          `;
-
-          const url = `${API_BASE}/v2/leaderboard/${encodeURIComponent(currentWindowId)}?page=${currentPage}&limit=100`;
-          const response = await fetch(url);
-          
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
-
-          const data = await response.json();
-          renderLeaderboard(data);
-          renderEventInfo(currentEvent, data);
-
-        } catch (error) {
-          console.error('Failed to fetch leaderboard:', error);
-          leaderboardContainerEl.innerHTML = `
-            <div class="error-container">
-              <div class="error-icon">⚠️</div>
-              <h3 class="error-title">Failed to load leaderboard</h3>
-              <p class="error-text">${error.message}</p>
-            </div>
-          `;
-        }
+        renderLeaderboardPlaceholder();
+        renderEventInfo(currentEvent, null);
       }
 
       // Auto-refresh for live events

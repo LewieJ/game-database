@@ -781,10 +781,15 @@
 
   <script>
     // ==================== CONSTANTS ====================
-    const API_BASE = 'https://fortniteccu.gdb.gg';
+    /** Public Fortnite Worker — see /fortnite/docs/current-api/ccu.md */
+    const API_BASE = 'https://fapi.gdb.gg';
     const REFRESH_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-    const CREATIVE_ISLANDS_LIMIT = 50;
+    /** Comprehensive `limit` (max 2000): creative list + client-side island search. */
+    const CCU_COMPREHENSIVE_LIMIT = 1500;
     const TOP_MAPS_COUNT = 15;
+
+    /** Populated from last `GET /ccu/comprehensive` — `/ccu/search` is not on fapi. */
+    let cachedCreativeIslandsForSearch = [];
 
     // Chart colors - using CSS variable values
     const COLORS = {
@@ -872,7 +877,9 @@
 
     async function fetchComprehensiveCCU() {
       try {
-        const response = await fetch(`${API_BASE}/ccu/comprehensive`);
+        const response = await fetch(
+          `${API_BASE}/ccu/comprehensive?limit=${CCU_COMPREHENSIVE_LIMIT}`
+        );
         if (!response.ok) {
           console.error('Comprehensive CCU API returned:', response.status);
           return null;
@@ -887,6 +894,7 @@
     async function fetchDailySummaries(days = 30) {
       try {
         const response = await fetch(`${API_BASE}/ccu/daily?days=${days}`);
+        if (!response.ok) return null;
         return await response.json();
       } catch (error) {
         console.error('Failed to fetch daily summaries:', error);
@@ -894,14 +902,11 @@
       }
     }
 
-    async function fetchCreativeIslands(limit = CREATIVE_ISLANDS_LIMIT) {
-      try {
-        const response = await fetch(`${API_BASE}/ccu/creative?limit=${limit}`);
-        return await response.json();
-      } catch (error) {
-        console.error('Failed to fetch creative islands:', error);
-        return null;
-      }
+    /** Creative islands from comprehensive payload (replaces legacy GET /ccu/creative). */
+    function creativeListFromComprehensive(comprehensiveData) {
+      const islands = comprehensiveData?.creative?.top_islands;
+      if (!Array.isArray(islands) || islands.length === 0) return null;
+      return { success: true, islands };
     }
 
     // ==================== RENDER FUNCTIONS ====================
@@ -1167,13 +1172,14 @@
           showChartError(ctx);
           return;
         }
+        // fapi daily rows: date, minCCU, maxCCU, avgCCU, snapshotCount (no per-day official/creative split)
         historyData = dailyData.data
           .sort((a, b) => new Date(a.date) - new Date(b.date))
           .map(d => ({
             timestamp: d.date + 'T12:00:00.000Z',
-            total: d.avgCCU,
-            official: d.avgOfficial || d.avg_official || null,
-            creative: d.avgCreative || d.avg_creative || null
+            total: d.avgCCU ?? d.avg_ccu ?? null,
+            official: d.avgOfficial ?? d.avg_official ?? null,
+            creative: d.avgCreative ?? d.avg_creative ?? null
           }));
       }
 
@@ -1334,11 +1340,17 @@
     // ==================== DATA REFRESH ====================
     async function refreshAllData() {
       try {
-        const [overviewData, comprehensiveData, creativeData] = await Promise.all([
+        const [overviewData, comprehensiveData] = await Promise.all([
           fetchOverview(),
-          fetchComprehensiveCCU(),
-          fetchCreativeIslands()
+          fetchComprehensiveCCU()
         ]);
+
+        const creativeData = creativeListFromComprehensive(comprehensiveData);
+        if (comprehensiveData?.creative?.top_islands) {
+          cachedCreativeIslandsForSearch = comprehensiveData.creative.top_islands;
+        } else {
+          cachedCreativeIslandsForSearch = [];
+        }
 
         if (overviewData && overviewData.success) {
           updateHeroStats(overviewData);
@@ -1436,17 +1448,35 @@
       const searchResults = document.getElementById('searchResults');
       
       try {
-        const response = await fetch(
-          `${API_BASE}/ccu/search?q=${encodeURIComponent(query)}&limit=15`
-        );
-        const data = await response.json();
-        
-        if (!data.success || !data.islands || data.islands.length === 0) {
+        const q = (query || '').trim().toLowerCase();
+        if (!q) {
+          searchResults.innerHTML = '<div class="search-empty">Type at least 2 characters...</div>';
+          return;
+        }
+
+        if (!cachedCreativeIslandsForSearch.length) {
+          searchResults.innerHTML = '<div class="search-empty">Island list still loading — try again in a moment.</div>';
+          return;
+        }
+
+        const matches = cachedCreativeIslandsForSearch.filter(island => {
+          const title = (island.title || island.name || '').toLowerCase();
+          const code = (island.code || '').toLowerCase().replace(/\s/g, '');
+          const creator = (island.creator || '').toLowerCase();
+          const qCompact = q.replace(/\s/g, '');
+          return (
+            title.includes(q) ||
+            code.includes(qCompact) ||
+            creator.includes(q)
+          );
+        }).slice(0, 15);
+
+        if (matches.length === 0) {
           searchResults.innerHTML = '<div class="search-empty">No islands found</div>';
           return;
         }
 
-        searchResults.innerHTML = data.islands.map(island => `
+        searchResults.innerHTML = matches.map(island => `
           <div class="search-result" data-code="${island.code}" data-title="${island.title}" data-creator="${island.creator || ''}">
             <div class="search-result-info">
               <div class="search-result-title">${escapeHtml(island.title)}</div>

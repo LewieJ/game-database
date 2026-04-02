@@ -1067,41 +1067,6 @@
       color: #000;
     }
 
-    /* Last Updated & Refresh Indicator */
-    .status-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      padding: 0.5rem 1rem;
-      background: var(--bg-card);
-      border-radius: 8px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .last-updated {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .refresh-indicator {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: var(--fn-green);
-    }
-
-    .refresh-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--fn-green);
-      border-radius: 50%;
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
-
     @keyframes pulse-dot {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.5; transform: scale(0.8); }
@@ -1246,7 +1211,11 @@
     }
 
     .empty-state-hint .refresh-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
       background: var(--fn-blue);
+      animation: pulse-dot 2s ease-in-out infinite;
     }
 
     /* Responsive */
@@ -1264,11 +1233,6 @@
 
       .quick-filter-pill {
         flex-shrink: 0;
-      }
-
-      .status-bar {
-        flex-direction: column;
-        gap: 0.5rem;
       }
 
       .section-header {
@@ -1378,18 +1342,6 @@
       <button class="quick-filter-pill" data-filter="mobile">📱 Mobile</button>
     </div>
 
-    <!-- Status Bar -->
-    <div class="status-bar" id="statusBar">
-      <div class="last-updated">
-        <span>📡 Last updated:</span>
-        <span id="lastUpdatedTime">Just now</span>
-      </div>
-      <div class="refresh-indicator">
-        <span class="refresh-dot"></span>
-        <span>Auto-refreshing</span>
-      </div>
-    </div>
-
     <!-- Events Container -->
     <div id="eventsContainer">
       <div class="loading-container">
@@ -1424,136 +1376,197 @@
     (function() {
       'use strict';
 
-      const API_BASE = 'https://fortnite-events-api.dbrnk.workers.dev';
-      
-      // DOM Elements
+      /** gdb.gg Fortnite Worker — see /fortnite/docs/current-api/tournaments.md */
+      const FAPI_BASE = 'https://fapi.gdb.gg';
+
       const regionFilter = document.getElementById('regionFilter');
       const platformFilter = document.getElementById('platformFilter');
       const searchFilter = document.getElementById('searchFilter');
       const eventsContainer = document.getElementById('eventsContainer');
 
-      // State
-      let liveData = null;
-      let completedData = null;
+      let activeEvents = [];
+      let upcomingEvents = [];
+      let completedEvents = [];
+      /** Total completed rows reported by API (for pagination — see GET /v1/tournaments/events?status=completed&offset=) */
+      let completedTotal = 0;
       let refreshInterval = null;
       let currentFilter = 'all';
       let currentSort = 'recent';
-      let lastFetchTime = null;
-      
-      // Make sort handler globally accessible
+      let initialLoadDone = false;
+
       window.handleSortChange = function(value) {
         currentSort = value;
         renderEvents();
       };
-      
-      // Update last updated time display
-      function updateLastUpdatedDisplay() {
-        const el = document.getElementById('lastUpdatedTime');
-        if (!el || !lastFetchTime) return;
-        
-        const seconds = Math.floor((Date.now() - lastFetchTime) / 1000);
-        if (seconds < 5) {
-          el.textContent = 'Just now';
-        } else if (seconds < 60) {
-          el.textContent = `${seconds}s ago`;
-        } else {
-          const minutes = Math.floor(seconds / 60);
-          el.textContent = `${minutes}m ago`;
-        }
-      }
-      
-      // Start updating the "last updated" display
-      setInterval(updateLastUpdatedDisplay, 5000);
 
-      // ==================== LIVE NOW API ====================
-      
-      async function fetchLiveNow() {
-        try {
-          const response = await fetch(`${API_BASE}/v2/live?includeUpcoming=48`);
-          if (!response.ok) throw new Error('Failed to fetch live data');
-          
-          liveData = await response.json();
-          lastFetchTime = Date.now();
-          updateLastUpdatedDisplay();
-          
-          renderEvents();
-        } catch (error) {
-          console.error('[Live Now] Error:', error);
-          showError('Failed to load live events. Please try again later.');
-        }
+      function asEventArray(raw) {
+        if (Array.isArray(raw)) return raw;
+        if (raw && typeof raw === 'object') return Object.keys(raw).length ? Object.values(raw) : [];
+        return [];
       }
-      
-      async function fetchCompleted() {
+
+      function buildTitle(ev) {
+        const ti = ev.images && ev.images.title;
+        if (ti && (ti.line1 || ti.line2)) {
+          return [ti.line1, ti.line2].filter(Boolean).join(' — ');
+        }
+        if (ev.images && ev.images.description) return ev.images.description;
+        return ev.web_id || ev.display_data_id || ev.event_id || '';
+      }
+
+      function buildSearchBlob(ev) {
+        return [
+          buildTitle(ev),
+          ev.event_id,
+          ev.tournament_type,
+          ev.web_id,
+          ev.display_data_id,
+          (ev.regions || []).join(' ')
+        ].join(' ').toLowerCase();
+      }
+
+      function matchesPlatformFilter(ev) {
+        const key = (platformFilter.value || '').trim();
+        if (!key) return true;
+        const p = (ev.platforms || []).join(' ').toLowerCase();
+        const hasWin = /windows|mac/.test(p);
+        const hasMobile = /\bios\b|\bandroid\b|mobile|lunaMobile|xcloudmobile|gfNmobile|heliosmobile/i.test(p);
+        const hasConsole = /ps4|ps5|xb1|xsx|xbox|switch|luna\b|helios\b|xcloud\b/.test(p);
+        if (key === 'pc') return hasWin;
+        if (key === 'console') return hasConsole;
+        if (key === 'console-only') return hasConsole && !hasWin && !hasMobile;
+        if (key === 'mobile') return hasMobile;
+        if (key === 'mobile-only') return hasMobile && !hasWin && !hasConsole;
+        return true;
+      }
+
+      function matchesClientFilters(ev) {
+        const term = searchFilter.value.toLowerCase().trim();
+        if (term && !buildSearchBlob(ev).includes(term)) return false;
+        return matchesPlatformFilter(ev);
+      }
+
+      function cardImageUrl(ev) {
+        const im = ev.images;
+        if (!im) return '';
+        return im.poster || im.background || im.tile || '';
+      }
+
+      function cardColorStyle(ev) {
+        const c = ev.images && ev.images.colors;
+        if (!c) return '';
+        const left = c.left ? (String(c.left).startsWith('#') ? c.left : '#' + c.left) : '';
+        const right = c.right ? (String(c.right).startsWith('#') ? c.right : '#' + c.right) : '';
+        if (left && right) return 'style="background: linear-gradient(135deg, ' + left + ', ' + right + ');"';
+        return '';
+      }
+
+      function regionLabel(ev) {
+        const r = ev.regions;
+        if (!r || !r.length) return '';
+        return r.length > 2 ? r.slice(0, 2).join(' · ') + '…' : r.join(' · ');
+      }
+
+      function liveProgressPercent(ev) {
+        const b = new Date(ev.begin_time).getTime();
+        const e = new Date(ev.end_time).getTime();
+        const n = Date.now();
+        if (!Number.isFinite(b) || !Number.isFinite(e) || e <= b) return 50;
+        return Math.min(100, Math.max(0, ((n - b) / (e - b)) * 100));
+      }
+
+      async function fetchTournamentList(status, offset) {
+        const region = (regionFilter.value || '').trim();
+        const params = new URLSearchParams({ status: status, limit: '200' });
+        if (region) params.set('region', region);
+        if (offset != null && offset > 0) params.set('offset', String(offset));
+
+        const res = await fetch(FAPI_BASE + '/v1/tournaments/events?' + params.toString());
+        if (!res.ok) throw new Error('Tournaments request failed (' + res.status + ')');
+        const data = await res.json();
+        const items = asEventArray(data.events);
+        const total = typeof data.total === 'number' ? data.total : items.length;
+        return { items: items, total: total };
+      }
+
+      window.loadMoreCompletedTournaments = async function() {
+        const btn = document.getElementById('loadMoreCompleted');
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Loading…';
+        }
         try {
-          const region = regionFilter.value;
-          const params = new URLSearchParams({
-            hasData: 'true',
-            limit: '20'
+          const page = await fetchTournamentList('completed', completedEvents.length);
+          completedTotal = page.total;
+          const seen = new Set(completedEvents.map(function(e) { return e.event_id; }));
+          page.items.forEach(function(e) {
+            if (e && e.event_id && !seen.has(e.event_id)) {
+              seen.add(e.event_id);
+              completedEvents.push(e);
+            }
           });
-          if (region && region !== 'All') {
-            params.set('region', region);
-          }
-          
-          const response = await fetch(`${API_BASE}/v2/completed?${params}`);
-          if (!response.ok) throw new Error('Failed to fetch completed events');
-          
-          completedData = await response.json();
-          
           renderEvents();
-        } catch (error) {
-          console.error('[Completed] Error:', error);
+        } catch (err) {
+          console.error('[Tournaments] load more completed', err);
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Could not load more — tap to retry';
+          }
+        }
+      };
+
+      async function loadTournaments() {
+        try {
+          const [active, upcoming, completed] = await Promise.all([
+            fetchTournamentList('active'),
+            fetchTournamentList('upcoming'),
+            fetchTournamentList('completed', 0)
+          ]);
+          activeEvents = active.items;
+          upcomingEvents = upcoming.items;
+          completedEvents = completed.items;
+          completedTotal = completed.total;
+          initialLoadDone = true;
+          renderEvents();
+        } catch (err) {
+          console.error('[Tournaments]', err);
+          if (!initialLoadDone) {
+            showError('Could not load competitive events from gdb.gg. Try again later.');
+          }
         }
       }
-      
+
       function renderEvents() {
+        if (!initialLoadDone) return;
+
         let html = '';
-        const searchTerm = searchFilter.value.toLowerCase().trim();
-        
-        // Filter function
-        const matchesFilter = (item) => {
-          if (!searchTerm) return true;
-          const title = (item.title || item.name || '').toLowerCase();
-          return title.includes(searchTerm);
-        };
-        
-        // Live Now Section
-        if (liveData) {
-          const { grouped } = liveData;
-          const region = regionFilter.value;
-          
-          let liveWindows = grouped.live || [];
-          let upcomingWindows = grouped.upcoming || [];
-          
-          if (region && region !== 'All') {
-            liveWindows = liveWindows.filter(w => w.region === region);
-            upcomingWindows = upcomingWindows.filter(w => w.region === region);
-          }
-          
-          // Apply search filter
-          liveWindows = liveWindows.filter(matchesFilter);
-          upcomingWindows = upcomingWindows.filter(matchesFilter);
-          
-          if (liveWindows.length > 0) {
-            html += renderLiveSection(liveWindows);
-          } else {
-            html += renderNoLiveEvents();
-          }
-          
-          if (upcomingWindows.length > 0) {
-            html += renderUpcomingSection(upcomingWindows);
-          }
+
+        let liveList = activeEvents.filter(matchesClientFilters);
+        let upcomingList = upcomingEvents.filter(matchesClientFilters);
+
+        if (liveList.length > 0) {
+          html += renderLiveSection(liveList);
+        } else {
+          html += renderNoLiveEvents();
         }
-        
-        // Completed Events Section
-        if (completedData && completedData.events) {
-          let filteredEvents = completedData.events.filter(matchesFilter);
-          html += renderCompletedSection(filteredEvents);
+        if (upcomingList.length > 0) {
+          html += renderUpcomingSection(upcomingList);
         }
-        
+
+        const completedFiltered = completedEvents.filter(matchesClientFilters);
+        if (completedFiltered.length > 0) {
+          html += renderCompletedSection(completedFiltered);
+        }
+
+        if (!html && initialLoadDone) {
+          html = '<section class="events-section"><div class="empty-state-enhanced" style="margin-top:1rem;text-align:center;padding:2rem;">' +
+            '<div class="empty-state-icon">🔎</div><h3>No events match your filters</h3>' +
+            '<p class="page-subtitle">Try another region, platform, or search.</p></div></section>';
+        }
+
         eventsContainer.innerHTML = html;
         startTimers();
-        
-        // Restore sort dropdown selection
+
         const sortSelect = document.getElementById('completedSort');
         if (sortSelect) sortSelect.value = currentSort;
       }
@@ -1569,8 +1582,7 @@
               <h3>No Rounds Currently Live</h3>
               <p>All competitive rounds have ended. Check back soon for the next event!</p>
               <div class="empty-state-hint">
-                <span class="refresh-dot"></span>
-                <span>Page auto-refreshes every 60 seconds</span>
+                <span>Refresh the page to check for new live rounds.</span>
               </div>
             </div>
           </section>
@@ -1578,7 +1590,7 @@
       }
       
       function renderLiveSection(windows) {
-        const cards = windows.map(w => renderLiveCard(w)).join('');
+        const cards = windows.map(ev => renderLiveCard(ev)).join('');
         
         return `
           <section class="events-section">
@@ -1593,7 +1605,7 @@
       }
       
       function renderUpcomingSection(windows) {
-        const cards = windows.map(w => renderUpcomingCard(w)).join('');
+        const cards = windows.map(ev => renderUpcomingCard(ev)).join('');
         
         return `
           <section class="events-section">
@@ -1607,97 +1619,92 @@
         `;
       }
       
-      function renderLiveCard(window) {
-        const cardImage = window.images?.poster || window.images?.background || '';
-        const bgColor = window.colors?.primary || '#2a2a2a';
-        
-        let backgroundStyle = '';
-        if (!cardImage && window.colors?.backgroundLeft && window.colors?.backgroundRight) {
-          backgroundStyle = `style="background: linear-gradient(135deg, ${window.colors.backgroundLeft}, ${window.colors.backgroundRight});"`;
-        }
-        
-        const progressPercent = Math.min(100, Math.max(0, window.progressPercent || 0));
-        
-        // Build top players HTML if available
-        let topPlayersHtml = '';
-        if (window.topPlayers && window.topPlayers.length > 0) {
-          const topThree = window.topPlayers.slice(0, 3);
-          const rankEmojis = ['🥇', '🥈', '🥉'];
-          topPlayersHtml = `
-            <div class="live-top-players">
-              ${topThree.map((p, i) => `
-                <div class="live-top-player">
-                  <span class="top-rank">${rankEmojis[i]}</span>
-                  <span class="top-name">${p.playerName || 'Anonymous'}</span>
-                  <span class="top-points">${p.points} pts</span>
-                </div>
-              `).join('')}
-            </div>
-          `;
-        }
-        
-        // Link with window parameter for direct navigation
-        const eventUrl = `/fortnite/event.html?id=${encodeURIComponent(window.eventId)}&window=${encodeURIComponent(window.windowId)}`;
-        
-        return `
-          <a href="${eventUrl}" class="event-card live-event-card">
-            <div class="event-card-image-wrapper" ${backgroundStyle}>
-              ${cardImage ? `<img class="event-card-image" src="${cardImage}" alt="${window.title}" loading="lazy">` : ''}
-              <div class="event-badges">
-                ${window.region ? `<span class="badge badge-region">${window.region}</span>` : ''}
-                <span class="badge badge-live">🔴 LIVE</span>
-              </div>
-              <div class="live-progress-bar">
-                <div class="live-progress-fill" style="width: ${progressPercent}%"></div>
-              </div>
-            </div>
-            <div class="event-card-info">
-              <h3 class="event-title">${window.title || window.name}</h3>
-              <div class="event-date">🔴 ${window.name} - Live Now</div>
-              <div class="event-time" data-ends="${window.endsInSeconds}">${formatTimeRemaining(window.endsInSeconds)}</div>
-              ${window.stats?.participants ? `<div class="event-participants">👥 ${window.stats.participants.toLocaleString()} players competing</div>` : ''}
-              ${topPlayersHtml}
-            </div>
-          </a>
-        `;
+      function renderLiveCard(ev) {
+        const title = escapeHtml(buildTitle(ev));
+        const cardImage = cardImageUrl(ev);
+        const backgroundStyle = !cardImage ? cardColorStyle(ev) : '';
+        const progressPercent = liveProgressPercent(ev);
+        const endMs = new Date(ev.end_time).getTime();
+        const rl = regionLabel(ev);
+        const sub = ev.tournament_type ? escapeHtml(String(ev.tournament_type).replace(/([A-Z])/g, ' $1').trim()) : 'Competitive';
+        const parts = typeof ev.participant_count === 'number' && ev.participant_count > 0
+          ? '<div class="event-participants">👥 ' + ev.participant_count.toLocaleString() + ' tracked</div>'
+          : '';
+
+        const eventUrl = '/fortnite/event.html?id=' + encodeURIComponent(ev.event_id);
+        const remainSec = Math.max(0, Math.floor((endMs - Date.now()) / 1000));
+
+        return (
+          '<a href="' + eventUrl + '" class="event-card live-event-card">' +
+            '<div class="event-card-image-wrapper" ' + backgroundStyle + '>' +
+            (cardImage ? '<img class="event-card-image" src="' + escapeHtml(cardImage) + '" alt="' + title + '" loading="lazy">' : '') +
+            '<div class="event-badges">' +
+            (rl ? '<span class="badge badge-region">' + escapeHtml(rl) + '</span>' : '') +
+            '<span class="badge badge-live">🔴 LIVE</span>' +
+            '</div>' +
+            '<div class="live-progress-bar">' +
+            '<div class="live-progress-fill" style="width: ' + progressPercent.toFixed(1) + '%"></div>' +
+            '</div></div>' +
+            '<div class="event-card-info">' +
+            '<h3 class="event-title">' + title + '</h3>' +
+            '<div class="event-date">🔴 ' + sub + ' — live now</div>' +
+            '<div class="event-time" data-end-ms="' + endMs + '">' + formatTimeRemaining(remainSec) + '</div>' +
+            parts +
+            '</div></a>'
+        );
       }
-      
-      function renderUpcomingCard(window) {
-        const cardImage = window.images?.poster || window.images?.background || '';
-        
-        let backgroundStyle = '';
-        if (!cardImage && window.colors?.backgroundLeft && window.colors?.backgroundRight) {
-          backgroundStyle = `style="background: linear-gradient(135deg, ${window.colors.backgroundLeft}, ${window.colors.backgroundRight});"`;
-        }
-        
-        // Link with window parameter for direct navigation
-        const eventUrl = `/fortnite/event.html?id=${encodeURIComponent(window.eventId)}&window=${encodeURIComponent(window.windowId)}`;
-        
-        return `
-          <a href="${eventUrl}" class="event-card">
-            <div class="event-card-image-wrapper" ${backgroundStyle}>
-              ${cardImage ? `<img class="event-card-image" src="${cardImage}" alt="${window.title}" loading="lazy">` : ''}
-              <div class="event-badges">
-                ${window.region ? `<span class="badge badge-region">${window.region}</span>` : ''}
-              </div>
-            </div>
-            <div class="event-card-info">
-              <h3 class="event-title">${window.title || window.name}</h3>
-              <div class="event-date">${formatEventDate(new Date(window.beginTime))}</div>
-              <div class="event-time" data-starts="${window.startsInSeconds}">${formatCountdown(window.startsInSeconds)}</div>
-              <div class="event-round">${window.name}</div>
-            </div>
-          </a>
-        `;
+
+      function escapeHtml(s) {
+        if (s == null || s === '') return '';
+        const d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      function renderUpcomingCard(ev) {
+        const title = escapeHtml(buildTitle(ev));
+        const cardImage = cardImageUrl(ev);
+        const backgroundStyle = !cardImage ? cardColorStyle(ev) : '';
+        const beginMs = new Date(ev.begin_time).getTime();
+        const rl = regionLabel(ev);
+        const sub = ev.tournament_type ? escapeHtml(String(ev.tournament_type)) : '';
+        const eventUrl = '/fortnite/event.html?id=' + encodeURIComponent(ev.event_id);
+        const startSec = Math.max(0, Math.floor((beginMs - Date.now()) / 1000));
+
+        return (
+          '<a href="' + eventUrl + '" class="event-card">' +
+            '<div class="event-card-image-wrapper" ' + backgroundStyle + '>' +
+            (cardImage ? '<img class="event-card-image" src="' + escapeHtml(cardImage) + '" alt="' + title + '" loading="lazy">' : '') +
+            '<div class="event-badges">' +
+            (rl ? '<span class="badge badge-region">' + escapeHtml(rl) + '</span>' : '') +
+            '</div></div>' +
+            '<div class="event-card-info">' +
+            '<h3 class="event-title">' + title + '</h3>' +
+            '<div class="event-date">' + formatEventDate(new Date(ev.begin_time)) + '</div>' +
+            '<div class="event-time" data-start-ms="' + beginMs + '">' + formatCountdown(startSec) + '</div>' +
+            (sub ? '<div class="event-round">' + sub + '</div>' : '') +
+            '</div></a>'
+        );
       }
       
       function renderCompletedSection(events) {
         if (events.length === 0) return '';
-        
-        // Sort events based on current sort setting
+
         const sortedEvents = sortCompletedEvents([...events]);
         const cards = sortedEvents.map(e => renderCompletedCard(e)).join('');
-        
+
+        const loadMore =
+          completedTotal > completedEvents.length
+            ? '<div style="text-align:center;margin-top:1.25rem;">' +
+              '<button type="button" class="filter-select" id="loadMoreCompleted" onclick="window.loadMoreCompletedTournaments()" ' +
+              'style="cursor:pointer;max-width:22rem;">' +
+              'Load more completed (' +
+              completedEvents.length +
+              ' / ' +
+              completedTotal +
+              ')</button></div>'
+            : '';
+
         return `
           <section class="events-section">
             <div class="section-header">
@@ -1714,55 +1721,60 @@
             <div class="events-scroll">
               ${cards}
             </div>
+            ${loadMore}
           </section>
         `;
       }
       
+      function completedHoursAgo(ev) {
+        const end = new Date(ev.end_time).getTime();
+        if (!Number.isFinite(end)) return 0;
+        return (Date.now() - end) / 3600000;
+      }
+
       function sortCompletedEvents(events) {
         const sortBy = currentSort || 'recent';
-        
+        const copy = events.slice();
+
         switch (sortBy) {
           case 'participants':
-            return events.sort((a, b) => (b.stats?.totalParticipants || 0) - (a.stats?.totalParticipants || 0));
+            return copy.sort((a, b) => (b.participant_count || 0) - (a.participant_count || 0));
           case 'rounds':
-            return events.sort((a, b) => (b.stats?.crawledWindows || 0) - (a.stats?.crawledWindows || 0));
+            return copy.sort((a, b) => (b.window_count || 0) - (a.window_count || 0));
           case 'name':
-            return events.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+            return copy.sort((a, b) => buildTitle(a).localeCompare(buildTitle(b)));
           case 'recent':
           default:
-            return events.sort((a, b) => (a.hoursSinceCompleted || 0) - (b.hoursSinceCompleted || 0));
+            return copy.sort((a, b) => completedHoursAgo(a) - completedHoursAgo(b));
         }
       }
-      
-      function renderCompletedCard(event) {
-        const cardImage = event.images?.poster || event.images?.background || '';
-        
-        let backgroundStyle = '';
-        if (!cardImage && event.colors?.backgroundLeft && event.colors?.primary) {
-          backgroundStyle = `style="background: linear-gradient(135deg, ${event.colors.backgroundLeft}, ${event.colors.primary}40);"`;
-        }
-        
-        const timeAgo = formatTimeAgo(event.hoursSinceCompleted);
-        
-        return `
-          <a href="/fortnite/event.html?id=${encodeURIComponent(event.eventId)}" class="event-card completed-event-card">
-            <div class="event-card-image-wrapper" ${backgroundStyle}>
-              ${cardImage ? `<img class="event-card-image" src="${cardImage}" alt="${event.title}" loading="lazy">` : ''}
-              <div class="event-badges">
-                ${event.region ? `<span class="badge badge-region">${event.region}</span>` : ''}
-                ${event.stats?.hasData ? `<span class="badge badge-archived">📊 Data</span>` : ''}
-              </div>
-            </div>
-            <div class="event-card-info">
-              <h3 class="event-title">${event.title || event.shortTitle}</h3>
-              <div class="event-date">${timeAgo}</div>
-              <div class="event-stats">
-                ${event.stats?.totalParticipants ? `<span>${event.stats.totalParticipants.toLocaleString()} players</span>` : ''}
-                ${event.stats?.crawledWindows ? `<span>${event.stats.crawledWindows} rounds</span>` : ''}
-              </div>
-            </div>
-          </a>
-        `;
+
+      function renderCompletedCard(ev) {
+        const title = escapeHtml(buildTitle(ev));
+        const cardImage = cardImageUrl(ev);
+        const backgroundStyle = !cardImage ? cardColorStyle(ev) : '';
+        const timeAgo = formatTimeAgo(completedHoursAgo(ev));
+        const rl = regionLabel(ev);
+        const pc = ev.participant_count;
+        const wc = ev.window_count;
+        const stats =
+          (pc ? '<span>' + Number(pc).toLocaleString() + ' players</span>' : '') +
+          (wc ? '<span>' + wc + ' rounds</span>' : '');
+
+        return (
+          '<a href="/fortnite/event.html?id=' + encodeURIComponent(ev.event_id) + '" class="event-card completed-event-card">' +
+            '<div class="event-card-image-wrapper" ' + backgroundStyle + '>' +
+            (cardImage ? '<img class="event-card-image" src="' + escapeHtml(cardImage) + '" alt="' + title + '" loading="lazy">' : '') +
+            '<div class="event-badges">' +
+            (rl ? '<span class="badge badge-region">' + escapeHtml(rl) + '</span>' : '') +
+            (pc > 0 ? '<span class="badge badge-archived">📊 Data</span>' : '') +
+            '</div></div>' +
+            '<div class="event-card-info">' +
+            '<h3 class="event-title">' + title + '</h3>' +
+            '<div class="event-date">' + timeAgo + '</div>' +
+            (stats ? '<div class="event-stats">' + stats + '</div>' : '') +
+            '</div></a>'
+        );
       }
       
       function formatTimeAgo(hours) {
@@ -1788,20 +1800,17 @@
       }
       
       function updateTimers() {
-        // Update live event timers (ends in)
-        document.querySelectorAll('[data-ends]').forEach(el => {
-          let seconds = parseInt(el.dataset.ends) - 1;
-          if (seconds < 0) seconds = 0;
-          el.dataset.ends = seconds;
-          el.textContent = formatTimeRemaining(seconds);
+        document.querySelectorAll('[data-end-ms]').forEach(el => {
+          const ms = parseInt(el.dataset.endMs, 10);
+          if (Number.isNaN(ms)) return;
+          const sec = Math.max(0, Math.floor((ms - Date.now()) / 1000));
+          el.textContent = formatTimeRemaining(sec);
         });
-        
-        // Update upcoming event timers (starts in)
-        document.querySelectorAll('[data-starts]').forEach(el => {
-          let seconds = parseInt(el.dataset.starts) - 1;
-          if (seconds < 0) seconds = 0;
-          el.dataset.starts = seconds;
-          el.textContent = formatCountdown(seconds);
+        document.querySelectorAll('[data-start-ms]').forEach(el => {
+          const ms = parseInt(el.dataset.startMs, 10);
+          if (Number.isNaN(ms)) return;
+          const sec = Math.max(0, Math.floor((ms - Date.now()) / 1000));
+          el.textContent = formatCountdown(sec);
         });
       }
       
@@ -1840,21 +1849,19 @@
       // ==================== ERROR HANDLING ====================
       
       function showError(message) {
-        eventsContainer.innerHTML = `
-          <div class="error-container">
-            <div class="error-icon">⚠️</div>
-            <h3 class="error-title">Error</h3>
-            <p class="error-text">${message}</p>
-          </div>
-        `;
+        eventsContainer.innerHTML =
+          '<div class="error-container">' +
+          '<div class="error-icon">⚠️</div>' +
+          '<h3 class="error-title">Error</h3>' +
+          '<p class="error-text">' + escapeHtml(message || 'Something went wrong') + '</p>' +
+          '</div>';
       }
       
       // ==================== EVENT LISTENERS ====================
       
       regionFilter.addEventListener('change', () => {
         localStorage.setItem('fn_events_region', regionFilter.value);
-        fetchLiveNow();
-        fetchCompleted();
+        loadTournaments();
       });
 
       platformFilter.addEventListener('change', () => {
@@ -1909,15 +1916,7 @@
       regionFilter.value = savedRegion !== null ? savedRegion : '';
       platformFilter.value = savedPlatform !== null ? savedPlatform : '';
       
-      // Initial fetch
-      fetchLiveNow();
-      fetchCompleted();
-      
-      // Refresh live data every 60 seconds
-      setInterval(fetchLiveNow, 60000);
-      
-      // Refresh completed events every 5 minutes
-      setInterval(fetchCompleted, 300000);
+      loadTournaments();
     })();
   </script>
 </body>
