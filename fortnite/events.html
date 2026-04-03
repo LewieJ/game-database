@@ -58,10 +58,15 @@
       padding: 1.5rem 2rem 3rem;
     }
 
-    /* Page Header */
+    /* Page header + compact partner credit (single block) */
     .page-header {
       text-align: center;
       margin-bottom: 1.5rem;
+    }
+
+    .page-header-lede {
+      max-width: 40rem;
+      margin: 0 auto;
     }
 
     .page-header h1 {
@@ -80,6 +85,44 @@
     .page-subtitle {
       color: var(--text-tertiary);
       font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 0 0 0.75rem;
+    }
+
+    .page-header-credit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      margin: 0.5rem 0 0;
+      padding: 0.55rem 1.15rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      max-width: 100%;
+    }
+
+    .page-header-credit__icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .page-header-credit a {
+      color: var(--fn-blue);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .page-header-credit a:hover {
+      text-decoration: underline;
+      color: #67e8f9;
     }
 
     /* Filters Section */
@@ -1294,8 +1337,13 @@
 
   <main>
     <header class="page-header">
-      <h1>Competitive <span>Events</span></h1>
-      <p class="page-subtitle">Browse Fortnite tournaments, cups, and competitive events</p>
+      <div class="page-header-lede">
+        <h1>Competitive <span>Events</span></h1>
+        <p class="page-header-credit">
+          <img class="page-header-credit__icon" src="/fortnite/assets/myfortnitestats-icon.png" width="28" height="28" alt="" aria-hidden="true" loading="lazy" decoding="async">
+          <span>Events data provided by <a href="https://myfortnitestats.com/events" target="_blank" rel="noopener noreferrer">MyFortniteStats</a></span>
+        </p>
+      </div>
     </header>
 
     <!-- Filters -->
