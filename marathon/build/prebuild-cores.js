@@ -18,7 +18,7 @@ const https = require('https');
 
 // ─── Config ─────────────────────────────────────────────────
 const API_URL       = 'https://cores.marathondb.gg/api/cores';
-const SITE_URL      = 'https://marathondb.gg';
+const { MARATHON_SITE_URL: SITE_URL } = require('./seo-config');
 const HTML_PATH     = path.resolve(__dirname, '..', 'cores', 'index.html');
 
 // ─── Constants (mirror cores.js) ────────────────────────────

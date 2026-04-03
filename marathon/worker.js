@@ -126,7 +126,7 @@ function rewriteCanonicalAndOgUrl(html, canonicalUrl) {
 
 async function handleItemCanonicalRewrite(request, env) {
   const url = new URL(request.url);
-  const siteUrl = 'https://marathondb.gg';
+  const siteUrl = 'https://gdb.gg/marathon';
 
   if (request.method !== 'GET') return null;
 

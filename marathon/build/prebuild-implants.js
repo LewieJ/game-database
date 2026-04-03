@@ -18,7 +18,7 @@ const https = require('https');
 
 // ─── Config ─────────────────────────────────────────────────
 const API_URL       = 'https://implants.marathondb.gg/api/implants';
-const SITE_URL      = 'https://marathondb.gg';
+const { MARATHON_SITE_URL: SITE_URL } = require('./seo-config');
 const HTML_PATH     = path.resolve(__dirname, '..', 'implants', 'index.html');
 
 // ─── Constants (mirror implants.js) ─────────────────────────

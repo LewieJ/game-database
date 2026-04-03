@@ -25,10 +25,17 @@ const path = require('path');
 const { generateNavigation } = require('./shared-nav');
 const { generateFooter } = require('./site-footer');
 const { headLoaderScript } = require('./adsense-snippets');
+const { MARATHON_SITE_URL: SITE_URL, SITE_ORIGIN } = require('./seo-config');
+
+/** Absolute URL for paths like /marathon/... or /assets/... (site-root paths). */
+function absolutePublicUrl(pathOrUrl) {
+    if (!pathOrUrl || pathOrUrl.startsWith('http')) return pathOrUrl;
+    if (pathOrUrl.startsWith('/')) return SITE_ORIGIN + pathOrUrl;
+    return `${SITE_URL}/${pathOrUrl}`;
+}
 
 // Configuration
 const API_BASE = 'https://helpbot.marathondb.gg';
-const SITE_URL = 'https://marathondb.gg';
 const OUTPUT_DIR = path.join(__dirname, '..');
 
 // News author profiles — add new authors here
@@ -36,7 +43,7 @@ const NEWS_AUTHORS = {
     'Chandler Bellgrave': {
         name: 'Chandler Bellgrave',
         role: 'Editor',
-        url: `https://marathondb.gg/news/`,
+        url: `${SITE_URL}/news/`,
         social: {
             twitter: 'https://x.com/MarathonDB',
         },
@@ -1494,7 +1501,7 @@ function generateFactionsListingPage() {
         "name": title,
         "url": canonicalUrl,
         "description": metaDesc,
-        "publisher": { "@type": "Organization", "name": "MarathonDB", "url": SITE_URL + "/marathon/" },
+        "publisher": { "@type": "Organization", "name": "MarathonDB", "url": `${SITE_URL}/` },
         "itemListElement": ALL_FACTION_SLUGS.map((slug, i) => ({
             "@type": "ListItem",
             "position": i + 1,
@@ -1508,7 +1515,7 @@ function generateFactionsListingPage() {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL + "/marathon/" },
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
             { "@type": "ListItem", "position": 2, "name": "Factions", "item": canonicalUrl }
         ]
     }, null, 2)}
@@ -2321,7 +2328,7 @@ ${headLoaderScript()}
         "name": "Maps Database - MARATHON DB",
         "url": canonicalUrl,
         "description": "Explore Marathon game maps and locations. Complete map database with layouts, strategies, and competitive gameplay information.",
-        "publisher": { "@type": "Organization", "name": "MarathonDB", "url": SITE_URL + "/marathon/" }
+        "publisher": { "@type": "Organization", "name": "MarathonDB", "url": `${SITE_URL}/` }
     }, null, 2)}
     </script>
     <script type="application/ld+json">
@@ -2329,7 +2336,7 @@ ${headLoaderScript()}
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL + "/marathon/" },
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
             { "@type": "ListItem", "position": 2, "name": "Maps", "item": canonicalUrl }
         ]
     }, null, 2)}
@@ -2969,7 +2976,7 @@ function generateArticleDetailPage(article, allArticles) {
         "@type": "NewsArticle",
         "headline": article.title,
         "description": article.excerpt,
-        "image": article.thumbnail.startsWith('http') ? article.thumbnail : `${SITE_URL}${article.thumbnail}`,
+        "image": absolutePublicUrl(article.thumbnail),
         "datePublished": isoDate,
         "dateModified": isoDate,
         "author": {
@@ -3024,7 +3031,7 @@ function generateArticleDetailPage(article, allArticles) {
     <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:title" content="${title} | MarathonDB">
     <meta property="og:description" content="${description}">
-    <meta property="og:image" content="${article.thumbnail.startsWith('http') ? article.thumbnail : `${SITE_URL}${article.thumbnail}`}">
+    <meta property="og:image" content="${absolutePublicUrl(article.thumbnail)}">
     <meta property="og:site_name" content="MarathonDB">
     <meta property="og:locale" content="en_US">
     <meta property="article:published_time" content="${isoDate}">
@@ -3037,7 +3044,7 @@ function generateArticleDetailPage(article, allArticles) {
     <meta name="twitter:site" content="@MarathonDB">
     <meta name="twitter:title" content="${title}">
     <meta name="twitter:description" content="${description}">
-    <meta name="twitter:image" content="${article.thumbnail.startsWith('http') ? article.thumbnail : `${SITE_URL}${article.thumbnail}`}">
+    <meta name="twitter:image" content="${absolutePublicUrl(article.thumbnail)}">
     
     <link rel="stylesheet" href="/marathon/css/style.css">
     <link rel="stylesheet" href="/marathon/css/pages.css">
@@ -3260,7 +3267,7 @@ function generateNewsListingPage(articles) {
     <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:title" content="Marathon News & Guides | MarathonDB">
     <meta property="og:description" content="Latest Marathon news, guides, weapon breakdowns, and community coverage.">
-    <meta property="og:image" content="${SITE_URL}/assets/og-image.png">
+    <meta property="og:image" content="${SITE_ORIGIN}/assets/og-image.png">
     <meta property="og:site_name" content="MarathonDB">
     <meta property="og:locale" content="en_US">
     
@@ -3269,7 +3276,7 @@ function generateNewsListingPage(articles) {
     <meta name="twitter:site" content="@MarathonDB">
     <meta name="twitter:title" content="Marathon News & Guides | MarathonDB">
     <meta name="twitter:description" content="Latest Marathon news, guides, and community content.">
-    <meta name="twitter:image" content="${SITE_URL}/assets/og-image.png">
+    <meta name="twitter:image" content="${SITE_ORIGIN}/assets/og-image.png">
     
     <link rel="stylesheet" href="/marathon/css/style.css">
     <link rel="stylesheet" href="/marathon/css/pages.css">
@@ -3515,7 +3522,7 @@ function generateListingRedirect(newPath, label) {
 <meta charset="UTF-8">
 <title>${label} | MarathonDB - Page Moved</title>
 <meta name="description" content="This page has moved. Visit the new ${label} page on MarathonDB.">
-<link rel="canonical" href="${SITE_URL}${newPath}">
+<link rel="canonical" href="${SITE_ORIGIN}${newPath}">
 <meta name="robots" content="noindex, follow">
 </head>
 <body>
@@ -3537,7 +3544,7 @@ function generateDetailRedirect(newBasePath, label) {
 <meta charset="UTF-8">
 <title>${label} | MarathonDB - Page Moved</title>
 <meta name="description" content="This page has moved. Visit the new ${label} page on MarathonDB.">
-<link rel="canonical" href="${SITE_URL}${newBasePath}">
+<link rel="canonical" href="${SITE_ORIGIN}${newBasePath}">
 <meta name="robots" content="noindex, follow">
 <script>
 (function(){var s=new URLSearchParams(window.location.search).get('slug');window.location.replace(s?'${newBasePath}'+s+'/marathon/':'${newBasePath}');})();
@@ -3704,7 +3711,7 @@ async function buildSitemap() {
 
     for (const url of urls) {
         xml += '  <url>\n';
-        xml += `    <loc>${SITE_URL}${url.loc}</loc>\n`;
+        xml += `    <loc>${SITE_ORIGIN}${url.loc}</loc>\n`;
         xml += `    <lastmod>${url.lastmod}</lastmod>\n`;
         xml += `    <changefreq>${url.changefreq}</changefreq>\n`;
         xml += `    <priority>${url.priority}</priority>\n`;
@@ -3780,7 +3787,7 @@ async function main() {
         console.log('  --maps          Generate maps page');
         console.log('  --news          Generate news/article pages from Markdown');
         console.log('  --redirects     Generate SEO redirect stubs + _redirects file');
-        console.log('  --sitemap       Generate marathon/sitemap.xml (marathondb.gg URLs)');
+        console.log('  --sitemap       Generate marathon/sitemap.xml (gdb.gg URLs)');
         console.log('  --all           All of the above');
         console.log('\nFull API prebuild (implants, cores, grids, cosmetics):');
         console.log('  node build/rebuild-all.js   (from marathon/)');

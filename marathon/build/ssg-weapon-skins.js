@@ -20,7 +20,7 @@ const fs    = require('fs');
 const path  = require('path');
 
 const API_BASE   = 'https://weaponskins.marathondb.gg';
-const SITE_URL   = 'https://marathondb.gg';
+const { MARATHON_SITE_URL: SITE_URL } = require('./seo-config');
 const OUTPUT_DIR = path.resolve(__dirname, '..', 'weapon-skins');
 
 const IS_TEST    = process.argv.includes('--test');

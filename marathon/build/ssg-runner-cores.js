@@ -31,7 +31,7 @@ const { generateFooter } = require('./site-footer');
 // ─── Config ─────────────────────────────────────────────────────────────────
 
 const API_URL    = 'https://cores.marathondb.gg/api/cores';
-const SITE_URL   = 'https://marathondb.gg';
+const { MARATHON_SITE_URL: SITE_URL } = require('./seo-config');
 const OUTPUT_DIR = path.resolve(__dirname, '..', 'cores');
 
 const IS_DRYRUN  = process.argv.includes('--dry-run');

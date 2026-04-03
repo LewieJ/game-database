@@ -12,23 +12,23 @@
 const https = require('https');
 
 const INDEXNOW_KEY = 'd86078e67f7c48eaaccd4c54ece9ab6b';
-const HOST = 'marathondb.gg';
+const HOST = 'gdb.gg';
+const MARATHON_PREFIX = '/marathon';
 const KEY_LOCATION = `https://${HOST}/${INDEXNOW_KEY}.txt`;
 
-// Default URL list — update when publishing new content
+// Default URL list — Marathon subsite paths; update when publishing new content
 const DEFAULT_URLS = [
-  `https://${HOST}/`,
-  `https://${HOST}/news/`,
-  `https://${HOST}/news/marathon-rewards-pass-s1-update/`,
-  `https://${HOST}/news/marathon-100k-concurrent-users-steam/`,
-  `https://${HOST}/mods/`,
-  `https://${HOST}/weapons/`,
-  `https://${HOST}/runners/`,
-  `https://${HOST}/cores/`,
-  `https://${HOST}/implants/`,
-  `https://${HOST}/items/`,
-  `https://${HOST}/runner-skins/`,
-  `https://${HOST}/weapon-skins/`,
+  `https://${HOST}${MARATHON_PREFIX}/`,
+  `https://${HOST}${MARATHON_PREFIX}/news/`,
+  `https://${HOST}${MARATHON_PREFIX}/news/marathon-rewards-pass-s1-update/`,
+  `https://${HOST}${MARATHON_PREFIX}/mods/`,
+  `https://${HOST}${MARATHON_PREFIX}/weapons/`,
+  `https://${HOST}${MARATHON_PREFIX}/runners/`,
+  `https://${HOST}${MARATHON_PREFIX}/cores/`,
+  `https://${HOST}${MARATHON_PREFIX}/implants/`,
+  `https://${HOST}${MARATHON_PREFIX}/items/`,
+  `https://${HOST}${MARATHON_PREFIX}/runner-skins/`,
+  `https://${HOST}${MARATHON_PREFIX}/weapon-skins/`,
 ];
 
 function submitToIndexNow(urls) {

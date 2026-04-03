@@ -1,39 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="robots" content="noindex,nofollow">
-    
-    
-
-
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    
-    
-    <link rel="icon" type="image/svg+xml" href="/assets/icons/gdb-mark.svg">
+    <meta name="description" content="Is Marathon down? Check live Marathon server status, report connection problems, and see outage reports from other players.">
+    <meta name="keywords" content="Marathon down, Marathon server status, Marathon outage, Marathon connection issues, Marathon servers, is Marathon working, Marathon lag, Marathon disconnects">
+    <meta name="robots" content="index, follow">
+        <link rel="icon" type="image/svg+xml" href="/assets/icons/gdb-mark.svg">
     <link rel="apple-touch-icon" href="/assets/icons/gdb-mark.svg">
 
-    
-    
-    
-    
-    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gdb.gg/marathon/servers/">
+    <meta property="og:title" content="Is Marathon Down? — Live Server Status | MARATHON DB">
+    <meta property="og:description" content="Check if Marathon servers are down. Report connection issues and see live outage data from players.">
+    <meta property="og:image" content="https://gdb.gg/assets/icons/marathon.svg">
 
-    
-    
-    
-    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Is Marathon Down? — Live Server Status | MARATHON DB">
+    <meta name="twitter:description" content="Check if Marathon servers are down. Report connection issues and see live outage data from players.">
+    <meta name="twitter:image" content="https://gdb.gg/assets/icons/marathon.svg">
 
     <meta name="theme-color" content="#d4ff00">
-    
+    <link rel="canonical" href="https://gdb.gg/marathon/servers/">
     <title>Is Marathon Down? — Live Server Status | MARATHON DB</title>
     <link rel="stylesheet" href="/marathon/css/style.css">
     <link rel="stylesheet" href="/marathon/css/pages.css">
     <link rel="stylesheet" href="/marathon/css/auth.css">
 
     <!-- Structured Data: WebPage -->
-    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Is Marathon Down? — Live Server Status",
+        "description": "Check if Marathon game servers are down. Report connection issues, see live outage reports from other players, and track problems in real-time.",
+        "url": "https://gdb.gg/marathon/servers/",
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": "MARATHON DB",
+            "url": "https://gdb.gg/marathon"
+        },
+        "about": {
+            "@type": "VideoGame",
+            "name": "Marathon",
+            "publisher": { "@type": "Organization", "name": "Bungie" }
+        },
+        "mainEntity": {
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "Is Marathon down right now?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Check the status indicator at the top of this page. It aggregates live reports from Marathon players. If many players are reporting issues simultaneously, the servers are likely experiencing problems."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How do I report Marathon server issues?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Select the issue category that matches your problem (e.g. Can't Connect, Lag, Disconnects) and click Submit Report. Your report is anonymous and rate-limited to prevent abuse."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Why can't I connect to Marathon servers?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Connection issues can be caused by server outages, scheduled maintenance, your internet connection, or firewall settings. Check this page to see if other players are experiencing similar problems. If many reports appear at once, it's likely a server-side issue."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How often does the Marathon server status update?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "The status page auto-refreshes every 2 minutes and shows player reports from the last 24 hours, grouped into 30-minute intervals."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What platforms does Marathon server status cover?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "This page tracks player-reported issues across all platforms — PC, PlayStation, and Xbox. Since Marathon uses shared servers with cross-play, outages typically affect all platforms simultaneously."
+                    }
+                }
+            ]
+        }
+    }
+    </script>
 
     <style>
         .srv-page { padding-top: var(--nav-height); }
@@ -300,6 +358,7 @@
             .report-grid { grid-template-columns: 1fr; }
         }
     </style>
+
       <script src="/marathon/js/unified-site-nav.js" defer></script>
 <link rel="stylesheet" href="/marathon/css/rnk-theme.css">
 </head>

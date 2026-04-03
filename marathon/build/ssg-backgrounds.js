@@ -28,7 +28,7 @@ const { generateFooter } = require('./site-footer');
 
 const BG_API     = 'https://backgrounds.marathondb.gg';
 const BG_CDN     = 'https://helpbot.marathondb.gg/';
-const SITE_URL   = 'https://marathondb.gg';
+const { MARATHON_SITE_URL: SITE_URL } = require('./seo-config');
 const OUTPUT_DIR = path.resolve(__dirname, '..', 'backgrounds');
 
 const IS_TEST    = process.argv.includes('--test');
@@ -283,8 +283,8 @@ function generateBackgroundPage(bg, allBgs) {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://marathondb.gg/" },
-    { "@type": "ListItem", "position": 2, "name": "Backgrounds", "item": "https://marathondb.gg/backgrounds/" },
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+    { "@type": "ListItem", "position": 2, "name": "Backgrounds", "item": `${SITE_URL}/backgrounds/` },
     { "@type": "ListItem", "position": 3, "name": "${escapeHtml(name)}", "item": "${canonicalUrl}" }
   ]
 }

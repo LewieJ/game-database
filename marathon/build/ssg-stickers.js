@@ -25,7 +25,7 @@ const { generateFooter } = require('./site-footer');
 // ─── Configuration ────────────────────────────────────────────────────────
 
 const API_BASE   = 'https://weaponstickers.marathondb.gg';
-const SITE_URL   = 'https://marathondb.gg';
+const { MARATHON_SITE_URL: SITE_URL } = require('./seo-config');
 const OUTPUT_DIR = path.resolve(__dirname, '..', 'stickers');
 
 const IS_TEST   = process.argv.includes('--test');

@@ -1,31 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Arachne is a global leader in cybersecurity and information security solutions. They are known for their advanced threat detection and prevention technologies. Learn about Arachne perks, cosmetics, contracts, and reputation in Marathon.">
     <meta name="keywords" content="Marathon Arachne, Arachne faction, Arachne contracts, Arachne perks, Arachne cosmetics, Arachne reputation, Marathon factions">
     <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
-    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
+        <link rel="icon" type="image/svg+xml" href="/assets/icons/gdb-mark.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/gdb-mark.svg">
     
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://marathondb.gg/factions/arachne/">
-    <meta property="og:title" content="Arachne Faction Hub | MarathonDB">
+    <meta property="og:url" content="https://gdb.gg/marathon/factions/arachne/">
+    <meta property="og:title" content="Arachne Faction Hub | gdb.gg">
     <meta property="og:description" content="Arachne is a global leader in cybersecurity and information security solutions. They are known for their advanced threat detection and prevention technologies. Learn about Arachne perks, cosmetics, contracts, and reputation in Marathon.">
     <meta property="og:image" content="https://helpbot.marathondb.gg/assets/items/reputations/arachne-200x200.png">
     
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Arachne Faction Hub | MarathonDB">
+    <meta name="twitter:title" content="Arachne Faction Hub | gdb.gg">
     <meta name="twitter:description" content="Arachne is a global leader in cybersecurity and information security solutions. They are known for their advanced threat detection and prevention technologies. Learn about Arachne perks, cosmetics, contracts, and reputation in Marathon.">
     <meta name="twitter:image" content="https://helpbot.marathondb.gg/assets/items/reputations/arachne-200x200.png">
     
-    <link rel="canonical" href="https://marathondb.gg/factions/arachne/">
-    <title>Arachne Faction Hub | MarathonDB</title>
+    <link rel="canonical" href="https://gdb.gg/marathon/factions/arachne/">
+    <title>Arachne Faction Hub | gdb.gg</title>
     <link rel="stylesheet" href="/marathon/css/style.css">
     <link rel="stylesheet" href="/marathon/css/pages.css">
     <link rel="stylesheet" href="/marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/faction-hub-upgrades.css">
+    <link rel="stylesheet" href="/marathon/css/faction-hub-contracts.css">
+    <style>
+        :root{--faction-color:#e40b0d;--faction-on-color:#1c1a1b}
+
+        /* ── Tab Navigation ── */
+        .fh-tabs-wrap{margin:16px 0 0;border-bottom:1px solid rgba(255,255,255,.08)}
+        .fh-tabs-nav{display:flex;gap:4px;padding:0 0 0 2px}
+        .fh-tab{background:none;border:none;color:rgba(255,255,255,.55);font-size:.875rem;font-weight:500;padding:10px 18px;cursor:pointer;position:relative;letter-spacing:.02em;transition:color .15s}
+        .fh-tab::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--faction-color);opacity:0;transition:opacity .15s}
+        .fh-tab:hover{color:rgba(255,255,255,.85)}
+        .fh-tab.active{color:#fff}
+        .fh-tab.active::after{opacity:1}
+        .fh-tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:99px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-size:.65rem;font-weight:600;vertical-align:middle}
+        .fh-tab.active .fh-tab-count{background:var(--faction-color);color:#000}
+        .fh-tab-panel{display:block}
+        .fh-tab-panel[hidden]{display:none!important}
+        .fh-contract-filter-bar{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px 0}
+        .fh-contract-filter-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:99px;color:rgba(255,255,255,.65);font-size:.75rem;font-weight:500;padding:4px 12px;cursor:pointer;transition:all .15s}
+        .fh-contract-filter-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+        .fh-contract-filter-btn.active{background:var(--faction-color);border-color:var(--faction-color);color:#000;font-weight:600}
+        .fh-contracts-rows{display:flex;flex-direction:column;gap:2px;padding:8px 0 4px}
+        .fh-contract-row{display:flex;align-items:stretch;gap:12px;padding:12px 16px;cursor:pointer;border-radius:6px;transition:background .12s;outline:none}
+        .fh-contract-row:hover,.fh-contract-row:focus{background:rgba(255,255,255,.06)}
+        .fh-contract-row-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+        .fh-contract-row-badges{display:flex;flex-wrap:wrap;gap:4px}
+        .fh-contract-row-name{font-size:.9rem;font-weight:600;color:#fff;line-height:1.3}
+        .fh-contract-row-desc{font-size:.78rem;color:rgba(255,255,255,.5);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .fh-contract-row-footer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px}
+        .fh-contract-row-meta{display:flex;flex-wrap:wrap;gap:8px}
+        .fh-contract-row-tags{display:flex;flex-wrap:wrap;gap:4px}
+        .fh-contract-row-rep{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;flex-shrink:0}
+        .fh-contract-rep-badge{background:rgba(255,255,255,.1);color:var(--faction-color);font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
+        .fh-contract-row-arrow{opacity:.3;flex-shrink:0}
+        .fh-contract-row:hover .fh-contract-row-arrow{opacity:.7}
+        .fh-upgrade-category-group{margin-bottom:12px}
+        .fh-upgrade-category-header{display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;padding:8px 0 6px;border-bottom:1px solid rgba(255,255,255,.07)}
+        .fh-upgrade-category-header svg{opacity:.6}
+        .fh-upgrade-category-count{margin-left:auto;background:rgba(255,255,255,.1);border-radius:99px;font-size:.65rem;padding:1px 7px;color:rgba(255,255,255,.6)}
+        .fh-upgrade-row{display:flex;flex-direction:column;gap:2px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+        .fh-upgrade-row:last-child{border-bottom:none}
+        .fh-upgrade-row-info{display:flex;align-items:center;gap:6px}
+        .fh-upgrade-row-name{font-size:.83rem;font-weight:500;color:rgba(255,255,255,.85)}
+        .fh-upgrade-row-desc{font-size:.75rem;color:rgba(255,255,255,.45);line-height:1.35}
+        .fh-empty-note{font-size:.82rem;color:rgba(255,255,255,.35);padding:12px 0}
+    </style>
+
 </head>
 <body>
     
