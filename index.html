@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="gdb.gg — multi-game item, cosmetics, and stats databases. Marathon is live; more titles on the way. Early development."
+      content="gdb.gg — fast game databases for loadouts, cosmetics, and stats. Marathon is live; more hubs in active development."
     />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#050508" />
     <title>GDB.GG — Game Database · Marathon &amp; more</title>
     <link rel="canonical" href="https://gdb.gg/" />
-    <link rel="icon" href="/logo.png" type="image/png" />
+    <link rel="icon" href="assets/icons/gdb-mark.svg" type="image/svg+xml" />
 
     <!-- After claiming the site: paste verification codes from Google Search Console and Bing Webmaster Tools. -->
     <!-- <meta name="google-site-verification" content="YOUR_GOOGLE_CODE" /> -->
@@ -22,7 +22,7 @@
     <meta property="og:title" content="GDB.GG — Game Database · Marathon &amp; more" />
     <meta
       property="og:description"
-      content="Multi-game item, cosmetics, and stats databases. Marathon is live; more titles on the way. Early development."
+      content="Fast game databases for loadouts, cosmetics, and stats. Marathon is live; more hubs in active development."
     />
     <meta property="og:url" content="https://gdb.gg/" />
     <meta property="og:image" content="https://gdb.gg/assets/og-default.png" />
@@ -35,7 +35,7 @@
     <meta name="twitter:title" content="GDB.GG — Game Database · Marathon &amp; more" />
     <meta
       name="twitter:description"
-      content="Multi-game item, cosmetics, and stats databases. Marathon is live; more titles on the way."
+      content="Fast game databases for loadouts, cosmetics, and stats. Marathon is live; more hubs shipping next."
     />
     <meta name="twitter:image" content="https://gdb.gg/assets/og-default.png" />
 
@@ -48,13 +48,13 @@
             "name": "Game Database",
             "alternateName": ["GDB.GG", "gdb.gg"],
             "url": "https://gdb.gg/",
-            "description": "Multi-game item, cosmetics, and stats databases. Early development."
+            "description": "Fast game databases for loadouts, cosmetics, and stats. Marathon live; more hubs in development."
           },
           {
             "@type": "Organization",
             "name": "Game Database",
             "url": "https://gdb.gg/",
-            "logo": "https://gdb.gg/logo.png"
+            "logo": "https://gdb.gg/assets/icons/gdb-mark.svg"
           }
         ]
       }
@@ -63,7 +63,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="assets/global.css" />
@@ -94,19 +94,22 @@
 
       <main class="core core--home">
         <header class="home-hero">
+          <p class="home-hero-kicker">gdb.gg</p>
           <h1 class="brand brand-oneline">
             <span class="brand-line">Game</span><span class="brand-line accent">Database</span>
           </h1>
-          <p class="brand-tag">Stats · profiles · cosmetics</p>
-          <p class="home-hero-lead">
-            Building databases for many titles. We're still in early development — check back often.
-            👀
-          </p>
+          <p class="brand-tag">Loadouts · cosmetics · live data</p>
         </header>
 
         <section id="games" class="home-games" aria-labelledby="home-games-heading">
-          <h2 id="home-games-heading" class="home-games-heading">Supported titles</h2>
-          <p class="home-games-sub">Marathon is available now; other titles may follow.</p>
+          <div class="home-games-head">
+            <span class="home-games-rule" aria-hidden="true"></span>
+            <h2 id="home-games-heading" class="home-games-heading">Live now</h2>
+            <span class="home-games-rule" aria-hidden="true"></span>
+          </div>
+          <p class="home-games-sub">
+            Marathon is fully online. The next game hubs are already in development—each launch gets its own polished database, announced here first.
+          </p>
           <div class="home-games-grid">
             <a href="marathon/" class="home-game-card">
               <div class="home-game-cover">
@@ -128,16 +131,16 @@
 
     <footer class="home-footer">
       <div class="home-footer-inner">
-        <a href="/" class="home-footer-brand" aria-label="Game Database home">
+        <a href="./" class="home-footer-brand" aria-label="Game Database home">
           <span class="home-footer-logo">GDB</span><span class="home-footer-dot">.</span><span class="home-footer-gg">GG</span>
         </a>
         <div class="home-footer-links">
-          <a href="/marathon/">Marathon</a>
-          <a href="/#games">Games</a>
-          <a href="/pages/about/">About</a>
-          <a href="/pages/contact/">Contact</a>
-          <a href="/pages/privacy-policy/">Privacy Policy</a>
-          <a href="/pages/terms-and-conditions/">Terms</a>
+          <a href="marathon/">Marathon</a>
+          <a href="#games">Games</a>
+          <a href="pages/about/">About</a>
+          <a href="pages/contact/">Contact</a>
+          <a href="pages/privacy-policy/">Privacy Policy</a>
+          <a href="pages/terms-and-conditions/">Terms</a>
         </div>
         <p class="home-footer-copy">&copy; 2026 Game Database · GDB.GG</p>
       </div>

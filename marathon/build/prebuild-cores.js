@@ -158,7 +158,7 @@ function buildCardHtml(core) {
                         ${desc ? `<div class="core-description-snippet">${desc}</div>` : ''}
                     </div>
                     <div class="core-card-footer">
-                        ${credits ? `<span class="core-card-credits"><img src="//marathon/assets/icons/credits.webp" alt="" width="14" height="14">${Number(credits).toLocaleString()}</span>` : '<span></span>'}
+                        ${credits ? `<span class="core-card-credits"><img src="/marathon/assets/icons/credits.webp" alt="" width="14" height="14">${Number(credits).toLocaleString()}</span>` : '<span></span>'}
                         <span class="core-card-cta">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                     </div>
                     ${heatStrip}
@@ -174,7 +174,7 @@ function buildSeoList(cores) {
         const rarity = capitalizeFirst((core.rarity || 'standard').toLowerCase());
         const name   = escapeHtml(core.name);
         const slug   = escapeAttr(core.slug);
-        return `        <li><a href="//marathon/cores/?core=${slug}">${name}</a> – ${rarity} ${runner} core</li>`;
+        return `        <li><a href="/marathon/cores/?core=${slug}">${name}</a> – ${rarity} ${runner} core</li>`;
     });
 
     return `    <noscript>

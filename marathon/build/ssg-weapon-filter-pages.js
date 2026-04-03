@@ -254,7 +254,7 @@ ${weaponOptionsHtml}
     html = html.replace(/<title>[^<]*<\/title>/, `<title>Marathon ${safeWeaponName} Skins — gdb.gg</title>`);
     html = html.replace(/<meta name="robots" content="noindex,nofollow">/, '<meta name="robots" content="index, follow">');
     html = html.replace(
-        /(<link rel="apple-touch-icon" href="\/marathon\/Icon.png">)/,
+        /(<link rel="apple-touch-icon" href="\/assets\/icons\/gdb-mark.svg">)/,
         `$1\n    <meta name="description" content="${escapeHtml(`Browse every ${weapon.name} weapon skin in Marathon — rarities, sources, and community ratings.`)}">\n    <link rel="canonical" href="${canonicalUrl}">`
     );
 

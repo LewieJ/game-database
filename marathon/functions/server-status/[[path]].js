@@ -72,17 +72,17 @@ export async function onRequest(context) {
     const path = url.pathname.replace(/^\/server-status/, '').replace(/\/$/, '');
 
     // GET /server-status/reports → aggregated 24h data
-    if (request.method === 'GET' && path === '//marathon/reports') {
+    if (request.method === 'GET' && path === '/marathon/reports') {
         return handleGetReports(env, origin);
     }
 
     // POST /server-status/reports → submit a report
-    if (request.method === 'POST' && path === '//marathon/reports') {
+    if (request.method === 'POST' && path === '/marathon/reports') {
         return handlePostReport(request, env, origin);
     }
 
     // GET /server-status/summary → status summary
-    if (request.method === 'GET' && path === '//marathon/summary') {
+    if (request.method === 'GET' && path === '/marathon/summary') {
         return handleGetSummary(env, origin);
     }
 

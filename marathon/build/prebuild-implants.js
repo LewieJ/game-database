@@ -139,7 +139,7 @@ function buildCardHtml(implant) {
                         ${hasUniqueTrait ? '<span class="implant-unique-pill">\u2605 Unique</span>' : ''}
                     </div>
                     <div class="implant-card-footer">
-                        ${credits ? `<span class="implant-card-credits"><img src="//marathon/assets/icons/credits.webp" alt="" width="14" height="14">${credits}</span>` : '<span></span>'}
+                        ${credits ? `<span class="implant-card-credits"><img src="/marathon/assets/icons/credits.webp" alt="" width="14" height="14">${credits}</span>` : '<span></span>'}
                         <span class="implant-card-cta">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                     </div>
                     <div class="cw-heat-strip" data-slug="${escapeAttr(slug)}">
@@ -163,7 +163,7 @@ function buildSeoList(implants) {
         const rarity = capitalizeFirst((imp.rarity || 'standard').toLowerCase());
         const name   = escapeHtml(imp.name);
         const slug   = escapeAttr(imp.slug);
-        return `        <li><a href="//marathon/implants/?implant=${slug}">${name}</a> – ${rarity} ${slot} implant</li>`;
+        return `        <li><a href="/marathon/implants/?implant=${slug}">${name}</a> – ${rarity} ${slot} implant</li>`;
     });
 
     return `    <noscript>

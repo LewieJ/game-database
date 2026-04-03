@@ -298,13 +298,13 @@ ${headLoaderScript()}
     <meta name="keywords" content="Marathon tier list, Marathon weapon tier list, Marathon weapon rankings, Marathon tierlist, Marathon weapon tierlist, Bungie Marathon tier list, Marathon best weapons, Marathon weapon meta, Marathon weapon ranking 2026, Marathon S tier weapons, Marathon meta weapons, Marathon gun tier list, Marathon gun rankings, Marathon PvP tier list, Marathon extraction shooter tier list, Marathon weapon guide, Marathon tier list maker, Marathon tierlist maker, Marathon weapon comparison, best weapons Marathon, Marathon top weapons, Marathon weapon tier list 2026, Marathon best pistol, Marathon best assault rifle, Marathon best shotgun, Marathon best sniper">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta name="author" content="gdb.gg">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     <meta property="og:type" content="website">
     <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:title" content="Marathon Weapon Tier List Maker — Rank Every Weapon | gdb.gg">
     <meta property="og:description" content="Build and share your own Marathon weapon tier list. Drag and drop all ${weapons.length} weapons into S, A, B, C, D, or F tier. Filter by weapon class and share your rankings.">
-    <meta property="og:image" content="${SITE_URL}/Icon.png">
+    <meta property="og:image" content="https://gdb.gg/assets/icons/marathon.svg">
     <meta property="og:image:width" content="512">
     <meta property="og:image:height" content="512">
     <meta property="og:site_name" content="gdb.gg Marathon">
@@ -313,7 +313,7 @@ ${headLoaderScript()}
     <meta name="twitter:site" content="@MarathonDB">
     <meta name="twitter:title" content="Marathon Weapon Tier List Maker — Rank Every Weapon">
     <meta name="twitter:description" content="Create, customize, and share your Marathon weapon tier list. Rank all ${weapons.length} weapons from S to F tier. Filter by class.">
-    <meta name="twitter:image" content="${SITE_URL}/Icon.png">
+    <meta name="twitter:image" content="https://gdb.gg/assets/icons/marathon.svg">
     <meta name="theme-color" content="#d4ff00">
     <link rel="canonical" href="${canonicalUrl}">
     <title>Marathon Weapon Tier List - Rank S to F | gdb.gg</title>
@@ -339,9 +339,9 @@ ${JSON.stringify(breadcrumbData, null, 2)}
     <script type="application/ld+json">
 ${JSON.stringify(faqData, null, 2)}
     </script>
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
 </head>
 <body>
     ${generateNavigation('weapons')}
@@ -350,9 +350,9 @@ ${JSON.stringify(faqData, null, 2)}
 
         <nav class="detail-breadcrumb" aria-label="Breadcrumb">
             <ol style="display:flex;align-items:center;gap:8px;list-style:none;margin:0;padding:0;">
-                <li><a href="//marathon/">Home</a></li>
+                <li><a href="/marathon/">Home</a></li>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-                <li><a href="//marathon/weapons/">Weapons</a></li>
+                <li><a href="/marathon/weapons/">Weapons</a></li>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 <li>Tier List</li>
             </ol>
@@ -402,7 +402,7 @@ ${tierRowsHtml}
             <p style="color:var(--text-dim);font-size:0.85rem;line-height:1.6;margin:0 0 10px;">Use this interactive Marathon tier list maker to rank every weapon in Bungie's Marathon. Whether you're looking for the best Marathon weapons for PvP, trying to figure out the current Marathon weapon meta, or just want to compare your gun rankings with friends — this tool makes it easy. Drag and drop all ${weapons.length} weapons into S, A, B, C, D, or F tier.</p>
             <p style="color:var(--text-dim);font-size:0.85rem;line-height:1.6;margin:0 0 10px;">Use the <strong style="color:var(--text-secondary);">category filters</strong> to focus on a single weapon class — rank the best Marathon assault rifles, machine guns, pistols, precision rifles, railguns, shotguns, sniper rifles, submachine guns separately, or rank them all together.</p>
             <p style="color:var(--text-dim);font-size:0.85rem;line-height:1.6;margin:0 0 10px;">Once you've built your Marathon weapon tier list, hit <strong style="color:var(--neon);">Share Tier List</strong> to copy a shareable link. Anyone who opens your link will see your exact weapon rankings — perfect for sharing your Marathon tierlist on Discord, Reddit, or social media.</p>
-            <p style="color:var(--text-dim);font-size:0.85rem;line-height:1.6;margin:0 0 16px;">Looking for detailed weapon stats instead? Check out our <a href="//marathon/weapons/" style="color:var(--neon);">full Marathon weapons database</a> with damage numbers, fire rates, handling stats, patch history, and community ratings for every gun in Marathon. Structured data is provided by <a href="https://marathondb.gg/" rel="noopener noreferrer" style="color:var(--neon);">MarathonDB.gg</a>.</p>
+            <p style="color:var(--text-dim);font-size:0.85rem;line-height:1.6;margin:0 0 16px;">Looking for detailed weapon stats instead? Check out our <a href="/marathon/weapons/" style="color:var(--neon);">full Marathon weapons database</a> with damage numbers, fire rates, handling stats, patch history, and community ratings for every gun in Marathon. Structured data is provided by <a href="https://marathondb.gg/" rel="noopener noreferrer" style="color:var(--neon);">MarathonDB.gg</a>.</p>
             <h3 style="font-size:0.95rem;color:var(--text-primary);margin:0 0 8px;">Weapon Classes in Marathon</h3>
             <p style="color:var(--text-dim);font-size:0.85rem;line-height:1.6;margin:0 0 10px;">Marathon features ${categories.length} weapon categories: ${categoryBreakdownHtml}. Each class fills a unique role in Marathon's extraction shooter gameplay.</p>
             <h3 style="font-size:0.95rem;color:var(--text-primary);margin:0 0 8px;">Frequently Asked Questions</h3>
@@ -420,9 +420,9 @@ ${tierRowsHtml}
 
     ${generateFooter()}
 
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
     <script>
     (function() {
         const allWeapons = document.querySelectorAll('.tier-weapon');
@@ -612,7 +612,7 @@ ${tierRowsHtml}
         });
     })();
     </script>
-    <script src="//marathon/js/feedback.js"></script>
+    <script src="/marathon/js/feedback.js"></script>
 
     <div class="ad-mobile-anchor">
         <div class="ad-container"></div>
@@ -800,8 +800,8 @@ function generateItemDetailPage(item, _allItems) {
     <meta name="description" content="${description}">
     <meta name="keywords" content="${name}, Marathon item, ${item.type || 'item'}, item stats, item effects, Marathon gear">
     <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     
     <!-- Open Graph Tags -->
     <meta property="og:type" content="website">
@@ -818,9 +818,9 @@ function generateItemDetailPage(item, _allItems) {
     
     <link rel="canonical" href="${canonicalUrl}">
     <title>${(() => { const t = (item.type || 'Item').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()); const full = `${name} - ${t} | MarathonDB`; return full.length > 60 ? `${name} | MarathonDB` : full; })()}</title>
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -851,14 +851,14 @@ ${JSON.stringify(structuredData, null, 2)}
         <nav class="detail-breadcrumb" aria-label="Breadcrumb">
             <ol itemscope itemtype="https://schema.org/BreadcrumbList" style="display: flex; align-items: center; gap: 8px; list-style: none; margin: 0; padding: 0;">
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/">
+                    <a itemprop="item" href="/marathon/">
                         <span itemprop="name">Home</span>
                     </a>
                     <meta itemprop="position" content="1" />
                 </li>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/items/">
+                    <a itemprop="item" href="/marathon/items/">
                         <span itemprop="name">Items</span>
                     </a>
                     <meta itemprop="position" content="2" />
@@ -930,11 +930,11 @@ ${patchHistoryHtml}
 
     ${generateFooter()}
 
-    <script src="//marathon/js/api.js"></script>
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/item-detail.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/item-detail.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
 
     <!-- Mobile Anchor Ad -->
     <div class="ad-mobile-anchor">
@@ -1164,7 +1164,7 @@ function generateOtherFactionLinks(currentSlug) {
             const f = FACTION_DATA[slug];
             const isCurrent = slug === currentSlug;
             return `
-                            <a href="//marathon/factions/${f.slug}/" class="fh-faction-link${isCurrent ? ' current' : ''}" style="--faction-color: ${f.color}">
+                            <a href="/marathon/factions/${f.slug}/" class="fh-faction-link${isCurrent ? ' current' : ''}" style="--faction-color: ${f.color}">
                                 <img src="${f.iconUrl}" alt="${escapeHtml(f.name)}" width="28" height="28">
                                 <span class="fh-faction-link-name">${escapeHtml(f.name)}</span>
                             </a>`;
@@ -1236,8 +1236,8 @@ ${faction.contracts.map(c => `
     <meta name="description" content="${escapeHtml(metaDesc)}">
     <meta name="keywords" content="Marathon ${faction.name}, ${faction.name} faction, ${faction.name} contracts, ${faction.name} perks, ${faction.name} cosmetics, ${faction.name} reputation, Marathon factions">
     <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     
     <meta property="og:type" content="website">
     <meta property="og:url" content="${canonicalUrl}">
@@ -1252,9 +1252,9 @@ ${faction.contracts.map(c => `
     
     <link rel="canonical" href="${canonicalUrl}">
     <title>${escapeHtml(title)}</title>
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
 </head>
 <body>
     ${generateNavigation('factions')}
@@ -1264,12 +1264,12 @@ ${faction.contracts.map(c => `
         <nav class="detail-breadcrumb" aria-label="Breadcrumb">
             <ol itemscope itemtype="https://schema.org/BreadcrumbList" style="display: flex; align-items: center; gap: 8px; list-style: none; margin: 0; padding: 0;">
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/"><span itemprop="name">Home</span></a>
+                    <a itemprop="item" href="/marathon/"><span itemprop="name">Home</span></a>
                     <meta itemprop="position" content="1" />
                 </li>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/factions/"><span itemprop="name">Factions</span></a>
+                    <a itemprop="item" href="/marathon/factions/"><span itemprop="name">Factions</span></a>
                     <meta itemprop="position" content="2" />
                 </li>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -1280,7 +1280,7 @@ ${faction.contracts.map(c => `
             </ol>
         </nav>
 
-        <a href="//marathon/factions/" class="back-link">
+        <a href="/marathon/factions/" class="back-link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             Back to Factions
         </a>
@@ -1374,7 +1374,7 @@ ${perksHtml}
                     </div>
                     <div class="fh-panel-body">
                         <div class="fh-quick-links">
-                            <a href="//marathon/contracts/?faction=${faction.slug}" class="fh-quick-link">
+                            <a href="/marathon/contracts/?faction=${faction.slug}" class="fh-quick-link">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
                                 View All Contracts
                             </a>
@@ -1416,10 +1416,10 @@ ${generateOtherFactionLinks(faction.slug)}
 
     ${generateFooter()}
 
-    <script src="//marathon/js/api.js"></script>
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
 
     <!-- Mobile Anchor Ad -->
     <div class="ad-mobile-anchor">
@@ -1447,7 +1447,7 @@ function generateFactionsListingPage() {
     const factionCardsHtml = ALL_FACTION_SLUGS.map(slug => {
         const f = FACTION_DATA[slug];
         return `
-                <a href="//marathon/factions/${f.slug}/" class="fh-listing-card" style="--faction-color: ${f.color}">
+                <a href="/marathon/factions/${f.slug}/" class="fh-listing-card" style="--faction-color: ${f.color}">
                     <img src="${f.iconUrl}" alt="${escapeHtml(f.name)}" class="fh-listing-icon" width="56" height="56">
                     <div class="fh-listing-info">
                         <div class="fh-listing-name">${escapeHtml(f.name)}</div>
@@ -1466,25 +1466,25 @@ function generateFactionsListingPage() {
     <meta name="description" content="${escapeHtml(metaDesc)}">
     <meta name="keywords" content="Marathon factions, Arachne, Cyberacme, Nucaloric, Traxus, Mida, Sekiguchi, Marathon faction guide, faction contracts, faction perks">
     <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     
     <meta property="og:type" content="website">
     <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:title" content="${escapeHtml(title)}">
     <meta property="og:description" content="${escapeHtml(metaDesc)}">
-    <meta property="og:image" content="https://marathondb.gg/Icon.png">
+    <meta property="og:image" content="https://gdb.gg/assets/icons/marathon.svg">
     
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${escapeHtml(title)}">
     <meta name="twitter:description" content="${escapeHtml(metaDesc)}">
-    <meta name="twitter:image" content="https://marathondb.gg/Icon.png">
+    <meta name="twitter:image" content="https://gdb.gg/assets/icons/marathon.svg">
     
     <link rel="canonical" href="${canonicalUrl}">
     <title>${escapeHtml(title)}</title>
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -1494,7 +1494,7 @@ function generateFactionsListingPage() {
         "name": title,
         "url": canonicalUrl,
         "description": metaDesc,
-        "publisher": { "@type": "Organization", "name": "MarathonDB", "url": SITE_URL + "//marathon/" },
+        "publisher": { "@type": "Organization", "name": "MarathonDB", "url": SITE_URL + "/marathon/" },
         "itemListElement": ALL_FACTION_SLUGS.map((slug, i) => ({
             "@type": "ListItem",
             "position": i + 1,
@@ -1508,7 +1508,7 @@ function generateFactionsListingPage() {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL + "//marathon/" },
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL + "/marathon/" },
             { "@type": "ListItem", "position": 2, "name": "Factions", "item": canonicalUrl }
         ]
     }, null, 2)}
@@ -1543,10 +1543,10 @@ ${factionCardsHtml}
 
     ${generateFooter()}
 
-    <script src="//marathon/js/api.js"></script>
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
 
     <!-- Mobile Anchor Ad -->
     <div class="ad-mobile-anchor">
@@ -1613,11 +1613,11 @@ function getRewardDetailUrl(reward) {
 
     if (table === 'cosmetics' || reward.reward_type === 'cosmetic') {
         const pathMap = {
-            'background': '//marathon/backgrounds/',
-            'charm': '//marathon/charms/',
-            'emblem': '//marathon/emblems/',
-            'sticker': '//marathon/stickers/',
-            'weapon_skin': '//marathon/weapon-skins/',
+            'background': '/marathon/backgrounds/',
+            'charm': '/marathon/charms/',
+            'emblem': '/marathon/emblems/',
+            'sticker': '/marathon/stickers/',
+            'weapon_skin': '/marathon/weapon-skins/',
         };
         if (cosmeticType === 'runner_skin' || !pathMap[cosmeticType]) {
             return `/marathon/runner-skins/?skin=${encodeURIComponent(slug)}`;
@@ -1704,7 +1704,7 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
     const tags = contract.tag_objects || (contract.tags || []).map(t => ({ slug: t, name: capitalizeFirst(t), color: '#666' }));
 
     const metaDesc = `${contract.name} contract guide for ${faction.name || factionSlug} in Marathon. ${steps.length}-step mission with walkthrough, objectives, and rewards.`;
-    const ogImage = factionIcon || `${SITE_URL}/Icon.png`;
+    const ogImage = factionIcon || `https://gdb.gg/assets/icons/marathon.svg`;
 
     // Structured data
     const structuredData = {
@@ -1791,8 +1791,8 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
             <span class="chain-nav-label">Part ${contract.chain_position} of ${contract.chain_total}</span>
             <div class="chain-nav-progress">${dots}</div>
             <div class="chain-nav-links">
-                ${prevContract ? `<a href="//marathon/factions/${factionSlug}/contracts/${prevContract.slug}/">← Prev</a>` : ''}
-                ${nextContract ? `<a href="//marathon/factions/${factionSlug}/contracts/${nextContract.slug}/">Next →</a>` : ''}
+                ${prevContract ? `<a href="/marathon/factions/${factionSlug}/contracts/${prevContract.slug}/">← Prev</a>` : ''}
+                ${nextContract ? `<a href="/marathon/factions/${factionSlug}/contracts/${nextContract.slug}/">Next →</a>` : ''}
             </div>
         </div>`;
     }
@@ -1845,7 +1845,7 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
     const relatedHtml = relatedContracts.length > 0
         ? `<div class="sidebar-card"><div class="sidebar-card-header">Related Contracts</div><div class="related-list">${relatedContracts.map(r => {
             const relType = r.contract_type || 'permanent';
-            return `<a href="//marathon/factions/${factionSlug}/contracts/${r.slug}/" class="related-item">
+            return `<a href="/marathon/factions/${factionSlug}/contracts/${r.slug}/" class="related-item">
                 <span class="related-name">${escapeHtml(r.name)}</span>
                 <span class="related-type ${relType}">${capitalizeFirst(relType)}</span>
             </a>`;
@@ -1865,8 +1865,8 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
     <meta name="description" content="${escapeHtml(metaDesc)}">
     <meta name="keywords" content="marathon, ${escapeHtml(contract.name)}, ${factionName}, contract, guide, walkthrough, rewards, objectives">
     <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     <meta property="og:type" content="article">
     <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:title" content="${name} — ${factionName} Contract | MARATHON DB">
@@ -1878,10 +1878,10 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
     <meta name="twitter:image" content="${ogImage}">
     <link rel="canonical" href="${canonicalUrl}">
     <title>${name} — ${factionName} Contract | MarathonDB</title>
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
-    <link rel="stylesheet" href="//marathon/css/contracts.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/contracts.css">
     <style>:root{--faction-color:${factionColor};--faction-on-color:${factionOnColor}}</style>
     <script type="application/ld+json">
     ${JSON.stringify(structuredData, null, 2)}
@@ -1895,15 +1895,15 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
         <nav class="detail-breadcrumb" aria-label="Breadcrumb">
             <ol itemscope itemtype="https://schema.org/BreadcrumbList">
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/"><span itemprop="name">Home</span></a>
+                    <a itemprop="item" href="/marathon/"><span itemprop="name">Home</span></a>
                     <meta itemprop="position" content="1">
                 </li>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/factions/"><span itemprop="name">Factions</span></a>
+                    <a itemprop="item" href="/marathon/factions/"><span itemprop="name">Factions</span></a>
                     <meta itemprop="position" content="2">
                 </li>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/factions/${factionSlug}/contracts/"><span itemprop="name">${factionName} Contracts</span></a>
+                    <a itemprop="item" href="/marathon/factions/${factionSlug}/contracts/"><span itemprop="name">${factionName} Contracts</span></a>
                     <meta itemprop="position" content="3">
                 </li>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
@@ -1912,7 +1912,7 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
                 </li>
             </ol>
         </nav>
-        <a href="//marathon/factions/${factionSlug}/contracts/" class="back-link">← Back to ${factionName} Contracts</a>
+        <a href="/marathon/factions/${factionSlug}/contracts/" class="back-link">← Back to ${factionName} Contracts</a>
 
 
         <!-- Mobile Top Ad -->
@@ -1920,7 +1920,7 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
         <!-- Header -->
         <header class="contract-detail-header">
             <div class="contract-detail-badges">
-                <a href="//marathon/factions/${factionSlug}/contracts/" class="contract-faction-badge">
+                <a href="/marathon/factions/${factionSlug}/contracts/" class="contract-faction-badge">
                     ${factionIcon ? `<img src="${escapeHtml(factionIcon)}" alt="${factionName}">` : ''}
                     ${factionName}
                 </a>
@@ -1958,10 +1958,10 @@ function generateContractDetailPage(contract, factionSlug, allContracts) {
     </main>
 
     ${generateFooter()}
-    <script src="//marathon/js/api.js"></script>
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
 
     <!-- Mobile Anchor Ad -->
     <div class="ad-mobile-anchor">
@@ -2031,7 +2031,7 @@ function generateFactionContractsListingPage(factionSummary, contracts, allTags)
         const tagDots = cTags.map(t => `<span class="contract-tag-dot" style="background:${t.color}" title="${escapeHtml(t.name)}"></span>`).join('');
 
         return `
-        <a href="//marathon/factions/${factionSlug}/contracts/${c.slug}/" class="contract-card" data-type="${cType}" data-difficulty="${cDiff}" data-tags="${(c.tags || []).join(',')}" style="--faction-color:${factionColor}">
+        <a href="/marathon/factions/${factionSlug}/contracts/${c.slug}/" class="contract-card" data-type="${cType}" data-difficulty="${cDiff}" data-tags="${(c.tags || []).join(',')}" style="--faction-color:${factionColor}">
             <div class="contract-card-top">
                 <span class="contract-type-badge ${cType}">${capitalizeFirst(cType)}</span>
                 <span class="contract-diff-badge ${cDiff}">${capitalizeFirst(cDiff)}</span>
@@ -2075,22 +2075,22 @@ function generateFactionContractsListingPage(factionSummary, contracts, allTags)
     <meta name="description" content="${escapeHtml(metaDesc)}">
     <meta name="keywords" content="marathon, ${factionName}, contracts, missions, guide, walkthrough, rewards">
     <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     <meta property="og:type" content="website">
     <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:title" content="${factionName} Contracts | MARATHON DB">
     <meta property="og:description" content="${escapeHtml(metaDesc)}">
-    <meta property="og:image" content="${factionIcon || `${SITE_URL}/Icon.png`}">
+    <meta property="og:image" content="${factionIcon || `https://gdb.gg/assets/icons/marathon.svg`}">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="${factionName} Contracts | MARATHON DB">
     <meta name="twitter:description" content="${escapeHtml(metaDesc)}">
     <link rel="canonical" href="${canonicalUrl}">
     <title>${factionName} Contracts — Mission Guides & Rewards | MARATHON DB</title>
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
-    <link rel="stylesheet" href="//marathon/css/contracts.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/contracts.css">
     <style>:root{--faction-color:${factionColor};--faction-on-color:${factionOnColor}}</style>
     <script type="application/ld+json">
     ${JSON.stringify(structuredData, null, 2)}
@@ -2104,11 +2104,11 @@ function generateFactionContractsListingPage(factionSummary, contracts, allTags)
         <nav class="detail-breadcrumb" aria-label="Breadcrumb">
             <ol itemscope itemtype="https://schema.org/BreadcrumbList">
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/"><span itemprop="name">Home</span></a>
+                    <a itemprop="item" href="/marathon/"><span itemprop="name">Home</span></a>
                     <meta itemprop="position" content="1">
                 </li>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/factions/"><span itemprop="name">Factions</span></a>
+                    <a itemprop="item" href="/marathon/factions/"><span itemprop="name">Factions</span></a>
                     <meta itemprop="position" content="2">
                 </li>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
@@ -2117,7 +2117,7 @@ function generateFactionContractsListingPage(factionSummary, contracts, allTags)
                 </li>
             </ol>
         </nav>
-        <a href="//marathon/factions/" class="back-link">← Back to Factions</a>
+        <a href="/marathon/factions/" class="back-link">← Back to Factions</a>
 
 
         <!-- Mobile Top Ad -->
@@ -2146,11 +2146,11 @@ function generateFactionContractsListingPage(factionSummary, contracts, allTags)
     </main>
 
     ${generateFooter()}
-    <script src="//marathon/js/api.js"></script>
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/contracts-filter.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/contracts-filter.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
 
     <!-- Mobile Anchor Ad -->
     <div class="ad-mobile-anchor">
@@ -2291,27 +2291,27 @@ ${headLoaderScript()}
     <meta name="description" content="Explore Marathon game maps and locations. Complete map database with layouts, strategies, and competitive gameplay information for Bungie's Marathon.">
     <meta name="keywords" content="Marathon maps, game maps, map guide, map layout, level design, Marathon locations, competitive maps, gameplay strategy">
     <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     
     <!-- Open Graph Tags -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:title" content="Maps Database - MARATHON DB">
     <meta property="og:description" content="Complete maps and locations database for Marathon by Bungie.">
-    <meta property="og:image" content="https://marathondb.gg/Icon.png">
+    <meta property="og:image" content="https://gdb.gg/assets/icons/marathon.svg">
     
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Maps Database - MARATHON DB">
     <meta name="twitter:description" content="Complete maps database with layouts, strategies, and competitive information.">
-    <meta name="twitter:image" content="https://marathondb.gg/Icon.png">
+    <meta name="twitter:image" content="https://gdb.gg/assets/icons/marathon.svg">
     
     <link rel="canonical" href="${canonicalUrl}">
     <title>Maps Database - MARATHON DB | Locations &amp; Strategies</title>
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -2321,7 +2321,7 @@ ${headLoaderScript()}
         "name": "Maps Database - MARATHON DB",
         "url": canonicalUrl,
         "description": "Explore Marathon game maps and locations. Complete map database with layouts, strategies, and competitive gameplay information.",
-        "publisher": { "@type": "Organization", "name": "MarathonDB", "url": SITE_URL + "//marathon/" }
+        "publisher": { "@type": "Organization", "name": "MarathonDB", "url": SITE_URL + "/marathon/" }
     }, null, 2)}
     </script>
     <script type="application/ld+json">
@@ -2329,7 +2329,7 @@ ${headLoaderScript()}
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL + "//marathon/" },
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL + "/marathon/" },
             { "@type": "ListItem", "position": 2, "name": "Maps", "item": canonicalUrl }
         ]
     }, null, 2)}
@@ -2387,12 +2387,12 @@ ${headLoaderScript()}
 
     ${generateFooter()}
 
-    <script src="//marathon/js/api.js"></script>
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/maps.js"></script>
-    <script src="//marathon/js/main.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/maps.js"></script>
+    <script src="/marathon/js/main.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
 
     <!-- Mobile Anchor Ad -->
     <div class="ad-mobile-anchor">
@@ -2762,17 +2762,17 @@ function markdownToHtml(md) {
  */
 function processEmbeds(html, assetLookup = new Map()) {
     const embedTypes = {
-        weapon: { label: 'Weapon', path: '//marathon/weapons/' },
-        runner: { label: 'Runner', path: '//marathon/runners/' },
-        core: { label: 'Core', path: '//marathon/cores/' },
-        mod: { label: 'Mod', path: '//marathon/mods/' },
-        item: { label: 'Item', path: '//marathon/items/' },
-        charm: { label: 'Charm', path: '//marathon/charms/' },
-        emblem: { label: 'Emblem', path: '//marathon/emblems/' },
-        sticker: { label: 'Sticker', path: '//marathon/stickers/' },
-        background: { label: 'Background', path: '//marathon/backgrounds/' },
-        'weapon-skin': { label: 'Weapon Skin', path: '//marathon/weapon-skins/' },
-        'runner-skin': { label: 'Runner Skin', path: '//marathon/runner-skins/' },
+        weapon: { label: 'Weapon', path: '/marathon/weapons/' },
+        runner: { label: 'Runner', path: '/marathon/runners/' },
+        core: { label: 'Core', path: '/marathon/cores/' },
+        mod: { label: 'Mod', path: '/marathon/mods/' },
+        item: { label: 'Item', path: '/marathon/items/' },
+        charm: { label: 'Charm', path: '/marathon/charms/' },
+        emblem: { label: 'Emblem', path: '/marathon/emblems/' },
+        sticker: { label: 'Sticker', path: '/marathon/stickers/' },
+        background: { label: 'Background', path: '/marathon/backgrounds/' },
+        'weapon-skin': { label: 'Weapon Skin', path: '/marathon/weapon-skins/' },
+        'runner-skin': { label: 'Runner Skin', path: '/marathon/runner-skins/' },
     };
 
     html = html.replace(/\{\{(\w[\w-]*):([a-z0-9-]+)\}\}/g, (match, type, slug) => {
@@ -2928,7 +2928,7 @@ function loadArticles() {
             category: meta.category || 'General',
             tags: Array.isArray(meta.tags) ? meta.tags : [],
             excerpt: meta.excerpt || '',
-            thumbnail: meta.thumbnail || '//marathon/assets/og-image.png',
+            thumbnail: meta.thumbnail || '/marathon/assets/og-image.png',
             featured: meta.featured === true,
             bodyMarkdown: body,
             bodyHtml: null, // Populated later after embed assets are fetched
@@ -2982,7 +2982,7 @@ function generateArticleDetailPage(article, allArticles) {
             "name": "MarathonDB",
             "logo": {
                 "@type": "ImageObject",
-                "url": `${SITE_URL}/Icon.png`
+                "url": `https://gdb.gg/assets/icons/marathon.svg`
             }
         },
         "mainEntityOfPage": {
@@ -3015,8 +3015,8 @@ function generateArticleDetailPage(article, allArticles) {
     <meta name="keywords" content="${article.tags.map(t => escapeHtml(t)).join(', ')}, Marathon news, Marathon guide, MarathonDB">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta name="author" content="${escapeHtml(article.author)}">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     <link rel="canonical" href="${canonicalUrl}">
     
     <!-- Open Graph -->
@@ -3039,10 +3039,10 @@ function generateArticleDetailPage(article, allArticles) {
     <meta name="twitter:description" content="${description}">
     <meta name="twitter:image" content="${article.thumbnail.startsWith('http') ? article.thumbnail : `${SITE_URL}${article.thumbnail}`}">
     
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
-    <link rel="stylesheet" href="//marathon/css/news.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/news.css">
     
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -3074,7 +3074,7 @@ ${JSON.stringify(breadcrumbData, null, 2)}
     <main class="container article-page">
         <!-- Breadcrumb -->
         <nav class="article-breadcrumb">
-            <a href="//marathon/">Home</a>
+            <a href="/marathon/">Home</a>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             <a href="/news/">News</a>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -3144,7 +3144,7 @@ ${JSON.stringify(breadcrumbData, null, 2)}
                     <h3 class="article-sidebar-title">Related Articles</h3>
                     <div class="article-related">
                         ${related.map(r => `
-                        <a href="//marathon/news/${r.slug}/" class="article-related-item">
+                        <a href="/marathon/news/${r.slug}/" class="article-related-item">
                             <div class="article-related-thumb">
                                 <img src="${r.thumbnail}" alt="${escapeHtml(r.title)}" loading="lazy">
                             </div>
@@ -3160,7 +3160,7 @@ ${JSON.stringify(breadcrumbData, null, 2)}
 
                 <!-- Back to News -->
                 <div class="article-sidebar-section">
-                    <a href="//marathon/news/" class="article-share-btn" style="justify-content: center; text-align: center;">
+                    <a href="/marathon/news/" class="article-share-btn" style="justify-content: center; text-align: center;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
                         </svg>
@@ -3180,10 +3180,10 @@ ${JSON.stringify(breadcrumbData, null, 2)}
 
     ${generateFooter()}
 
-    <script src="//marathon/js/api.js"></script>
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
     <script>
         function copyArticleLink() {
             navigator.clipboard.writeText(window.location.href).then(() => {
@@ -3251,8 +3251,8 @@ function generateNewsListingPage(articles) {
     <meta name="keywords" content="Marathon news, Marathon guides, Marathon tips, Marathon patch notes, Marathon weapon guide, Marathon runner guide, Marathon updates, Bungie Marathon, MarathonDB articles">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta name="author" content="MARATHON DB">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     <link rel="canonical" href="${canonicalUrl}">
     
     <!-- Open Graph -->
@@ -3271,10 +3271,10 @@ function generateNewsListingPage(articles) {
     <meta name="twitter:description" content="Latest Marathon news, guides, and community content.">
     <meta name="twitter:image" content="${SITE_URL}/assets/og-image.png">
     
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
-    <link rel="stylesheet" href="//marathon/css/news.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/news.css">
     
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -3323,7 +3323,7 @@ ${JSON.stringify(structuredData, null, 2)}
         ${featured ? `
         <!-- Featured Article -->
         <div class="news-featured">
-            <a href="//marathon/news/${featured.slug}/" class="news-featured-card" data-category="${escapeHtml(featured.category)}">
+            <a href="/marathon/news/${featured.slug}/" class="news-featured-card" data-category="${escapeHtml(featured.category)}">
                 <div class="news-featured-image">
                     <img src="${featured.thumbnail}" alt="${escapeHtml(featured.title)}" loading="lazy">
                 </div>
@@ -3344,7 +3344,7 @@ ${JSON.stringify(structuredData, null, 2)}
         <!-- Article Grid -->
         <div class="news-grid">
             ${remainingArticles.map(article => `
-            <a href="//marathon/news/${article.slug}/" class="news-card" data-category="${escapeHtml(article.category)}">
+            <a href="/marathon/news/${article.slug}/" class="news-card" data-category="${escapeHtml(article.category)}">
                 <div class="news-card-image">
                     <img src="${article.thumbnail}" alt="${escapeHtml(article.title)}" loading="lazy">
                 </div>
@@ -3373,11 +3373,11 @@ ${JSON.stringify(structuredData, null, 2)}
 
     ${generateFooter()}
 
-    <script src="//marathon/js/api.js"></script>
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
-    <script src="//marathon/js/news.js"></script>
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
+    <script src="/marathon/js/news.js"></script>
 
     <!-- Mobile Anchor Ad -->
     <div class="ad-mobile-anchor">
@@ -3474,33 +3474,33 @@ async function buildNews() {
  */
 const REDIRECT_MAP = {
     listing: [
-        { old: 'weapons.html', newPath: '//marathon/weapons/', label: 'Weapons' },
-        { old: 'runners.html', newPath: '//marathon/runners/', label: 'Runners' },
-        { old: 'cores.html', newPath: '//marathon/cores/', label: 'Cores' },
-        { old: 'mods.html', newPath: '//marathon/mods/', label: 'Mods' },
-        { old: 'items.html', newPath: '//marathon/items/', label: 'Items' },
-        { old: 'factions.html', newPath: '//marathon/factions/', label: 'Factions' },
-        { old: 'cosmetics-weapons.html', newPath: '//marathon/weapon-skins/', label: 'Weapon Skins' },
-        { old: 'cosmetics-runners.html', newPath: '//marathon/runner-skins/', label: 'Runner Skins' },
-        { old: 'cosmetics-stickers.html', newPath: '//marathon/stickers/', label: 'Stickers' },
-        { old: 'cosmetics-backgrounds.html', newPath: '//marathon/backgrounds/', label: 'Backgrounds' },
-        { old: 'cosmetics-charms.html', newPath: '//marathon/charms/', label: 'Charms' },
-        { old: 'cosmetics-emblems.html', newPath: '//marathon/emblems/', label: 'Emblems' },
+        { old: 'weapons.html', newPath: '/marathon/weapons/', label: 'Weapons' },
+        { old: 'runners.html', newPath: '/marathon/runners/', label: 'Runners' },
+        { old: 'cores.html', newPath: '/marathon/cores/', label: 'Cores' },
+        { old: 'mods.html', newPath: '/marathon/mods/', label: 'Mods' },
+        { old: 'items.html', newPath: '/marathon/items/', label: 'Items' },
+        { old: 'factions.html', newPath: '/marathon/factions/', label: 'Factions' },
+        { old: 'cosmetics-weapons.html', newPath: '/marathon/weapon-skins/', label: 'Weapon Skins' },
+        { old: 'cosmetics-runners.html', newPath: '/marathon/runner-skins/', label: 'Runner Skins' },
+        { old: 'cosmetics-stickers.html', newPath: '/marathon/stickers/', label: 'Stickers' },
+        { old: 'cosmetics-backgrounds.html', newPath: '/marathon/backgrounds/', label: 'Backgrounds' },
+        { old: 'cosmetics-charms.html', newPath: '/marathon/charms/', label: 'Charms' },
+        { old: 'cosmetics-emblems.html', newPath: '/marathon/emblems/', label: 'Emblems' },
     ],
     detail: [
-        { old: 'weapon.html', newPath: '//marathon/weapons/', label: 'Weapon Details' },
-        { old: 'runner.html', newPath: '//marathon/runners/', label: 'Runner Details' },
-        { old: 'core.html', newPath: '//marathon/cores/', label: 'Core Details' },
-        { old: 'mod.html', newPath: '//marathon/mods/', label: 'Mod Details' },
-        { old: 'item.html', newPath: '//marathon/items/', label: 'Item Details' },
-        { old: 'cosmetic-weapon.html', newPath: '//marathon/weapon-skins/', label: 'Weapon Skin Details' },
-        { old: 'cosmetic.html', newPath: '//marathon/runner-skins/', label: 'Runner Skin Details' },
-        { old: 'cosmetic-sticker.html', newPath: '//marathon/stickers/', label: 'Sticker Details' },
-        { old: 'cosmetic-background.html', newPath: '//marathon/backgrounds/', label: 'Background Details' },
-        { old: 'cosmetic-charm.html', newPath: '//marathon/charms/', label: 'Charm Details' },
-        { old: 'cosmetic-emblem.html', newPath: '//marathon/emblems/', label: 'Emblem Details' },
-        { old: 'contract.html', newPath: '//marathon/factions/', label: 'Contract Details' },
-        { old: 'faction.html', newPath: '//marathon/factions/', label: 'Faction Details' },
+        { old: 'weapon.html', newPath: '/marathon/weapons/', label: 'Weapon Details' },
+        { old: 'runner.html', newPath: '/marathon/runners/', label: 'Runner Details' },
+        { old: 'core.html', newPath: '/marathon/cores/', label: 'Core Details' },
+        { old: 'mod.html', newPath: '/marathon/mods/', label: 'Mod Details' },
+        { old: 'item.html', newPath: '/marathon/items/', label: 'Item Details' },
+        { old: 'cosmetic-weapon.html', newPath: '/marathon/weapon-skins/', label: 'Weapon Skin Details' },
+        { old: 'cosmetic.html', newPath: '/marathon/runner-skins/', label: 'Runner Skin Details' },
+        { old: 'cosmetic-sticker.html', newPath: '/marathon/stickers/', label: 'Sticker Details' },
+        { old: 'cosmetic-background.html', newPath: '/marathon/backgrounds/', label: 'Background Details' },
+        { old: 'cosmetic-charm.html', newPath: '/marathon/charms/', label: 'Charm Details' },
+        { old: 'cosmetic-emblem.html', newPath: '/marathon/emblems/', label: 'Emblem Details' },
+        { old: 'contract.html', newPath: '/marathon/factions/', label: 'Contract Details' },
+        { old: 'faction.html', newPath: '/marathon/factions/', label: 'Faction Details' },
     ]
 };
 
@@ -3540,7 +3540,7 @@ function generateDetailRedirect(newBasePath, label) {
 <link rel="canonical" href="${SITE_URL}${newBasePath}">
 <meta name="robots" content="noindex, follow">
 <script>
-(function(){var s=new URLSearchParams(window.location.search).get('slug');window.location.replace(s?'${newBasePath}'+s+'//marathon/':'${newBasePath}');})();
+(function(){var s=new URLSearchParams(window.location.search).get('slug');window.location.replace(s?'${newBasePath}'+s+'/marathon/':'${newBasePath}');})();
 </script>
 </head>
 <body>
@@ -3611,7 +3611,7 @@ async function buildSitemap() {
     const urls = [];
 
     // Homepage
-    urls.push({ loc: '//marathon/', priority: '1.0', changefreq: 'daily', lastmod: today });
+    urls.push({ loc: '/marathon/', priority: '1.0', changefreq: 'daily', lastmod: today });
 
     // SSG directories to scan
     const ssgDirs = [
@@ -3679,19 +3679,19 @@ async function buildSitemap() {
     // Non-SSG'd pages that are still active (keep in sitemap)
     // NOTE: Cloudflare Pages 307-redirects .html → non-.html, so omit extension
     const staticPages = [
-        { loc: '//marathon/loadout-builder/', priority: '0.8', changefreq: 'weekly' },
-        { loc: '//marathon/weapon-loadout-builder/', priority: '0.8', changefreq: 'weekly' },
-        { loc: '//marathon/runner-loadout-builder/', priority: '0.8', changefreq: 'weekly' },
-        { loc: '//marathon/complete-loadout-builder/', priority: '0.8', changefreq: 'weekly' },
-        { loc: '//marathon/pages/beta', priority: '0.9', changefreq: 'daily' },
-        { loc: '//marathon/pages/twitch', priority: '0.7', changefreq: 'daily' },
-        { loc: '//marathon/pages/cosmetics-destiny2', priority: '0.6', changefreq: 'weekly' },
-        { loc: '//marathon/pages/search', priority: '0.5', changefreq: 'weekly' },
-        { loc: '//marathon/pages/about', priority: '0.5', changefreq: 'monthly' },
-        { loc: '//marathon/pages/contact', priority: '0.5', changefreq: 'monthly' },
-        { loc: '//marathon/pages/cookie-policy', priority: '0.3', changefreq: 'monthly' },
-        { loc: '//marathon/pages/privacy-policy', priority: '0.3', changefreq: 'monthly' },
-        { loc: '//marathon/pages/terms-and-conditions', priority: '0.3', changefreq: 'monthly' },
+        { loc: '/marathon/loadout-builder/', priority: '0.8', changefreq: 'weekly' },
+        { loc: '/marathon/weapon-loadout-builder/', priority: '0.8', changefreq: 'weekly' },
+        { loc: '/marathon/runner-loadout-builder/', priority: '0.8', changefreq: 'weekly' },
+        { loc: '/marathon/complete-loadout-builder/', priority: '0.8', changefreq: 'weekly' },
+        { loc: '/marathon/pages/beta', priority: '0.9', changefreq: 'daily' },
+        { loc: '/marathon/pages/twitch', priority: '0.7', changefreq: 'daily' },
+        { loc: '/marathon/pages/cosmetics-destiny2', priority: '0.6', changefreq: 'weekly' },
+        { loc: '/marathon/pages/search', priority: '0.5', changefreq: 'weekly' },
+        { loc: '/marathon/pages/about', priority: '0.5', changefreq: 'monthly' },
+        { loc: '/marathon/pages/contact', priority: '0.5', changefreq: 'monthly' },
+        { loc: '/marathon/pages/cookie-policy', priority: '0.3', changefreq: 'monthly' },
+        { loc: '/marathon/pages/privacy-policy', priority: '0.3', changefreq: 'monthly' },
+        { loc: '/marathon/pages/terms-and-conditions', priority: '0.3', changefreq: 'monthly' },
     ];
 
     for (const page of staticPages) {

@@ -48,7 +48,7 @@ function detectActiveSection(html) {
         return 'cosmetics';
     }
     // Check for active in More dropdown items (href comes before class in generated HTML)
-    const moreMatch = html.match(/href="\/([^/"]+)\/"[^>]*?class="nav-dropdown-item(?:\s+active|--active)"//marathon/);
+    const moreMatch = html.match(/href="\/([^/"]+)\/"[^>]*?class="nav-dropdown-item(?:\s+active|--active)"/marathon/);
     if (moreMatch) {
         const slug = moreMatch[1];
         if (slug === 'loadout-builder') return 'loadouts';
@@ -79,7 +79,7 @@ for (const filePath of pages) {
     } else {
         fs.writeFileSync(filePath, updated_html, 'utf8');
         updated++;
-        const rel = path.relative(ROOT, filePath).replace(/\\/g, '//marathon/');
+        const rel = path.relative(ROOT, filePath).replace(/\\/g, '/marathon/');
         console.log(`  ✓ ${rel} (active: ${activeSection || 'none'})`);
     }
 }

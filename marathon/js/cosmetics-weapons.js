@@ -95,7 +95,7 @@ function setupEventListeners() {
             window.location.href = '/marathon/weapon-skins/';
         } else if (val.startsWith('/')) {
             let href = val;
-            if (href.startsWith('//marathon/')) href = href.replace(/^\/\/marathon\//, '/marathon/');
+            if (href.startsWith('/marathon/')) href = href.replace(/^\/\/marathon\//, '/marathon/');
             if (href.startsWith('/weapon-skins/')) href = '/marathon' + href;
             window.location.href = href;
         } else {

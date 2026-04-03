@@ -40,7 +40,7 @@ async function handleServerStatus(request, env) {
   const path = url.pathname.replace(/^\/server-status/, '').replace(/\/$/, '');
 
   // GET /server-status/reports
-  if (request.method === 'GET' && path === '//marathon/reports') {
+  if (request.method === 'GET' && path === '/marathon/reports') {
     const now = Date.now();
     const cur = getBucket(now);
     const entries = await Promise.all(
@@ -53,7 +53,7 @@ async function handleServerStatus(request, env) {
   }
 
   // POST /server-status/reports
-  if (request.method === 'POST' && path === '//marathon/reports') {
+  if (request.method === 'POST' && path === '/marathon/reports') {
     const ip = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown';
     const ipHash     = await hashIP(ip);
     const rateBucket = Math.floor(Date.now() / (RATE_LIMIT_TTL * 1000));
@@ -83,7 +83,7 @@ async function handleServerStatus(request, env) {
   }
 
   // GET /server-status/summary
-  if (request.method === 'GET' && path === '//marathon/summary') {
+  if (request.method === 'GET' && path === '/marathon/summary') {
     const now = Date.now();
     const cur = getBucket(now);
     let recentTotal = 0, recentCounts = {}, dayTotal = 0;
@@ -134,13 +134,13 @@ async function handleItemCanonicalRewrite(request, env) {
   const params = url.searchParams;
 
   // Mods: /mods/?mod=...
-  if ((pathname === '//marathon/mods/' || pathname === '//marathon/mods') && params.has('mod')) {
+  if ((pathname === '/marathon/mods/' || pathname === '/marathon/mods') && params.has('mod')) {
     const mod = params.get('mod');
     if (!mod) return null;
 
     const canonicalUrl = `${siteUrl}/mods/?mod=${encodeURIComponent(mod)}`;
     const assetUrl = new URL(request.url);
-    assetUrl.pathname = '//marathon/mods/index.html';
+    assetUrl.pathname = '/marathon/mods/index.html';
     assetUrl.search = '';
 
     const resp = await env.ASSETS.fetch(assetUrl);
@@ -158,13 +158,13 @@ async function handleItemCanonicalRewrite(request, env) {
   }
 
   // Implants: /implants/?implant=...
-  if ((pathname === '//marathon/implants/' || pathname === '//marathon/implants') && params.has('implant')) {
+  if ((pathname === '/marathon/implants/' || pathname === '/marathon/implants') && params.has('implant')) {
     const implant = params.get('implant');
     if (!implant) return null;
 
     const canonicalUrl = `${siteUrl}/implants/?implant=${encodeURIComponent(implant)}`;
     const assetUrl = new URL(request.url);
-    assetUrl.pathname = '//marathon/implants/index.html';
+    assetUrl.pathname = '/marathon/implants/index.html';
     assetUrl.search = '';
 
     const resp = await env.ASSETS.fetch(assetUrl);
@@ -182,13 +182,13 @@ async function handleItemCanonicalRewrite(request, env) {
   }
 
   // Cores: /cores/?core=...
-  if ((pathname === '//marathon/cores/' || pathname === '//marathon/cores') && params.has('core')) {
+  if ((pathname === '/marathon/cores/' || pathname === '/marathon/cores') && params.has('core')) {
     const core = params.get('core');
     if (!core) return null;
 
     const canonicalUrl = `${siteUrl}/cores/?core=${encodeURIComponent(core)}`;
     const assetUrl = new URL(request.url);
-    assetUrl.pathname = '//marathon/cores/index.html';
+    assetUrl.pathname = '/marathon/cores/index.html';
     assetUrl.search = '';
 
     const resp = await env.ASSETS.fetch(assetUrl);
@@ -214,7 +214,7 @@ export default {
     const url = new URL(request.url);
 
     // Server-status API
-    if (url.pathname.startsWith('//marathon/server-status/') || url.pathname === '//marathon/server-status') {
+    if (url.pathname.startsWith('/marathon/server-status/') || url.pathname === '/marathon/server-status') {
       return handleServerStatus(request, env);
     }
 

@@ -1,6 +1,6 @@
 /**
  * gdb.gg — shared “shell” for non-Marathon pages only.
- * Activated when <html data-rnk-platform="…"> is set (see global.js).
+ * Activated when <html data-rnk-platform="home"> is set (legal pages set this in markup).
  * Marathon never sets this attribute — Marathon styling stays on rnk-theme.css alone.
  */
 
@@ -14,42 +14,6 @@ html[data-rnk-platform="home"] {
     --rnk-b-r: 108;
     --rnk-b-g: 92;
     --rnk-b-b: 231;
-}
-
-html[data-rnk-platform="twitch"] {
-    --rnk-a-r: 145;
-    --rnk-a-g: 70;
-    --rnk-a-b: 255;
-    --rnk-b-r: 177;
-    --rnk-b-g: 151;
-    --rnk-b-b: 252;
-}
-
-html[data-rnk-platform="steam"] {
-    --rnk-a-r: 102;
-    --rnk-a-g: 192;
-    --rnk-a-b: 244;
-    --rnk-b-r: 74;
-    --rnk-b-g: 125;
-    --rnk-b-b: 168;
-}
-
-html[data-rnk-platform="xbox"] {
-    --rnk-a-r: 91;
-    --rnk-a-g: 191;
-    --rnk-a-b: 33;
-    --rnk-b-r: 0;
-    --rnk-b-g: 180;
-    --rnk-b-b: 255;
-}
-
-html[data-rnk-platform="playstation"] {
-    --rnk-a-r: 0;
-    --rnk-a-g: 112;
-    --rnk-a-b: 209;
-    --rnk-b-r: 0;
-    --rnk-b-g: 191;
-    --rnk-b-b: 255;
 }
 
 /* Shared semantic tokens (pages can reference these) */

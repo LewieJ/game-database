@@ -15,16 +15,6 @@
     --accent: #5f6368;
     --accent-light: #8ab4f8;
     --border: rgba(255, 255, 255, 0.1);
-    
-    /* Platform Colors */
-    --color-twitch: #9146ff;
-    --color-twitch-light: #b197fc;
-    --color-steam: #66c0f4;
-    --color-steam-light: #a8d8f7;
-    --color-xbox: #5bbf21;
-    --color-xbox-light: #8ee35a;
-    --color-playstation: #00bfff;
-    --color-playstation-light: #66d9ff;
     /* Slim unified top bar — subsite stickies use this offset */
     --master-nav-height: 36px;
 }
@@ -220,10 +210,6 @@
 
 /* Platform accents when active (subtle left border / tint) */
 .master-nav-platforms > a.nav-marathon.active { box-shadow: inset 0 -2px 0 #d4ff00; background: rgba(212, 255, 0, 0.06); }
-.master-nav-platforms > a.nav-twitch.active { box-shadow: inset 0 -2px 0 #9146ff; background: rgba(145, 70, 255, 0.08); }
-.master-nav-platforms > a.nav-steam.active { box-shadow: inset 0 -2px 0 #66c0f4; background: rgba(102, 192, 244, 0.08); }
-.master-nav-platforms > a.nav-xbox.active { box-shadow: inset 0 -2px 0 #5bbf21; background: rgba(91, 191, 33, 0.08); }
-.master-nav-platforms > a.nav-playstation.active { box-shadow: inset 0 -2px 0 #00bfff; background: rgba(0, 191, 255, 0.08); }
 
 @media (min-width: 769px) {
     #global-nav,
@@ -498,9 +484,13 @@
         padding-bottom: 80px !important;
     }
 
-    /* Landing page: keep padding minimal (avoid giant footer void). */
+    /* Landing: no body padding (was a blank strip below the footer). Clear the fixed bottom chrome via footer padding instead. */
     body.page-home-landing {
-        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: 0 !important;
+    }
+
+    body.page-home-landing .home-footer {
+        padding-bottom: calc(1.5rem + 64px + env(safe-area-inset-bottom, 0px));
     }
 }
 
@@ -595,10 +585,6 @@
     
     /* Platform colors for active states */
     .mobile-bottom-nav a.nav-home.active { color: var(--accent-light); }
-    .mobile-bottom-nav a.nav-twitch.active { color: var(--color-twitch-light); }
-    .mobile-bottom-nav a.nav-steam.active { color: var(--color-steam); }
-    .mobile-bottom-nav a.nav-xbox.active { color: var(--color-xbox-light); }
-    .mobile-bottom-nav a.nav-playstation.active { color: var(--color-playstation); }
     .mobile-bottom-nav a.nav-marathon.active { color: #d4ff00; }
     
     /* Hide the ::after pseudo element since we're using real nav */
@@ -627,8 +613,9 @@
     margin-top: 3rem;
 }
 
+/* Footer follows .stage (flex: 1); margin-top:auto duplicated “fill” space and lengthened the page */
 body.page-home-landing .home-footer {
-    margin-top: auto;
+    margin-top: 0;
 }
 
 .home-footer-inner {

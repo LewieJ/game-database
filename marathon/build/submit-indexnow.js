@@ -41,7 +41,7 @@ function submitToIndexNow(urls) {
 
   const options = {
     hostname: 'api.indexnow.org',
-    path: '//marathon/IndexNow',
+    path: '/marathon/IndexNow',
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
@@ -76,7 +76,7 @@ function submitToIndexNow(urls) {
 async function main() {
   const arg = process.argv[2];
   const urls = arg
-    ? [`https://${HOST}${arg.startsWith('//marathon/') ? arg : '//marathon/' + arg}`]
+    ? [`https://${HOST}${arg.startsWith('/marathon/') ? arg : '/marathon/' + arg}`]
     : DEFAULT_URLS;
 
   console.log(`Submitting ${urls.length} URL(s) to IndexNow...`);

@@ -12,48 +12,8 @@ const CONFIG = {
     CACHE_TTL: 300 // Cache time-to-live in seconds
   },
 
-  // Platform-Specific API Endpoints
-  PLATFORMS: {
-    STEAM: {
-      BASE_URL: 'https://api.gdb.gg/steam',
-      ENDPOINTS: {
-        PROFILE: '/user',
-        GAMES: '/games',
-        POPULAR: '/games/popular',
-        FEATURED: '/games/featured',
-        TRENDING: '/games/trending',
-        NEW_RELEASES: '/games/new-releases',
-        TOP_SELLERS: '/games/top-sellers',
-        SPECIALS: '/games/specials',
-        SEARCH_GAMES: '/search/games',
-        SEARCH_PROFILES: '/search/profiles',
-        METRICS: '/metrics',
-        LEADERBOARDS: '/leaderboards'
-      }
-    },
-    TWITCH: {
-      BASE_URL: 'https://api.gdb.gg/api/v2',
-      ENDPOINTS: {
-        TOP_CATEGORIES: '/top-categories/current',
-        CATEGORY: '/categories',
-        PROFILE: '/streamers',
-        LEADERBOARDS: '/leaderboards',
-        STREAMS: '/streams'
-      }
-    },
-    XBOX: {
-      BASE_URL: 'https://api.gdb.gg/xbox',
-      ENDPOINTS: {
-        PROFILE: '/profile'
-      }
-    },
-    PLAYSTATION: {
-      BASE_URL: 'https://api.gdb.gg/playstation',
-      ENDPOINTS: {
-        PROFILE: '/profile'
-      }
-    }
-  },
+  // Reserved for future subsite API roots (not used by static pages today)
+  PLATFORMS: {},
 
   // Feature Flags
   FEATURES: {

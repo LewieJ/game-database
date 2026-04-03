@@ -182,7 +182,7 @@ function buildCardHtml(core) {
                         ${desc ? `<div class="core-description-snippet">${desc}</div>` : ''}
                     </div>
                     <div class="core-card-footer">
-                        ${credits ? `<span class="core-card-credits"><img src="//marathon/assets/icons/credits.webp" alt="" width="14" height="14">${Number(credits).toLocaleString()}</span>` : '<span></span>'}
+                        ${credits ? `<span class="core-card-credits"><img src="/marathon/assets/icons/credits.webp" alt="" width="14" height="14">${Number(credits).toLocaleString()}</span>` : '<span></span>'}
                         <span class="core-card-cta">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                     </div>
                     ${heatStrip}
@@ -198,7 +198,7 @@ function buildSeoList(cores, runnerName) {
         const name   = escapeHtml(core.name);
         const slug   = escapeAttr(core.slug);
         const runner = capitalizeFirst((core.runner_type || '').toLowerCase());
-        return `        <li><a href="//marathon/cores/?core=${slug}">${name}</a> – ${rarity} ${runner} core</li>`;
+        return `        <li><a href="/marathon/cores/?core=${slug}">${name}</a> – ${rarity} ${runner} core</li>`;
     });
 
     return `    <noscript>
@@ -250,9 +250,9 @@ function generateRunnerPage(runner, runnerCores, allCores) {
     // embedded cores (already pre-filtered to this runner + universal)
     const runnerTabs = RUNNER_TYPES.map(r => {
         if (r === runner) {
-            return `                    <a href="//marathon/cores/${r}/" class="runner-nav-pill active" data-runner="">${capitalizeFirst(r)}</a>`;
+            return `                    <a href="/marathon/cores/${r}/" class="runner-nav-pill active" data-runner="">${capitalizeFirst(r)}</a>`;
         }
-        return `                    <a href="//marathon/cores/${r}/" class="runner-nav-pill" data-runner="${r}">${capitalizeFirst(r)}</a>`;
+        return `                    <a href="/marathon/cores/${r}/" class="runner-nav-pill" data-runner="${r}">${capitalizeFirst(r)}</a>`;
     }).join('\n');
 
     return `<!DOCTYPE html>
@@ -263,27 +263,27 @@ function generateRunnerPage(runner, runnerCores, allCores) {
     <meta name="description" content="${escapeAttr(description)}">
     <meta name="keywords" content="Marathon ${runnerName} cores, ${runnerName} core database, ${runnerName} runner upgrades, ${runnerName} abilities, Marathon ${runnerName}, Bungie Marathon, core stats">
     <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
 
     <!-- Open Graph Tags -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="${SITE_URL}/cores/${runner}/">
     <meta property="og:title" content="Marathon ${runnerName} Cores – Stats, Ratings & Balance History | MarathonDB">
     <meta property="og:description" content="${escapeAttr(description)}">
-    <meta property="og:image" content="${SITE_URL}/Icon.png">
+    <meta property="og:image" content="https://gdb.gg/assets/icons/marathon.svg">
 
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Marathon ${runnerName} Cores – Stats, Ratings & Balance History | MarathonDB">
     <meta name="twitter:description" content="${escapeAttr(description)}">
-    <meta name="twitter:image" content="${SITE_URL}/Icon.png">
+    <meta name="twitter:image" content="https://gdb.gg/assets/icons/marathon.svg">
 
     <link rel="canonical" href="${SITE_URL}/cores/${runner}/">
     <title>Marathon ${runnerName} Cores – Stats, Ratings & Balance History | MarathonDB</title>
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -298,12 +298,12 @@ ${structured}
         <nav class="detail-breadcrumb" aria-label="Breadcrumb">
             <ol itemscope itemtype="https://schema.org/BreadcrumbList" style="display: flex; align-items: center; gap: 8px; list-style: none; margin: 0; padding: 0;">
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/"><span itemprop="name">Home</span></a>
+                    <a itemprop="item" href="/marathon/"><span itemprop="name">Home</span></a>
                     <meta itemprop="position" content="1" />
                 </li>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-                    <a itemprop="item" href="//marathon/cores/"><span itemprop="name">Cores</span></a>
+                    <a itemprop="item" href="/marathon/cores/"><span itemprop="name">Cores</span></a>
                     <meta itemprop="position" content="2" />
                 </li>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -340,7 +340,7 @@ ${structured}
         <!-- Filter Bar: Runner tabs + Rarity pills in one row -->
         <div class="cores-filter-bar">
             <nav class="runner-nav-pills" id="runnerTabs">
-                <a href="//marathon/cores/" class="runner-nav-pill" data-runner="">All</a>
+                <a href="/marathon/cores/" class="runner-nav-pill" data-runner="">All</a>
 ${runnerTabs}
             </nav>
             <div class="cores-filter-divider"></div>
@@ -384,15 +384,15 @@ ${cardsHtml}
             <div class="seo-intro-body">
                 <h2>All ${runnerName} Cores in Marathon</h2>
                 <p>${intro}</p>
-                <p>Universal cores (available to all runners) are also shown on this page. For the complete list across all runner classes, visit the <a href="//marathon/cores/">full cores database</a>.</p>
+                <p>Universal cores (available to all runners) are also shown on this page. For the complete list across all runner classes, visit the <a href="/marathon/cores/">full cores database</a>.</p>
                 <h2>Browse Cores by Runner Class</h2>
                 <ul>
-                    <li><a href="//marathon/cores/destroyer/">Destroyer Cores</a></li>
-                    <li><a href="//marathon/cores/recon/">Recon Cores</a></li>
-                    <li><a href="//marathon/cores/thief/">Thief Cores</a></li>
-                    <li><a href="//marathon/cores/assassin/">Assassin Cores</a></li>
-                    <li><a href="//marathon/cores/vandal/">Vandal Cores</a></li>
-                    <li><a href="//marathon/cores/triage/">Triage Cores</a></li>
+                    <li><a href="/marathon/cores/destroyer/">Destroyer Cores</a></li>
+                    <li><a href="/marathon/cores/recon/">Recon Cores</a></li>
+                    <li><a href="/marathon/cores/thief/">Thief Cores</a></li>
+                    <li><a href="/marathon/cores/assassin/">Assassin Cores</a></li>
+                    <li><a href="/marathon/cores/vandal/">Vandal Cores</a></li>
+                    <li><a href="/marathon/cores/triage/">Triage Cores</a></li>
                 </ul>
             </div>
         </details>
@@ -475,12 +475,12 @@ ${cardsHtml}
     </div>
 
     <script>window.__CORES_DATA = ${jsonBlob};</script>
-    <script src="//marathon/js/api.js"></script>
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/cores.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
-    <script src="//marathon/js/feedback.js"></script>
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/cores.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
+    <script src="/marathon/js/feedback.js"></script>
 
 </body>
 </html>`;

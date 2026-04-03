@@ -175,7 +175,7 @@ function generateBackgroundPage(bg, allBgs) {
     // Build-time image URLs
     const fullImg    = resolveImage(bg.image_url);
     const previewImg = resolveImage(bg.image_preview_url) || fullImg;
-    const ogImage    = previewImg || `${SITE_URL}/Icon.png`;
+    const ogImage    = previewImg || `https://gdb.gg/assets/icons/marathon.svg`;
 
     // SEO
     const metaDesc = bg.acquisition_summary
@@ -243,8 +243,8 @@ function generateBackgroundPage(bg, allBgs) {
     <meta name="keywords" content="${keywords}">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta name="author" content="MARATHON DB">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     <link rel="canonical" href="${canonicalUrl}">
 
     <!-- Open Graph -->
@@ -263,9 +263,9 @@ function generateBackgroundPage(bg, allBgs) {
     <meta name="twitter:description" content="${escapeHtml(metaDesc)}">
     <meta name="twitter:image" content="${escapeHtml(ogImage)}">
 
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -327,8 +327,8 @@ ${generateNavigation()}
                 <!-- Right: Info column -->
                 <div class="bd-hero-info">
                     <nav class="breadcrumb bd-breadcrumb">
-                        <a href="//marathon/">Home</a> /
-                        <a href="//marathon/backgrounds/">Backgrounds</a> /
+                        <a href="/marathon/">Home</a> /
+                        <a href="/marathon/backgrounds/">Backgrounds</a> /
                         <span>${escapeHtml(name)}</span>
                     </nav>
 
@@ -418,8 +418,8 @@ ${relatedHtml}
 ${generateFooter()}
 
     <!-- Runtime JS: share buttons, lightbox, rating widget -->
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/cosmetic-ratings.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/cosmetic-ratings.js"></script>
     <script>
     (function(){
         // ─── Share buttons ───
@@ -491,9 +491,9 @@ ${generateFooter()}
         }
     })();
     </script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
-    <script src="//marathon/js/feedback.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
+    <script src="/marathon/js/feedback.js"></script>
 
     <!-- Mobile Anchor Ad -->
     <div class="ad-mobile-anchor">
@@ -524,7 +524,7 @@ function buildDetailRows(bg) {
     if (bg.season_name) lines.push(row('Season', escapeHtml(bg.season_name)));
     if (bg.faction_name && bg.faction_slug) {
         const fc = FACTION_COLOURS[bg.faction_slug] || '#fff';
-        lines.push(row('Faction', `<a href="//marathon/factions/${bg.faction_slug}/" style="color:${fc}">${escapeHtml(bg.faction_name)}</a>`));
+        lines.push(row('Faction', `<a href="/marathon/factions/${bg.faction_slug}/" style="color:${fc}">${escapeHtml(bg.faction_name)}</a>`));
     }
     lines.push(row('Obtainable', bg.is_obtainable ? '<span style="color:#2ecc71">Yes</span>' : '<span style="color:#e74c3c">No (Legacy)</span>'));
     if (bg.description) lines.push(row('Description', escapeHtml(bg.description)));
@@ -551,7 +551,7 @@ function buildRelatedSection(related) {
         const thumbHtml = imgSrc
             ? `<img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(r.name || '')}" loading="lazy" width="36" height="36">`
             : '';
-        return `                    <a href="//marathon/backgrounds/${r.slug}/" class="bd-related-card">
+        return `                    <a href="/marathon/backgrounds/${r.slug}/" class="bd-related-card">
                         <div class="bd-related-card-thumb">${thumbHtml}</div>
                         <span class="bd-related-card-name">${escapeHtml(r.name || r.slug)}</span>
                     </a>`;
@@ -572,12 +572,12 @@ function buildQuickNav(allBgs, idx) {
     const next = idx < allBgs.length - 1 ? allBgs[idx + 1] : allBgs[0];
 
     return `            <nav class="bd-quick-nav" style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;padding:24px 0;border-top:1px solid var(--border);margin-top:8px;">
-                <a href="//marathon/backgrounds/${prev.slug}/" class="bd-quick-link bd-quick-link--prev">
+                <a href="/marathon/backgrounds/${prev.slug}/" class="bd-quick-link bd-quick-link--prev">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
                     <span>${escapeHtml(prev.name)}</span>
                 </a>
                 <a href="/backgrounds/" class="bd-quick-link bd-quick-link--all">All Backgrounds</a>
-                <a href="//marathon/backgrounds/${next.slug}/" class="bd-quick-link bd-quick-link--next">
+                <a href="/marathon/backgrounds/${next.slug}/" class="bd-quick-link bd-quick-link--next">
                     <span>${escapeHtml(next.name)}</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </a>

@@ -1,6 +1,6 @@
 # Game Database (gdb.gg)
 
-Static site for **gdb.gg**: home (`index.html`), **Marathon** subsite (`marathon/`), plus Steam/Twitch and other subsites; shared `assets/`.
+Static site for **gdb.gg**: home (`index.html`), **Marathon** subsite (`marathon/`), legal pages under `pages/`, and shared `assets/`.
 
 ## Layout
 

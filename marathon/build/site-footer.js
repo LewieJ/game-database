@@ -13,17 +13,17 @@ function generateFooter() {
                     <span class="footer-logo">Marathon</span>
                 </div>
                 <div class="footer-nav">
-                    <a href="//marathon/weapons/" class="footer-link">Weapons</a>
-                    <a href="//marathon/runners/" class="footer-link">Runners</a>
-                    <a href="//marathon/cores/" class="footer-link">Cores</a>
-                    <a href="//marathon/implants/" class="footer-link">Implants</a>
-                    <a href="//marathon/items/" class="footer-link">Items</a>
-                    <a href="//marathon/mods/" class="footer-link">Mods</a>
-                    <a href="//marathon/contracts/" class="footer-link">Contracts</a>
-                    <a href="//marathon/weapon-skins/" class="footer-link">Skins</a>
-                    <a href="//marathon/tier-lists/" class="footer-link">Tier Lists</a>
-                    <a href="//marathon/marathon-pc-requirements/" class="footer-link">PC Requirements</a>
-                    <a href="//marathon/news/" class="footer-link">News</a>
+                    <a href="/marathon/weapons/" class="footer-link">Weapons</a>
+                    <a href="/marathon/runners/" class="footer-link">Runners</a>
+                    <a href="/marathon/cores/" class="footer-link">Cores</a>
+                    <a href="/marathon/implants/" class="footer-link">Implants</a>
+                    <a href="/marathon/items/" class="footer-link">Items</a>
+                    <a href="/marathon/mods/" class="footer-link">Mods</a>
+                    <a href="/marathon/contracts/" class="footer-link">Contracts</a>
+                    <a href="/marathon/weapon-skins/" class="footer-link">Skins</a>
+                    <a href="/marathon/tier-lists/" class="footer-link">Tier Lists</a>
+                    <a href="/marathon/marathon-pc-requirements/" class="footer-link">PC Requirements</a>
+                    <a href="/marathon/news/" class="footer-link">News</a>
                 </div>
                 <div class="footer-social">
                     <a href="https://x.com/MarathonDB" target="_blank" rel="noopener noreferrer" class="footer-social-link" title="X/Twitter">
@@ -48,7 +48,7 @@ function generateFooter() {
             </div>
             <div class="footer-legal">
                 <p class="footer-disclaimer">Marathon™ is a trademark of Bungie, Inc. This site is not affiliated with or endorsed by Bungie.</p>
-                <p class="footer-links"><a href="//marathon/pages/about">About</a> · <a href="//marathon/pages/contact">Contact</a> · <a href="//marathon/pages/privacy-policy">Privacy Policy</a> · <a href="//marathon/pages/terms-and-conditions">Terms</a></p>
+                <p class="footer-links"><a href="/marathon/pages/about">About</a> · <a href="/marathon/pages/contact">Contact</a> · <a href="/marathon/pages/privacy-policy">Privacy Policy</a> · <a href="/marathon/pages/terms-and-conditions">Terms</a></p>
             </div>
         </div>
     </footer>`;

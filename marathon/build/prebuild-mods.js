@@ -189,7 +189,7 @@ function buildCardHtml(mod) {
                     <div class="mod-card-content">${snippetHtml}${effectsHtml}
                     </div>
                     <div class="mod-card-footer">
-                        ${cost ? `<span class="mod-card-credits"><img src="//marathon/assets/icons/credits.webp" alt="" width="14" height="14">${cost.toLocaleString()}</span>` : '<span></span>'}
+                        ${cost ? `<span class="mod-card-credits"><img src="/marathon/assets/icons/credits.webp" alt="" width="14" height="14">${cost.toLocaleString()}</span>` : '<span></span>'}
                         <span class="mod-card-cta">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                     </div>
                 </div>`;

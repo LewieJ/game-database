@@ -176,12 +176,12 @@ function buildQuickNav(allStickers, currentIdx) {
     const next = currentIdx < allStickers.length - 1 ? allStickers[currentIdx + 1] : allStickers[0];
     return `
             <nav class="sd-quick-nav" style="display:grid; grid-template-columns:1fr auto 1fr; gap:12px; align-items:center; padding:24px 0; border-top:1px solid var(--border); margin-top:8px;">
-                <a href="//marathon/stickers/${escapeHtml(prev.slug)}/" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text-primary); padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius-lg); transition:all .2s;">
+                <a href="/marathon/stickers/${escapeHtml(prev.slug)}/" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text-primary); padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius-lg); transition:all .2s;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
                     <span><span style="display:block; font-size:0.7rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em;">Previous</span><span style="font-size:0.85rem; font-weight:600;">${escapeHtml(prev.name)}</span></span>
                 </a>
-                <a href="//marathon/stickers/" style="font-size:0.78rem; font-weight:700; color:var(--text-dim); text-decoration:none; text-transform:uppercase; letter-spacing:0.06em;">All Stickers</a>
-                <a href="//marathon/stickers/${escapeHtml(next.slug)}/" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text-primary); padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius-lg); justify-content:flex-end; text-align:right; transition:all .2s;">
+                <a href="/marathon/stickers/" style="font-size:0.78rem; font-weight:700; color:var(--text-dim); text-decoration:none; text-transform:uppercase; letter-spacing:0.06em;">All Stickers</a>
+                <a href="/marathon/stickers/${escapeHtml(next.slug)}/" style="display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text-primary); padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius-lg); justify-content:flex-end; text-align:right; transition:all .2s;">
                     <span><span style="display:block; font-size:0.7rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em;">Next</span><span style="font-size:0.85rem; font-weight:600;">${escapeHtml(next.name)}</span></span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 </a>
@@ -230,7 +230,7 @@ function generateStickerPage(sticker, allStickers, idx) {
     // Images
     const fullImg    = resolveImage(sticker.image_url || '');
     const previewImg = resolveImage(sticker.image_preview_url || sticker.image_url || '');
-    const ogImage    = fullImg || previewImg || `${SITE_URL}/Icon.png`;
+    const ogImage    = fullImg || previewImg || `https://gdb.gg/assets/icons/marathon.svg`;
 
     // SEO
     const acqText  = sticker.acquisition_detail || sticker.acquisition_summary || '';
@@ -262,8 +262,8 @@ function generateStickerPage(sticker, allStickers, idx) {
     <meta name="keywords" content="${keywords}">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta name="author" content="MARATHON DB">
-    <link rel="icon" type="image/png" href="//marathon/Icon.png">
-    <link rel="apple-touch-icon" href="//marathon/Icon.png">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     <link rel="canonical" href="${canonicalUrl}">
 
     <!-- Open Graph -->
@@ -282,9 +282,9 @@ function generateStickerPage(sticker, allStickers, idx) {
     <meta name="twitter:description" content="${escapeHtml(metaDesc).slice(0, 160)}">
     <meta name="twitter:image" content="${escapeHtml(ogImage)}">
 
-    <link rel="stylesheet" href="//marathon/css/style.css">
-    <link rel="stylesheet" href="//marathon/css/pages.css">
-    <link rel="stylesheet" href="//marathon/css/auth.css">
+    <link rel="stylesheet" href="/marathon/css/style.css">
+    <link rel="stylesheet" href="/marathon/css/pages.css">
+    <link rel="stylesheet" href="/marathon/css/auth.css">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -363,8 +363,8 @@ function generateStickerPage(sticker, allStickers, idx) {
                 <!-- Right: Title + Stats -->
                 <div class="sd-hero-info">
                     <nav class="breadcrumb sd-breadcrumb">
-                        <a href="//marathon/">Home</a> /
-                        <a href="//marathon/stickers/">Stickers</a> /
+                        <a href="/marathon/">Home</a> /
+                        <a href="/marathon/stickers/">Stickers</a> /
                         <span>${escapeHtml(name)}</span>
                     </nav>
 
@@ -455,7 +455,7 @@ function generateStickerPage(sticker, allStickers, idx) {
 
             <!-- Related Links (faction browse) -->
             <div id="relatedLinks" class="sd-related-links" style="${sticker.faction_slug ? '' : 'display:none'}">
-                ${sticker.faction_slug ? `<a href="//marathon/stickers/?faction=${escapeHtml(sticker.faction_slug)}" class="sd-link-card">
+                ${sticker.faction_slug ? `<a href="/marathon/stickers/?faction=${escapeHtml(sticker.faction_slug)}" class="sd-link-card">
                     <div class="sd-link-icon sd-link-icon--collection"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
                     <div class="sd-link-text"><span class="sd-link-name">${escapeHtml(sticker.faction_name || sticker.faction_slug)}</span><span class="sd-link-hint">Browse faction stickers &rarr;</span></div>
                 </a>` : ''}
@@ -483,11 +483,11 @@ function generateStickerPage(sticker, allStickers, idx) {
 
     ${generateFooter()}
 
-    <script src="//marathon/js/api.js"></script>
-    <script src="//marathon/js/search.js"></script>
-    <script src="//marathon/js/cosmetic-ratings.js"></script>
-    <script src="//marathon/js/mobile-nav.js"></script>
-    <script src="//marathon/js/auth.js"></script>
+    <script src="/marathon/js/api.js"></script>
+    <script src="/marathon/js/search.js"></script>
+    <script src="/marathon/js/cosmetic-ratings.js"></script>
+    <script src="/marathon/js/mobile-nav.js"></script>
+    <script src="/marathon/js/auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var COSMETIC_SLUG = '${escapeJs(slug)}';
@@ -641,7 +641,7 @@ function generateStickerPage(sticker, allStickers, idx) {
             enrichFromAPI();
         });
     </script>
-    <script src="//marathon/js/feedback.js"></script>
+    <script src="/marathon/js/feedback.js"></script>
 
     <!-- Mobile Anchor Ad -->
     <div class="ad-mobile-anchor">

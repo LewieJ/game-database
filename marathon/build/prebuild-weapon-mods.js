@@ -60,7 +60,7 @@ async function main() {
     // Build replacement HTML
     const indent = '                                    ';
     const linksHtml = allMods
-        .map(m => `${indent}<a href="//marathon/mods/?mod=${m.slug}" class="mod-tag clickable">${m.name}</a>`)
+        .map(m => `${indent}<a href="/marathon/mods/?mod=${m.slug}" class="mod-tag clickable">${m.name}</a>`)
         .join('\n');
 
     // Read the weapon's index.html

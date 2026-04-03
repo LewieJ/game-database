@@ -6,39 +6,64 @@
 (function() {
     'use strict';
 
-    /** Sets data-rnk-platform on <html> so gdb-subsite-shell.css applies. Skipped for /marathon/ — Marathon uses rnk-theme.css only. Skipped for / and /index.html — landing page keeps its own chrome. */
-    (function applyRnkPlatformShell() {
-        var path = window.location.pathname.toLowerCase();
-        if (path.indexOf('/marathon') !== -1) return;
-        if (path === '/' || path === '/index.html') return;
-        var plat = '';
-        if (path.indexOf('/twitch') !== -1) plat = 'twitch';
-        else if (path.indexOf('/steam') !== -1) plat = 'steam';
-        else if (path.indexOf('/xbox') !== -1) plat = 'xbox';
-        else if (path.indexOf('/playstation') !== -1) plat = 'playstation';
-        if (!plat) return;
-        document.documentElement.setAttribute('data-rnk-platform', plat);
-    })();
+    /**
+     * Root-relative paths like /marathon/ resolve to file:///marathon/ when the site is opened
+     * via file://. Under the repo folder “Gamedatabase”, compute a ../ prefix to the site root.
+     */
+    function fileSiteRootPrefix() {
+        var p = window.location.pathname.replace(/\\/g, '/');
+        var m = p.match(/(.*\/Gamedatabase)(?:\/|$)/i);
+        if (!m) return null;
+        var rootDir = m[1];
+        var lastSlash = p.lastIndexOf('/');
+        var currentDir = lastSlash === -1 ? p : p.slice(0, lastSlash);
+        if (currentDir.length <= rootDir.length) return '';
+        var extra = currentDir.slice(rootDir.length + 1);
+        var depth = extra.split('/').filter(Boolean).length;
+        return depth ? new Array(depth + 1).join('../') : '';
+    }
 
-    const ICONS = {
-        marathon: '<img src="/assets/icons/marathon.svg" style="width: 14px; height: 14px;" alt="Marathon">'
-    };
+    /** Map absolute site paths (e.g. /marathon/, /, /#games) for anchors and assets. */
+    function siteHref(absPath) {
+        var hash = '';
+        var i = absPath.indexOf('#');
+        if (i !== -1) {
+            hash = absPath.slice(i);
+            absPath = absPath.slice(0, i);
+        }
+        if (window.location.protocol !== 'file:') {
+            return (absPath || '/') + hash;
+        }
+        var pre = fileSiteRootPrefix();
+        var pathOnly = absPath || '/';
+        if (pre === null) {
+            if (pathOnly === '/') return 'index.html' + hash;
+            return (pathOnly.charAt(0) === '/' ? pathOnly.slice(1) : pathOnly) + hash;
+        }
+        if (pathOnly === '/') return pre + 'index.html' + hash;
+        if (pathOnly.charAt(0) === '/') return pre + pathOnly.slice(1) + hash;
+        return pathOnly + hash;
+    }
+
+    function marathonNavIcon() {
+        return '<img src="' + siteHref('/assets/icons/marathon.svg') + '" style="width: 14px; height: 14px;" alt="Marathon">';
+    }
 
     // Determine active section based on URL
     function getActiveSection() {
-        const path = window.location.pathname.toLowerCase();
-        if (path.includes('/twitch')) return 'twitch';
-        if (path.includes('/steam')) return 'steam';
-        if (path.includes('/xbox')) return 'xbox';
-        if (path.includes('/playstation')) return 'playstation';
-        if (path.includes('/marathon')) return 'marathon';
-        if (path === '/' || path === '/index.html') return 'home';
+        var path = window.location.pathname.replace(/\\/g, '/').toLowerCase();
+        if (path.indexOf('/marathon') !== -1) return 'marathon';
+        if (/\/pages\//i.test(path)) return null;
+        if (path === '/' || path.endsWith('/index.html')) {
+            var before = path.slice(0, path.lastIndexOf('/'));
+            if (!/\/marathon$/i.test(before)) return 'home';
+        }
         return null;
     }
 
     // Platform links (slim top bar — brand is “home”). Only surfaces titles with live APIs.
     const PLATFORM_LINKS = [
-        { id: 'marathon', href: '/marathon/', label: 'Marathon', icon: ICONS.marathon }
+        { id: 'marathon', path: '/marathon/', label: 'Marathon' }
     ];
 
     const HOME_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>';
@@ -46,37 +71,39 @@
     function platformNavItemDesktop(link, activeSection) {
         var isActive = activeSection === link.id ? ' active' : '';
         var label = '<span class="master-nav-label">' + link.label + '</span>';
-        return '<a href="' + link.href + '" class="nav-' + link.id + isActive + '" data-platform="' + link.id + '">' +
-            link.icon + label + '</a>';
+        return '<a href="' + siteHref(link.path) + '" class="nav-' + link.id + isActive + '" data-platform="' + link.id + '">' +
+            link.iconHtml + label + '</a>';
     }
 
     function platformNavItemMobile(link, activeSection) {
         var isActive = activeSection === link.id ? ' active' : '';
-        var inner = link.icon + '<span>' + link.label + '</span>';
-        return '<a href="' + link.href + '" class="nav-' + link.id + isActive + '">' + inner + '</a>';
+        var inner = link.iconHtml + '<span>' + link.label + '</span>';
+        return '<a href="' + siteHref(link.path) + '" class="nav-' + link.id + isActive + '">' + inner + '</a>';
     }
 
     // Generate navbar HTML (Tracker-style single compact row)
     function generateNavbar() {
         const activeSection = getActiveSection();
 
-        const platformsHTML = PLATFORM_LINKS.map(function (link) {
+        const platformLinksResolved = PLATFORM_LINKS.map(function (l) {
+            return { id: l.id, path: l.path, label: l.label, iconHtml: marathonNavIcon() };
+        });
+
+        const platformsHTML = platformLinksResolved.map(function (link) {
             return platformNavItemDesktop(link, activeSection);
         }).join('');
 
-        var pathLower = window.location.pathname.toLowerCase();
-        var onIndex = pathLower === '/' || pathLower.endsWith('/index.html');
-        const homeAnchors = activeSection === 'home' && onIndex
+        const homeAnchors = activeSection === 'home'
             ? '<div class="master-nav-anchors" aria-label="Sections">' +
-              '<a href="/#games">Games</a>' +
+              '<a href="' + siteHref('/#games') + '">Games</a>' +
               '</div>'
             : '';
 
-        const mobileItems = [{ id: 'home', href: '/', label: 'Home', icon: HOME_ICON }].concat(PLATFORM_LINKS);
+        const mobileItems = [{ id: 'home', path: '/', label: 'Home', iconHtml: HOME_ICON }].concat(platformLinksResolved);
         const mobileLinksHTML = mobileItems.map(function (link) {
             if (link.id === 'home') {
                 var hAct = activeSection === 'home' ? ' active' : '';
-                return '<a href="' + link.href + '" class="nav-home' + hAct + '">' + link.icon + '<span>' + link.label + '</span></a>';
+                return '<a href="' + siteHref(link.path) + '" class="nav-home' + hAct + '">' + link.iconHtml + '<span>' + link.label + '</span></a>';
             }
             return platformNavItemMobile(link, activeSection);
         }).join('\n    ');
@@ -84,8 +111,8 @@
         return (
             '<nav class="master-nav" aria-label="gdb.gg sites">' +
             '<div class="master-nav-inner">' +
-            '<a href="/" class="master-nav-brand" title="GDB.GG home">' +
-            '<img src="/logo.png" alt="" class="master-nav-brand-mark" width="20" height="20">' +
+            '<a href="' + siteHref('/') + '" class="master-nav-brand" title="GDB.GG home">' +
+            '<img src="' + siteHref('/assets/icons/gdb-mark.svg') + '" alt="" class="master-nav-brand-mark" width="20" height="20">' +
             '<span class="master-nav-wordmark">gdb<span class="master-nav-dot">.</span>gg</span>' +
             '</a>' +
             '<div class="master-nav-platforms" role="navigation">' + platformsHTML + '</div>' +

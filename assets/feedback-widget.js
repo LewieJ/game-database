@@ -63,12 +63,12 @@ class FeedbackWidget {
             </div>
 
             <div class="feedback-field">
-              <label for="feedback-epic-id">Epic ID (optional)</label>
+              <label for="feedback-epic-id">In-game username (optional)</label>
               <input 
                 type="text" 
                 id="feedback-epic-id" 
                 name="epicId" 
-                placeholder="YourEpicUsername"
+                placeholder="Your in-game name"
                 maxlength="50"
               >
               <small>🏆 Users who help improve the site will be granted achievements/awards in the future!</small>
