@@ -14,20 +14,6 @@ const CONFIG = {
 
   // Platform-Specific API Endpoints
   PLATFORMS: {
-    FORTNITE: {
-      BASE_URL: 'https://api.gdb.gg/fortnite',
-      ENDPOINTS: {
-        PROFILE: '/profile',
-        RANKED: '/ranked',
-        LEADERBOARDS: '/leaderboards',
-        EVENTS: '/events',
-        SHOP: '/shop',
-        CCU: '/ccu',
-        POPULATION: '/population',
-        PLAYLISTS: '/playlists',
-        METRICS: '/metrics'
-      }
-    },
     STEAM: {
       BASE_URL: 'https://api.gdb.gg/steam',
       ENDPOINTS: {

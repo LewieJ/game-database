@@ -16,15 +16,6 @@ html[data-rnk-platform="home"] {
     --rnk-b-b: 231;
 }
 
-html[data-rnk-platform="fortnite"] {
-    --rnk-a-r: 0;
-    --rnk-a-g: 212;
-    --rnk-a-b: 255;
-    --rnk-b-r: 247;
-    --rnk-b-g: 201;
-    --rnk-b-b: 72;
-}
-
 html[data-rnk-platform="twitch"] {
     --rnk-a-r: 145;
     --rnk-a-g: 70;
@@ -97,11 +88,6 @@ html[data-rnk-platform] .master-nav-brand .master-nav-dot {
     color: rgb(var(--rnk-b-r), var(--rnk-b-g), var(--rnk-b-b));
 }
 
-/* Fortnite: let the shell gradient show through fixed backdrop layers */
-html[data-rnk-platform="fortnite"] .bg-gradient {
-    background: transparent !important;
-}
-
 /* Reusable glass panel (optional on any subsite) */
 html[data-rnk-platform] .rnk-glass-panel {
     background: var(--rnk-shell-surface);
@@ -112,10 +98,3 @@ html[data-rnk-platform] .rnk-glass-panel {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
-html[data-rnk-platform="fortnite"] .home-footer-dot {
-    color: rgb(var(--rnk-b-r), var(--rnk-b-g), var(--rnk-b-b));
-}
-
-html[data-rnk-platform="fortnite"] .home-footer-links a:hover {
-    color: rgb(var(--rnk-b-r), var(--rnk-b-g), var(--rnk-b-b));
-}

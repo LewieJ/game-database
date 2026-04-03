@@ -7,7 +7,7 @@ First implemented on **Cores** (`feature/cores-popout-redesign`). Next targets: 
 
 ## Overview
 
-Instead of individual detail pages (e.g. `/cores/adaptive-barrier/index.html`), all items live on one listing page. Clicking a card opens a Fortnite.GG-style popout modal that fetches full detail from the API.
+Instead of individual detail pages (e.g. `/cores/adaptive-barrier/index.html`), all items live on one listing page. Clicking a card opens a compact popout modal that fetches full detail from the API.
 
 ### Benefits
 - Fewer static HTML pages to maintain / deploy

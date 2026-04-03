@@ -1,15 +1,15 @@
 # Game Database (gdb.gg)
 
-Static site for **gdb.gg**: home (`index.html`), **Marathon** subsite (`marathon/`), other game folders present but not linked from the global nav; shared `assets/`.
+Static site for **gdb.gg**: home (`index.html`), **Marathon** subsite (`marathon/`), plus Steam/Twitch and other subsites; shared `assets/`.
 
 ## Layout
 
-- **`/`** — Landing: hero, supported titles (Marathon + Fortnite placeholder), master nav, footer. SEO: canonical `https://gdb.gg/`, Open Graph + Twitter use `assets/og-default.png` (1200×630).
+- **`/`** — Landing: hero, supported titles (Marathon), master nav, footer. SEO: canonical `https://gdb.gg/`, Open Graph + Twitter use `assets/og-default.png` (1200×630).
 - **`/marathon/`** — Marathon subsite (weapons, skins, SSG build scripts under `marathon/build/`).
 
 ## Sitemap
 
-Root **`sitemap.xml`** lists **`https://gdb.gg/`** and **`https://gdb.gg/marathon/...`** routes only (no Fortnite, hub, or other subsites). Regenerate after adding Marathon HTML:
+Root **`sitemap.xml`** lists **`https://gdb.gg/`** and **`https://gdb.gg/marathon/...`** routes only. Regenerate after adding Marathon HTML:
 
 ```bash
 npm run build:sitemap

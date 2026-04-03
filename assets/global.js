@@ -12,8 +12,7 @@
         if (path.indexOf('/marathon') !== -1) return;
         if (path === '/' || path === '/index.html') return;
         var plat = '';
-        if (path.indexOf('/fortnite') !== -1) plat = 'fortnite';
-        else if (path.indexOf('/twitch') !== -1) plat = 'twitch';
+        if (path.indexOf('/twitch') !== -1) plat = 'twitch';
         else if (path.indexOf('/steam') !== -1) plat = 'steam';
         else if (path.indexOf('/xbox') !== -1) plat = 'xbox';
         else if (path.indexOf('/playstation') !== -1) plat = 'playstation';
@@ -22,7 +21,6 @@
     })();
 
     const ICONS = {
-        fortnite: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="m15.767 14.171.097-5.05H12.4V5.197h3.99L16.872 0H7.128v24l5.271-.985V14.17z"/></svg>',
         marathon: '<img src="/assets/icons/marathon.svg" style="width: 14px; height: 14px;" alt="Marathon">'
     };
 
@@ -33,7 +31,6 @@
         if (path.includes('/steam')) return 'steam';
         if (path.includes('/xbox')) return 'xbox';
         if (path.includes('/playstation')) return 'playstation';
-        if (path.includes('/fortnite')) return 'fortnite';
         if (path.includes('/marathon')) return 'marathon';
         if (path === '/' || path === '/index.html') return 'home';
         return null;
@@ -41,26 +38,14 @@
 
     // Platform links (slim top bar — brand is “home”). Only surfaces titles with live APIs.
     const PLATFORM_LINKS = [
-        { id: 'marathon', href: '/marathon/', label: 'Marathon', icon: ICONS.marathon },
-        { id: 'fortnite', href: '/fortnite/', label: 'Fortnite', icon: ICONS.fortnite }
+        { id: 'marathon', href: '/marathon/', label: 'Marathon', icon: ICONS.marathon }
     ];
 
     const HOME_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>';
 
-    /** On the home page only, these platforms are non-navigable (soft launch). */
-    const HOME_SOFT_LAUNCH_COMING_SOON = ['fortnite'];
-
-    function isHomeSoftLaunchPlatform(linkId, activeSection) {
-        return activeSection === 'home' && HOME_SOFT_LAUNCH_COMING_SOON.indexOf(linkId) !== -1;
-    }
-
     function platformNavItemDesktop(link, activeSection) {
         var isActive = activeSection === link.id ? ' active' : '';
         var label = '<span class="master-nav-label">' + link.label + '</span>';
-        if (isHomeSoftLaunchPlatform(link.id, activeSection)) {
-            return '<span class="nav-' + link.id + isActive + ' master-nav-platform--soon" role="text" tabindex="-1" title="Coming soon">' +
-                link.icon + label + '</span>';
-        }
         return '<a href="' + link.href + '" class="nav-' + link.id + isActive + '" data-platform="' + link.id + '">' +
             link.icon + label + '</a>';
     }
@@ -68,9 +53,6 @@
     function platformNavItemMobile(link, activeSection) {
         var isActive = activeSection === link.id ? ' active' : '';
         var inner = link.icon + '<span>' + link.label + '</span>';
-        if (isHomeSoftLaunchPlatform(link.id, activeSection)) {
-            return '<span class="nav-' + link.id + isActive + ' master-nav-platform--soon" role="text" tabindex="-1" title="Coming soon">' + inner + '</span>';
-        }
         return '<a href="' + link.href + '" class="nav-' + link.id + isActive + '">' + inner + '</a>';
     }
 

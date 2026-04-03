@@ -186,7 +186,7 @@ class FeedbackWidget {
       page: window.location.href,
       userAgent: navigator.userAgent,
       timestamp: new Date().toISOString(),
-      platform: 'fortnite' // Identifies which section of the site
+      platform: 'gdb'
     };
 
     // Frontend validation

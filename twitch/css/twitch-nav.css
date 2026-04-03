@@ -477,12 +477,12 @@
     .twitch-more-menu a.nav-home { color: #8ab4f8; border-color: rgba(138, 180, 248, 0.3); }
     .twitch-more-menu a.nav-steam { color: #66c0f4; border-color: rgba(102, 192, 244, 0.3); }
     .twitch-more-menu a.nav-xbox { color: #8ee35a; border-color: rgba(91, 191, 33, 0.3); }
-    .twitch-more-menu a.nav-fortnite { color: #ffc107; border-color: rgba(255, 193, 7, 0.3); }
+    .twitch-more-menu a.nav-marathon { color: #d4ff00; border-color: rgba(212, 255, 0, 0.35); }
     
     .twitch-more-menu a.nav-home:hover { background: rgba(138, 180, 248, 0.15); }
     .twitch-more-menu a.nav-steam:hover { background: rgba(102, 192, 244, 0.15); }
     .twitch-more-menu a.nav-xbox:hover { background: rgba(91, 191, 33, 0.15); }
-    .twitch-more-menu a.nav-fortnite:hover { background: rgba(255, 193, 7, 0.15); }
+    .twitch-more-menu a.nav-marathon:hover { background: rgba(212, 255, 0, 0.12); }
 }
 
 /* Hide on desktop */

@@ -8178,7 +8178,7 @@ body.compare-active .weapon-card.compare-selected {
     color: #f87171;
 }
 
-/* Image area - taller/more square like Fortnite.gg */
+/* Image area - taller/more square (tracker-style cards) */
 .cw-skin-image {
     position: relative;
     aspect-ratio: 1 / 1;
@@ -8503,7 +8503,7 @@ body.compare-active .weapon-card.compare-selected {
     background: rgba(153, 153, 153, 0.06);
 }
 
-/* ── Compact Emoji Rating Strip (Fortnite.gg style) ── */
+/* ── Compact Emoji Rating Strip ── */
 .cw-heat-strip {
     position: relative;
     display: flex;

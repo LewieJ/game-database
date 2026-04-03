@@ -49,13 +49,6 @@ function fixSharedHtmlPaths(html) {
   out = out.replace(/steam\.css">>/g, 'css/steam.css">');
   out = out.replace(/href="steam\.css"/g, 'href="css/steam.css"');
   out = out.replace(/src="steam\.js"/g, 'src="js/steam.js"');
-  out = out.replace(/\/fortnite\/fortnite\.css(\?[^"']*)?/g, "/fortnite/css/fortnite.css");
-  out = out.replace(/\/fortnite\/fortnite-nav\.css(\?[^"']*)?/g, "/fortnite/css/fortnite-nav.css");
-  out = out.replace(/href="fortnite\.css(\?[^"]*)?"/g, 'href="css/fortnite.css"');
-  out = out.replace(/href="fortnite-nav\.css(\?[^"]*)?"/g, 'href="css/fortnite-nav.css"');
-  out = out.replace(/\/fortnite\/fortnite-nav\.js(\?[^"']*)?/g, "/fortnite/js/fortnite-nav.js");
-  out = out.replace(/\/fortnite\/fortnite-index\.js(\?[^"']*)?/g, "/fortnite/js/fortnite-index.js");
-  out = out.replace(/src="fortnite-nav\.js(\?[^"]*)?"/g, 'src="js/fortnite-nav.js"');
   out = out.replace(/\/twitch\/twitch-nav\.css(\?[^"']*)?/g, "/twitch/css/twitch-nav.css");
   out = out.replace(/\/twitch\/(twitch-nav|twitch|categories|category|leaderboards|profile)\.js(\?[^"']*)?/g, (_, base) => `/twitch/js/${base}.js`);
   return out;
@@ -68,18 +61,7 @@ function processHtmlFile(filePath) {
   fs.writeFileSync(filePath, html, "utf8");
 }
 
-function migrateFortniteSteamTwitchFolders() {
-  const fn = path.join(ROOT, "fortnite");
-  if (fs.existsSync(fn)) {
-    fs.mkdirSync(path.join(fn, "css"), { recursive: true });
-    fs.mkdirSync(path.join(fn, "js"), { recursive: true });
-    moveIfExists(path.join(fn, "fortnite.css"), path.join(fn, "css", "fortnite.css"));
-    moveIfExists(path.join(fn, "fortnite-nav.css"), path.join(fn, "css", "fortnite-nav.css"));
-    for (const j of ["fortnite-nav.js", "fortnite-index.js", "fortnite-icons.js"]) {
-      moveIfExists(path.join(fn, j), path.join(fn, "js", j));
-    }
-  }
-
+function migrateSteamTwitchFolders() {
   const st = path.join(ROOT, "steam");
   if (fs.existsSync(st)) {
     fs.mkdirSync(path.join(st, "css"), { recursive: true });
@@ -153,24 +135,6 @@ function patchGlobalJs() {
     /src="\/assets\/icons\/logo\.png"/,
     'src="/assets/icons/marathon.svg"'
   );
-  if (s.includes("marathondb.gg")) {
-    const oldBlock = `        const navLinks = [
-            { id: 'home', href: '/', label: 'Home', icon: null },
-            { id: 'twitch', href: '/twitch/', label: 'Twitch', icon: ICONS.twitch },
-            { id: 'fortnite', href: '/fortnite/', label: 'Fortnite', icon: ICONS.fortnite },
-            { id: 'marathon', href: 'https://marathondb.gg', label: 'Marathon', icon: ICONS.marathon, external: true }
-        ];`;
-    const newBlock = `        const navLinks = [
-            { id: 'home', href: '/', label: 'Home', icon: null },
-            { id: 'fortnite', href: '/fortnite/', label: 'Fortnite', icon: ICONS.fortnite },
-            { id: 'twitch', href: '/twitch/', label: 'Twitch', icon: ICONS.twitch },
-            { id: 'steam', href: '/steam/', label: 'Steam', icon: ICONS.steam },
-            { id: 'xbox', href: '/xbox/', label: 'Xbox', icon: ICONS.xbox },
-            { id: 'playstation', href: '/playstation/', label: 'PSN', icon: ICONS.playstation },
-            { id: 'marathon', href: '/marathon/', label: 'Marathon', icon: ICONS.marathon, external: false }
-        ];`;
-    s = s.replace(oldBlock, newBlock);
-  }
   fs.writeFileSync(p, s, "utf8");
 }
 
@@ -182,9 +146,9 @@ function copyConfigJs() {
   }
 }
 
-migrateFortniteSteamTwitchFolders();
+migrateSteamTwitchFolders();
 
-for (const sub of ["fortnite", "steam", "twitch"]) {
+for (const sub of ["steam", "twitch"]) {
   walkHtml(path.join(ROOT, sub), processHtmlFile);
 }
 
