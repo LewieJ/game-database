@@ -535,14 +535,14 @@ body.page-home-landing .home-hero .brand-tag {
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   width: 100%;
-  max-width: 67%;
+  max-width: min(38rem, 94%);
   margin: 0 auto;
 }
 
 @media (max-width: 520px) {
   .home-games-grid {
     grid-template-columns: 1fr;
-    max-width: 10.75rem;
+    max-width: 11.5rem;
     margin: 0 auto;
   }
 }
@@ -555,6 +555,7 @@ body.page-home-landing .home-hero .brand-tag {
   text-align: center;
   text-decoration: none;
   color: inherit;
+  margin: 0;
   background: var(--glass);
   border: 1px solid var(--glass-edge);
   backdrop-filter: blur(20px);
@@ -615,8 +616,8 @@ body.page-home-landing .home-hero .brand-tag {
 }
 
 .home-game-badge {
-  display: inline-block;
-  margin: 0 0.85rem 1rem;
+  align-self: center;
+  margin: 0.65rem 0.85rem 0;
   padding: 0.2rem 0.55rem;
   font-size: 0.625rem;
   font-weight: 600;
