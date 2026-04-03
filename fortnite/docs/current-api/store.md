@@ -8,7 +8,7 @@ Public routes backed by the Worker **service account** (Epic) and/or **fortnite-
 |--------|------|-------------|
 | GET | **`/v1/store`** | Same as **`/v1/store/catalog`**. Epic **`/fortnite/api/storefront/v2/catalog`** (raw storefront JSON). |
 | GET | **`/v1/store/catalog`** | Alias of `/v1/store`. |
-| GET | **`/v1/store/br`** | Primary: [fortnite-api.com](https://fortnite-api.com) **`/v2/shop/br`** (BR shop with images/metadata). On failure, same body as Epic **`/v1/store`**, plus `note`. |
+| GET | **`/v1/store/br`** | Primary: [fortnite-api.com](https://fortnite-api.com) **`/v2/shop`** (replaces deprecated **`/v2/shop/br`**). Jam Tracks: cover art is mirrored onto **`images`** / **`brItems[].images`** from **`tracks[].albumArt`** for clients that expect cosmetic-style icons. Optional env **`FORTNITE_API_KEY`** (same as Jarvis) if the host requires it. On failure, same body as Epic **`/v1/store`**, plus `note`. |
 | GET | `/fortnite/shop` | Legacy; same payload and cache as **`/v1/store`**. |
 | GET | `/fortnite/catalog` | Legacy; same as **`/fortnite/shop`**. |
 | GET | `/fortnite/shop/enriched` | Legacy; same behavior as **`/v1/store/br`**. |

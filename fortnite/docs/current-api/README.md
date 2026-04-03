@@ -10,6 +10,7 @@ Share **this entire folder** (`docs/current-api/`): it is the up-to-date contrac
 |------------|-----|
 | [users.md](./users.md) | Search → `accountId`, lightweight account routes |
 | [profile.md](./profile.md) | **`GET /v1/profile/{accountId}`** — stats summary, ranked current + historical, query flags |
+| [tournaments.md](./tournaments.md) | **Competitive calendar** — same-origin **`/mfs/*`** on gdb.gg (see that doc); Worker routes retired |
 | [auth.md](./auth.md) | Only if they operate the Worker (Epic login, secrets). **App developers** calling **`https://fapi.gdb.gg`** only need the routes above; auth is server-side. |
 
 **Minimal integration path:** `GET /user/search?username=…` → `GET /v1/profile/{accountId}` (32-hex id from search). Handle **`meta.partial`** and **`meta.errors`** when any slice fails. Use **`stats.summary`** for combined BR stats, **`stats.summary.by_experience`** for Reload / Blitz / OG / core BR / etc. (omit with `?stats_by_experience=false`), and **`stats.by_input`** for KBM vs controller vs touch (omit with `?stats_by_input=false`). Profile views **persist** to D1 in the background for charts and leaderboards — see [progression-leaderboards.md](./progression-leaderboards.md).
@@ -33,7 +34,7 @@ All paths below are relative to the base (e.g. `GET https://fapi.gdb.gg/health`)
 | [progression-leaderboards.md](./progression-leaderboards.md) | Time-series (`/v1/progress`, `/v1/ranked`), global + ranked leaderboards, D1 scope |
 | [store.md](./store.md) | **`GET /v1/store`**, **`/v1/store/br`** — item shop (Epic + enriched), heavy KV + CDN cache |
 | [ccu.md](./ccu.md) | **`GET /ccu/comprehensive`**, hourly D1 snapshot, crawler — CCU cost model |
-| [tournaments.md](./tournaments.md) | **`GET /v1/tournaments/events`**, D1 tournament viewer, bulk sync |
+| [tournaments.md](./tournaments.md) | **`/mfs/*`** — calendar + leaderboards for **`events.html`** / **`event.html`** (Pages proxy; not fapi) |
 
 ## Epic upstream reference
 

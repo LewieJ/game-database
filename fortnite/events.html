@@ -1424,19 +1424,21 @@
     (function() {
       'use strict';
 
-      /** gdb.gg Fortnite Worker — see /fortnite/docs/current-api/tournaments.md */
-      const FAPI_BASE = 'https://fapi.gdb.gg';
+      /** Same-origin MFS proxy — see /fortnite/docs/current-api/tournaments.md */
+      const MFS_BASE = '/mfs';
 
       const regionFilter = document.getElementById('regionFilter');
       const platformFilter = document.getElementById('platformFilter');
       const searchFilter = document.getElementById('searchFilter');
       const eventsContainer = document.getElementById('eventsContainer');
 
-      let activeEvents = [];
-      let upcomingEvents = [];
-      let completedEvents = [];
-      /** Total completed rows reported by API (for pagination — see GET /v1/tournaments/events?status=completed&offset=) */
-      let completedTotal = 0;
+      /** All tournament windows from last combined fetch (filters applied in render). */
+      let cachedFlatWindows = [];
+      let calendarMetaStale = false;
+      const UPCOMING_PAGE_SIZE = 120;
+      const COMPLETED_PAGE_SIZE = 120;
+      let upcomingShownCount = UPCOMING_PAGE_SIZE;
+      let completedShownCount = COMPLETED_PAGE_SIZE;
       let refreshInterval = null;
       let currentFilter = 'all';
       let currentSort = 'recent';
@@ -1466,6 +1468,7 @@
         return [
           buildTitle(ev),
           ev.event_id,
+          ev.parent_event_id,
           ev.tournament_type,
           ev.web_id,
           ev.display_data_id,
@@ -1488,10 +1491,99 @@
         return true;
       }
 
+      function matchesRegionFilter(ev) {
+        const key = (regionFilter.value || '').trim();
+        if (!key) return true;
+        const regs = ev.regions || [];
+        const u = key.toUpperCase();
+        return regs.some(function (r) {
+          return String(r).toUpperCase() === u;
+        });
+      }
+
       function matchesClientFilters(ev) {
+        if (!matchesRegionFilter(ev)) return false;
         const term = searchFilter.value.toLowerCase().trim();
         if (term && !buildSearchBlob(ev).includes(term)) return false;
         return matchesPlatformFilter(ev);
+      }
+
+      function eventDetailHref(ev) {
+        const parent = ev.parent_event_id || ev.event_id;
+        let url = '/fortnite/event.html?id=' + encodeURIComponent(parent);
+        if (ev.window_id) url += '&window=' + encodeURIComponent(ev.window_id);
+        return url;
+      }
+
+      function cmsRowToImages(cms) {
+        if (!cms || typeof cms !== 'object') return null;
+        var line1 = cms.title_line_1 || cms.long_format_title || '';
+        var line2 = cms.title_line_2 || '';
+        return {
+          title: { line1: line1, line2: line2 },
+          description: cms.details_description || cms.long_format_title || '',
+          poster: cms.square_poster_image || '',
+          tile: cms.playlist_tile_image || '',
+          background: cms.tournament_view_background_image || '',
+          colors: {
+            left: cms.background_left_color,
+            right: cms.background_right_color,
+            primary: cms.primary_color
+          }
+        };
+      }
+
+      function windowRegions(parentEvent, win) {
+        var fromWin = [];
+        if (win && win.regionMappings && typeof win.regionMappings === 'object') {
+          fromWin = Object.keys(win.regionMappings).filter(Boolean);
+        }
+        var fromParent = Array.isArray(parentEvent.regions) ? parentEvent.regions.slice() : [];
+        var seen = {};
+        var out = [];
+        fromParent.concat(fromWin).forEach(function (r) {
+          var s = String(r);
+          if (s && !seen[s]) {
+            seen[s] = true;
+            out.push(s);
+          }
+        });
+        return out;
+      }
+
+      function flattenMfsSchedule(schedule, cmsById) {
+        var events = asEventArray(schedule && schedule.events);
+        var out = [];
+        var cms = cmsById && typeof cmsById === 'object' ? cmsById : {};
+        events.forEach(function (parent) {
+          var wins = Array.isArray(parent.eventWindows) ? parent.eventWindows : [];
+          var displayDataId = parent.displayDataId || '';
+          var row = displayDataId ? cms[displayDataId] : null;
+          var images = cmsRowToImages(row);
+          wins.forEach(function (win) {
+            if (!win || !win.eventWindowId) return;
+            var regions = windowRegions(parent, win);
+            var begin = win.beginTime || parent.beginTime;
+            var end = win.endTime || parent.endTime;
+            var roundType = win.metadata && win.metadata.RoundType ? win.metadata.RoundType : '';
+            out.push({
+              window_id: win.eventWindowId,
+              parent_event_id: parent.eventId,
+              display_data_id: displayDataId,
+              begin_time: begin,
+              end_time: end,
+              regions: regions,
+              platforms: Array.isArray(parent.platforms) ? parent.platforms : [],
+              tournament_type: roundType || parent.eventGroup || '',
+              images: images,
+              web_id: parent.link || parent.eventId,
+              event_id: win.eventWindowId,
+              participant_count: undefined,
+              window_count: undefined
+            });
+          });
+        });
+        return out;
       }
 
       function cardImageUrl(ev) {
@@ -1523,63 +1615,66 @@
         return Math.min(100, Math.max(0, ((n - b) / (e - b)) * 100));
       }
 
-      async function fetchTournamentList(status, offset) {
-        const region = (regionFilter.value || '').trim();
-        const params = new URLSearchParams({ status: status, limit: '200' });
-        if (region) params.set('region', region);
-        if (offset != null && offset > 0) params.set('offset', String(offset));
-
-        const res = await fetch(FAPI_BASE + '/v1/tournaments/events?' + params.toString());
-        if (!res.ok) throw new Error('Tournaments request failed (' + res.status + ')');
-        const data = await res.json();
-        const items = asEventArray(data.events);
-        const total = typeof data.total === 'number' ? data.total : items.length;
-        return { items: items, total: total };
-      }
-
-      window.loadMoreCompletedTournaments = async function() {
-        const btn = document.getElementById('loadMoreCompleted');
-        if (btn) {
-          btn.disabled = true;
-          btn.textContent = 'Loading…';
-        }
+      async function fetchCombinedCalendar() {
+        var evRes;
+        var cmsRes;
         try {
-          const page = await fetchTournamentList('completed', completedEvents.length);
-          completedTotal = page.total;
-          const seen = new Set(completedEvents.map(function(e) { return e.event_id; }));
-          page.items.forEach(function(e) {
-            if (e && e.event_id && !seen.has(e.event_id)) {
-              seen.add(e.event_id);
-              completedEvents.push(e);
-            }
-          });
-          renderEvents();
-        } catch (err) {
-          console.error('[Tournaments] load more completed', err);
-          if (btn) {
-            btn.disabled = false;
-            btn.textContent = 'Could not load more — tap to retry';
-          }
+          evRes = await fetch(MFS_BASE + '/events-data');
+          cmsRes = await fetch(MFS_BASE + '/cms-data');
+        } catch (e) {
+          throw new Error('Calendar network error — if you are on local static serve, run Pages dev so /mfs is available.');
         }
+        if (!evRes.ok) throw new Error('events-data failed (' + evRes.status + ')');
+        if (!cmsRes.ok) throw new Error('cms-data failed (' + cmsRes.status + ')');
+        var schedule = await evRes.json();
+        var cmsJson = await cmsRes.json();
+        var tournaments = cmsJson.tournaments;
+        var cmsByDisplayId = {};
+        if (Array.isArray(tournaments)) {
+          tournaments.forEach(function (row) {
+            var id = row && row.tournament_display_id;
+            if (typeof id === 'string' && id.length) cmsByDisplayId[id] = row;
+          });
+        }
+        var data = {
+          schedule: schedule,
+          assets: cmsJson,
+          cms_by_display_id: cmsByDisplayId
+        };
+        if (!data.schedule) throw new Error('Invalid calendar response');
+        return {
+          data: data,
+          meta: {
+            events: {},
+            cms: {},
+            combined_at: new Date().toISOString()
+          }
+        };
+      }
+      window.loadMoreCompletedTournaments = function() {
+        completedShownCount += COMPLETED_PAGE_SIZE;
+        renderEvents();
+      };
+
+      window.loadMoreUpcomingTournaments = function() {
+        upcomingShownCount += UPCOMING_PAGE_SIZE;
+        renderEvents();
       };
 
       async function loadTournaments() {
         try {
-          const [active, upcoming, completed] = await Promise.all([
-            fetchTournamentList('active'),
-            fetchTournamentList('upcoming'),
-            fetchTournamentList('completed', 0)
-          ]);
-          activeEvents = active.items;
-          upcomingEvents = upcoming.items;
-          completedEvents = completed.items;
-          completedTotal = completed.total;
+          var pack = await fetchCombinedCalendar();
+          cachedFlatWindows = flattenMfsSchedule(pack.data.schedule, pack.data.cms_by_display_id);
+          var m = pack.meta;
+          calendarMetaStale = !!(m && m.events && m.events.stale) || !!(m && m.cms && m.cms.stale);
+          upcomingShownCount = UPCOMING_PAGE_SIZE;
+          completedShownCount = COMPLETED_PAGE_SIZE;
           initialLoadDone = true;
           renderEvents();
         } catch (err) {
-          console.error('[Tournaments]', err);
+          console.error('[Calendar]', err);
           if (!initialLoadDone) {
-            showError('Could not load competitive events from gdb.gg. Try again later.');
+            showError('Could not load competitive calendar. Try again later.');
           }
         }
       }
@@ -1589,8 +1684,32 @@
 
         let html = '';
 
-        let liveList = activeEvents.filter(matchesClientFilters);
-        let upcomingList = upcomingEvents.filter(matchesClientFilters);
+        if (calendarMetaStale) {
+          html +=
+            '<div class="stale-banner" style="text-align:center;margin:0 0 1rem;padding:0.65rem 1rem;font-size:0.85rem;color:var(--text-secondary);background:rgba(247,201,72,0.12);border:1px solid rgba(247,201,72,0.35);border-radius:8px;">' +
+            'Schedule or artwork may be slightly out of date (cached on the server). ' +
+            '</div>';
+        }
+
+        var filtered = cachedFlatWindows.filter(matchesClientFilters);
+        var now = Date.now();
+        var liveList = [];
+        var upcomingPool = [];
+        var completedPool = [];
+        filtered.forEach(function (row) {
+          var b = new Date(row.begin_time).getTime();
+          var e = new Date(row.end_time).getTime();
+          if (!Number.isFinite(b) || !Number.isFinite(e)) return;
+          if (b <= now && e > now) liveList.push(row);
+          else if (b > now) upcomingPool.push(row);
+          else completedPool.push(row);
+        });
+
+        upcomingPool.sort(function (a, b) {
+          return new Date(a.begin_time).getTime() - new Date(b.begin_time).getTime();
+        });
+        var upcomingTotal = upcomingPool.length;
+        var upcomingList = upcomingPool.slice(0, upcomingShownCount);
 
         if (liveList.length > 0) {
           html += renderLiveSection(liveList);
@@ -1598,12 +1717,14 @@
           html += renderNoLiveEvents();
         }
         if (upcomingList.length > 0) {
-          html += renderUpcomingSection(upcomingList);
+          html += renderUpcomingSection(upcomingList, upcomingTotal);
         }
 
-        const completedFiltered = completedEvents.filter(matchesClientFilters);
-        if (completedFiltered.length > 0) {
-          html += renderCompletedSection(completedFiltered);
+        var completedSorted = sortCompletedEvents(completedPool.slice());
+        var completedTotal = completedSorted.length;
+        var completedVisible = completedSorted.slice(0, completedShownCount);
+        if (completedVisible.length > 0) {
+          html += renderCompletedSection(completedVisible, completedTotal);
         }
 
         if (!html && initialLoadDone) {
@@ -1652,9 +1773,21 @@
         `;
       }
       
-      function renderUpcomingSection(windows) {
+      function renderUpcomingSection(windows, totalUpcoming) {
         const cards = windows.map(ev => renderUpcomingCard(ev)).join('');
-        
+        const total = typeof totalUpcoming === 'number' ? totalUpcoming : windows.length;
+        const loadMoreUp =
+          total > upcomingShownCount
+            ? '<div style="text-align:center;margin-top:1.25rem;">' +
+              '<button type="button" class="filter-select" id="loadMoreUpcoming" onclick="window.loadMoreUpcomingTournaments()" ' +
+              'style="cursor:pointer;max-width:22rem;">' +
+              'Load more upcoming (' +
+              windows.length +
+              ' / ' +
+              total +
+              ')</button></div>'
+            : '';
+
         return `
           <section class="events-section">
             <div class="section-header">
@@ -1663,6 +1796,7 @@
             <div class="events-scroll">
               ${cards}
             </div>
+            ${loadMoreUp}
           </section>
         `;
       }
@@ -1679,7 +1813,7 @@
           ? '<div class="event-participants">👥 ' + ev.participant_count.toLocaleString() + ' tracked</div>'
           : '';
 
-        const eventUrl = '/fortnite/event.html?id=' + encodeURIComponent(ev.event_id);
+        const eventUrl = eventDetailHref(ev);
         const remainSec = Math.max(0, Math.floor((endMs - Date.now()) / 1000));
 
         return (
@@ -1716,7 +1850,7 @@
         const beginMs = new Date(ev.begin_time).getTime();
         const rl = regionLabel(ev);
         const sub = ev.tournament_type ? escapeHtml(String(ev.tournament_type)) : '';
-        const eventUrl = '/fortnite/event.html?id=' + encodeURIComponent(ev.event_id);
+        const eventUrl = eventDetailHref(ev);
         const startSec = Math.max(0, Math.floor((beginMs - Date.now()) / 1000));
 
         return (
@@ -1735,21 +1869,21 @@
         );
       }
       
-      function renderCompletedSection(events) {
+      function renderCompletedSection(events, totalCompleted) {
         if (events.length === 0) return '';
 
-        const sortedEvents = sortCompletedEvents([...events]);
-        const cards = sortedEvents.map(e => renderCompletedCard(e)).join('');
+        const cards = events.map(e => renderCompletedCard(e)).join('');
+        const total = typeof totalCompleted === 'number' ? totalCompleted : events.length;
 
         const loadMore =
-          completedTotal > completedEvents.length
+          total > completedShownCount
             ? '<div style="text-align:center;margin-top:1.25rem;">' +
               '<button type="button" class="filter-select" id="loadMoreCompleted" onclick="window.loadMoreCompletedTournaments()" ' +
               'style="cursor:pointer;max-width:22rem;">' +
               'Load more completed (' +
-              completedEvents.length +
+              events.length +
               ' / ' +
-              completedTotal +
+              total +
               ')</button></div>'
             : '';
 
@@ -1810,7 +1944,7 @@
           (wc ? '<span>' + wc + ' rounds</span>' : '');
 
         return (
-          '<a href="/fortnite/event.html?id=' + encodeURIComponent(ev.event_id) + '" class="event-card completed-event-card">' +
+          '<a href="' + eventDetailHref(ev) + '" class="event-card completed-event-card">' +
             '<div class="event-card-image-wrapper" ' + backgroundStyle + '>' +
             (cardImage ? '<img class="event-card-image" src="' + escapeHtml(cardImage) + '" alt="' + title + '" loading="lazy">' : '') +
             '<div class="event-badges">' +
@@ -1909,7 +2043,9 @@
       
       regionFilter.addEventListener('change', () => {
         localStorage.setItem('fn_events_region', regionFilter.value);
-        loadTournaments();
+        upcomingShownCount = UPCOMING_PAGE_SIZE;
+        completedShownCount = COMPLETED_PAGE_SIZE;
+        renderEvents();
       });
 
       platformFilter.addEventListener('change', () => {

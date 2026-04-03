@@ -1616,8 +1616,16 @@
       // ===========================================
       // CONFIGURATION — see /fortnite/docs/current-api/tournaments.md
       // ===========================================
-      const FAPI_BASE = 'https://fapi.gdb.gg';
-      
+      const MFS_BASE = '/mfs';
+      const LEADERBOARD_PAGE_SIZE = 100;
+
+      function escapeHtml(s) {
+        if (s == null || s === '') return '';
+        const d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
       // Get URL params
       const urlParams = new URLSearchParams(window.location.search);
       let eventId = urlParams.get('id');
@@ -1859,6 +1867,8 @@
         
         const title = event.title || event.short_title || event.event_id;
         const description = event.description || '';
+        const descriptionPreview =
+          description.length > 720 ? description.slice(0, 720) + '…' : description;
         
         // Determine status
         const status = event.status || 'active';
@@ -1924,7 +1934,7 @@
             <div class="event-hero-content">
               ${statusHtml}
               <h1 class="event-hero-title">${title}</h1>
-              ${description ? `<p class="event-hero-subtitle">${description.substring(0, 200)}${description.length > 200 ? '...' : ''}</p>` : ''}
+              ${description ? `<p class="event-hero-subtitle">${escapeHtml(descriptionPreview)}</p>` : ''}
               <div class="event-hero-meta">
                 ${regionHtml}
                 ${tournamentTypeHtml}
@@ -2196,7 +2206,8 @@
 
         // Update stats and pagination
         const totalEntries = data.pagination?.totalEntries || entries.length;
-        totalPages = data.pagination?.totalPages || Math.ceil(totalEntries / 100);
+        const pageSize = data.pagination?.pageSize || LEADERBOARD_PAGE_SIZE;
+        totalPages = data.pagination?.totalPages || Math.ceil(totalEntries / pageSize);
         jumpToRankEl.style.display = 'flex';
         
         renderStatsSummary(data);
@@ -2240,7 +2251,7 @@
         });
 
         entries.forEach((entry, entryIndex) => {
-          const rank = entry.rank || (currentPage * 100) + entryIndex + 1;
+          const rank = entry.rank || (currentPage * pageSize) + entryIndex + 1;
           const rankClass = rank === 1 ? 'top-1' : rank === 2 ? 'top-2' : rank === 3 ? 'top-3' : '';
           const rowId = `row-${currentPage}-${entryIndex}`;
           const isExpanded = expandedRows.has(rowId);
@@ -2381,7 +2392,7 @@
               <span class="pagination-info">Page ${currentPage + 1} of ${totalPages}</span>
               <div class="pagination-controls">
                 <button class="pagination-btn" id="prevPageBtn" ${currentPage === 0 ? 'disabled' : ''}>← Previous</button>
-                <span class="page-indicator">${(currentPage * 100) + 1} - ${Math.min((currentPage + 1) * 100, totalEntries)}</span>
+                <span class="page-indicator">${(currentPage * pageSize) + 1} - ${Math.min((currentPage + 1) * pageSize, totalEntries)}</span>
                 <button class="pagination-btn" id="nextPageBtn" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next →</button>
               </div>
             </div>
@@ -2503,7 +2514,7 @@
       // LIVE DATA FUNCTIONS
       // ===========================================
 
-      /** Legacy live overlay used an external /v2/live feed; fapi tournament viewer has no equivalent yet. */
+      /** Legacy live overlay used an external /v2/live feed; no equivalent on this calendar-backed viewer. */
       async function fetchLiveData() {
         return null;
       }
@@ -2665,8 +2676,215 @@
       }
 
       // ===========================================
-      // DATA FETCHING (fapi tournament viewer — D1 sync, no per-request Epic)
+      // DATA FETCHING (MyFortniteStats via same-origin /mfs proxy)
       // ===========================================
+
+      function regionFromEventId(id) {
+        var parts = String(id).split('_');
+        var last = parts[parts.length - 1] || 'unknown';
+        if (/^[A-Z0-9]{2,12}$/i.test(last)) return last.toUpperCase();
+        return 'unknown';
+      }
+
+      function placementStatsFromSessions(hist) {
+        if (!Array.isArray(hist) || hist.length === 0) return { avg: 0, best: null };
+        var sum = 0;
+        var n = 0;
+        var best = null;
+        for (var i = 0; i < hist.length; i++) {
+          var s = hist[i];
+          var pl = s && s.trackedStats ? s.trackedStats.PLACEMENT_STAT_INDEX : null;
+          if (pl != null && Number.isFinite(Number(pl))) {
+            var v = Number(pl);
+            sum += v;
+            n++;
+            if (best === null || v < best) best = v;
+          }
+        }
+        return { avg: n > 0 ? sum / n : 0, best: best };
+      }
+
+      function elimsAndWinsFromHist(hist) {
+        var elims = 0;
+        var wins = 0;
+        if (!Array.isArray(hist)) return { elims: elims, wins: wins };
+        for (var i = 0; i < hist.length; i++) {
+          var s = hist[i];
+          var t = s && s.trackedStats;
+          if (t && Number(t.VICTORY_ROYALE_STAT) === 1) wins++;
+          if (t && typeof t.TEAM_ELIMS_STAT_INDEX === 'number') elims += t.TEAM_ELIMS_STAT_INDEX;
+        }
+        return { elims: elims, wins: wins };
+      }
+
+      async function fetchMfsCalendarPayload() {
+        var evRes;
+        var cmsRes;
+        try {
+          evRes = await fetch(MFS_BASE + '/events-data');
+          cmsRes = await fetch(MFS_BASE + '/cms-data');
+        } catch (e) {
+          throw new Error('Network error loading calendar — on local static serve use Pages dev so /mfs works.');
+        }
+        if (!evRes.ok) throw new Error('events-data failed (' + evRes.status + ')');
+        if (!cmsRes.ok) throw new Error('cms-data failed (' + cmsRes.status + ')');
+        var schedule = await evRes.json();
+        var cmsJson = await cmsRes.json();
+        var tournaments = cmsJson.tournaments;
+        var cmsByDisplayId = {};
+        if (Array.isArray(tournaments)) {
+          for (var j = 0; j < tournaments.length; j++) {
+            var row = tournaments[j];
+            var did = row && row.tournament_display_id;
+            if (typeof did === 'string' && did.length) cmsByDisplayId[did] = row;
+          }
+        }
+        return {
+          data: {
+            schedule: schedule,
+            assets: cmsJson,
+            cms_by_display_id: cmsByDisplayId
+          }
+        };
+      }
+
+      function buildEventDetailFromCombined(data, eid) {
+        var sched = data && data.schedule;
+        if (!sched) return null;
+        var rawEvents = sched.events;
+        var events = Array.isArray(rawEvents) ? rawEvents : Object.values(rawEvents || {});
+        var match = null;
+        for (var i = 0; i < events.length; i++) {
+          if (events[i] && events[i].eventId === eid) {
+            match = events[i];
+            break;
+          }
+        }
+        if (!match) return null;
+        var cmsMap = (data && data.cms_by_display_id) || {};
+        var cmsId = match.displayDataId;
+        var cms = cmsId && typeof cmsId === 'string' && cmsMap[cmsId] ? cmsMap[cmsId] : null;
+        var winList = Array.isArray(match.eventWindows) ? match.eventWindows : [];
+        var windowsPayload = winList.map(function (w) {
+          var wm = w.metadata || {};
+          var roundType = wm.RoundType || wm.roundType || '';
+          var reqRaw = w.additionalRequirements;
+          var requirements = Array.isArray(reqRaw) ? reqRaw : [];
+          return {
+            window_id: w.eventWindowId,
+            begin_time: w.beginTime,
+            end_time: w.endTime,
+            round: w.round != null ? w.round : null,
+            round_type: roundType,
+            entry_count: 0,
+            requirements: requirements,
+            metadata: wm
+          };
+        });
+        var meta = match.metadata || {};
+        var line1 = cms ? cms.title_line_1 || cms.long_format_title || '' : '';
+        var line2 = cms ? cms.title_line_2 || '' : '';
+        var desc = cms ? String(cms.details_description || cms.long_format_title || '') : '';
+        var titleFallback = line1 || eid;
+        var eventPayload = {
+          event_id: match.eventId,
+          begin_time: match.beginTime,
+          end_time: match.endTime,
+          regions: Array.isArray(match.regions) ? match.regions : [],
+          platforms: Array.isArray(match.platforms) ? match.platforms : [],
+          metadata: meta,
+          web_id: match.link || match.eventId,
+          window_count: windowsPayload.length,
+          display_data_id: cmsId || null,
+          images: cms
+            ? {
+                title: { line1: line1, line2: line2 },
+                description: desc,
+                detailsDescription: desc,
+                poster: cms.square_poster_image || '',
+                tile: cms.playlist_tile_image || '',
+                background: cms.tournament_view_background_image || '',
+                colors: {
+                  left: cms.background_left_color,
+                  right: cms.background_right_color,
+                  primary: cms.primary_color
+                }
+              }
+            : {
+                title: { line1: titleFallback },
+                description: '',
+                detailsDescription: '',
+                colors: { primary: 'f7c948', left: 'f7c948', right: '00d4ff' }
+              }
+        };
+        return { event: eventPayload, windows: windowsPayload };
+      }
+
+      function mapMfsLeaderboardEntry(e) {
+        var teamIds = (e.teamAccountIds || []).map(String);
+        var hist = e.sessionHistory || [];
+        var _ps = placementStatsFromSessions(hist);
+        var avg = _ps.avg;
+        var best = _ps.best;
+        var primaryId = teamIds.length > 0 ? teamIds[0] : String(e.teamId || '');
+        var displayName = primaryId ? 'Player' : 'Unknown';
+        var _ew = elimsAndWinsFromHist(hist);
+        var elims = _ew.elims;
+        var wins = _ew.wins;
+        var teamDisplayNames = teamIds.map(function () {
+          return 'Unknown';
+        });
+        return {
+          rank: Number(e.rank) || 0,
+          accountId: primaryId,
+          displayName: displayName,
+          countryCode: null,
+          teamAccountIds: teamIds,
+          teamDisplayNames: teamDisplayNames,
+          points: Number(e.pointsEarned) || 0,
+          matchesPlayed: hist.length || 0,
+          eliminations: elims,
+          wins: wins,
+          avgPlacement: avg,
+          bestPlacement: best != null ? best : '-',
+          pointBreakdown: e.pointBreakdown || {}
+        };
+      }
+
+      function mapMfsLeaderboardResponseToViewer(lb) {
+        var raw = Array.isArray(lb.entries) ? lb.entries : [];
+        var totalEntries = Number(lb.totalEntries) || Number(lb.totalCount) || raw.length;
+        var pageSize = LEADERBOARD_PAGE_SIZE;
+        var totalPages = totalEntries > 0 ? Math.max(1, Math.ceil(totalEntries / pageSize)) : 1;
+        var entries = raw.map(mapMfsLeaderboardEntry);
+        var wrow = currentWindows.find(function (x) {
+          return x.window_id === currentWindowId;
+        });
+        var winName = wrow && wrow.name ? wrow.name : 'Round';
+        var winRegion = '';
+        if (currentEvent && currentEvent.regions && currentEvent.regions.length) {
+          winRegion = currentEvent.regions.join(' · ');
+        } else {
+          var rf = regionFromEventId(eventId);
+          winRegion = rf !== 'unknown' ? rf : '';
+        }
+        return {
+          entries: entries,
+          pagination: {
+            page: currentPage,
+            pageSize: pageSize,
+            totalEntries: totalEntries,
+            totalPages: totalPages
+          },
+          window: {
+            windowId: currentWindowId,
+            name: winName,
+            region: winRegion,
+            totalParticipants: totalEntries
+          },
+          meta: { source: 'myfortnitestats' }
+        };
+      }
 
       function hexColor(c, fallback) {
         if (!c) return fallback || 'f7c948';
@@ -2712,9 +2930,13 @@
             begin_time: w.begin_time,
             end_time: w.end_time,
             round: w.round,
+            requirements: w.requirements,
+            metadata: w.metadata,
+            scoring_rules: w.scoring_rules,
             name: w.round_type
-              ? w.round_type + (w.round ? ' · R' + w.round : '')
-              : ('Round ' + (w.round || 1)),
+              ? w.round_type +
+                (w.round != null && Number(w.round) > 0 ? ' · R' + w.round : '')
+              : 'Round ' + (w.round != null && Number(w.round) > 0 ? w.round : 1),
             total_participants: typeof w.entry_count === 'number' ? w.entry_count : 0
           };
           row.status = getWindowStatus(row);
@@ -2725,27 +2947,17 @@
       async function fetchEventDetails() {
         try {
           liveWindowData = null;
-          const response = await fetch(
-            FAPI_BASE + '/v1/tournaments/events/' + encodeURIComponent(eventId)
-          );
-
-          if (!response.ok) {
-            if (response.status === 404) {
-              throw new Error('This event is not in the gdb.gg tournament cache yet, or the id is invalid.');
-            }
-            throw new Error('Request failed (' + response.status + ')');
+          var cal = await fetchMfsCalendarPayload();
+          var detail = buildEventDetailFromCombined(cal.data, eventId);
+          if (!detail) {
+            throw new Error('This event was not found on the competitive calendar (MyFortniteStats). Check the event id or try again later.');
           }
-
-          const data = await response.json();
-          const rawEvent = data.event;
+          var rawEvent = detail.event;
           if (!rawEvent) {
             throw new Error('Event data not found');
           }
 
-          const mergedWindows =
-            Array.isArray(data.windows) && data.windows.length
-              ? data.windows
-              : (Array.isArray(rawEvent.windows) ? rawEvent.windows : []);
+          var mergedWindows = Array.isArray(detail.windows) ? detail.windows : [];
 
           currentEvent = normalizeFapiEvent(rawEvent);
           currentWindows = normalizeFapiWindows(mergedWindows);
@@ -2850,7 +3062,46 @@
           return;
         }
 
-        renderLeaderboardPlaceholder();
+        leaderboardContainerEl.innerHTML = `
+          <div class="leaderboard-container">
+            <div class="loading-container">
+              <div class="loading-spinner"></div>
+              <p class="loading-text">Loading leaderboard…</p>
+            </div>
+          </div>
+        `;
+
+        try {
+          var params = new URLSearchParams({
+            eventId: eventId,
+            sessionId: currentWindowId,
+            page: String(currentPage),
+            pageSize: String(LEADERBOARD_PAGE_SIZE)
+          });
+          const res = await fetch(MFS_BASE + '/event-leaderboard?' + params.toString());
+          if (!res.ok) {
+            throw new Error('Leaderboard request failed (' + res.status + ')');
+          }
+          const rawLb = await res.json();
+          if (rawLb && typeof rawLb.error === 'string') {
+            throw new Error(rawLb.error);
+          }
+          const data = mapMfsLeaderboardResponseToViewer(rawLb);
+          await renderLeaderboard(data);
+        } catch (err) {
+          console.error('[Leaderboard]', err);
+          leaderboardContainerEl.innerHTML = `
+            <div class="leaderboard-container">
+              <div class="empty-state">
+                <div class="empty-icon">⚠️</div>
+                <h3 class="empty-title">Could not load leaderboard</h3>
+                <p class="empty-text">${escapeHtml(err.message || 'Unknown error')}</p>
+              </div>
+            </div>
+          `;
+          jumpToRankEl.style.display = 'none';
+        }
+
         renderEventInfo(currentEvent, null);
       }
 
@@ -2909,7 +3160,7 @@
       jumpBtnEl.addEventListener('click', () => {
         const rank = parseInt(rankInputEl.value);
         if (rank && rank > 0) {
-          const targetPage = Math.floor((rank - 1) / 100);
+          const targetPage = Math.floor((rank - 1) / LEADERBOARD_PAGE_SIZE);
           if (targetPage !== currentPage) {
             currentPage = targetPage;
             expandedRows.clear();

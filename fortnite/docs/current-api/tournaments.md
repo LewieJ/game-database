@@ -1,54 +1,51 @@
-# Tournament / competitive events (viewer)
+# Competitive calendar & event viewer (gdb.gg site)
 
-Read-only **event and window** data is served from **D1** (`COMPETITIVE_DB`). There are **no** live Epic calls on `GET` — you must populate the database with a **bulk sync** (one Epic request per run).
+The **Fortnite Worker** (`fapi.gdb.gg`) no longer proxies MyFortniteStats tournament JSON or leaderboards. The **static site** loads schedule, CMS artwork, and standings through a **same-origin** Pages Function so the browser never calls `myfortnitestats.com` directly (avoids CORS).
 
-> **Schema note:** The canonical writer for this flow is [`CompetitiveImporter`](../../src/db/competitive-importer.js) (`event_id`, `regions` JSON, `event_windows.window_id`, etc.). The root [`schema.sql`](../../schema.sql) describes an older alternate shape; do not mix it with the importer on the same D1 without reconciling columns. The expensive path [`CompetitiveDB`](../../src/db/competitive-db.js) + [`getEnhancedLeaderboard`](../../src/api/competitive.js) is **not** used for the viewer sync.
+---
 
-## Sync (ingestion)
+## Same-origin proxy (`/mfs/*`)
 
-| Mechanism | When | Epic cost |
-|-----------|------|-----------|
-| **Hourly cron** | Same tick as CCU (`0 * * * *`) if `CRON_TOURNAMENT_EVENTS_SYNC=true` | **1×** `GET /api/v1/events/Fortnite/data/{SERVICE_ACCOUNT_ID}` (+ optional display-data fetches) |
-| **Manual** | `POST /admin/tournaments/sync` (service token must be valid) | Same as above |
+Implemented at repo root: `functions/mfs/[[path]].js` (Cloudflare Pages). **GET/HEAD only.**
 
-**Do not** enable `CRON_TOURNAMENT_LEADERBOARDS` unless you understand cost: it runs the legacy **`getEnhancedLeaderboard` + per-match DB writes** loop on the 15-minute heavy cron.
+| Path | Upstream |
+|------|----------|
+| **`/mfs/events-data`** | `https://myfortnitestats.com/api/events-data` |
+| **`/mfs/cms-data`** | `https://myfortnitestats.com/api/cms-data` |
+| **`/mfs/event-leaderboard`** | `https://myfortnitestats.com/api/event-leaderboard` (query string forwarded) |
 
-## Public routes (v1)
+**Leaderboard query params:** `eventId`, `sessionId` (Epic **`eventWindowId`**), `page` (0-based), `pageSize`.
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/v1/tournaments/events` | Paginated list. Query: `status` (`all` \| `active` \| `upcoming` \| `completed`), `limit` (max 200), `offset`, `region` (matches inside `regions` JSON, e.g. `EU`). |
-| GET | `/v1/tournaments/events/{eventId}` | Event + windows; large `raw_*` blobs stripped from the JSON. |
+---
 
-Responses include `Cache-Control` for CDN caching.
+## Frontend pages
 
-## Legacy routes
+- **`fortnite/events.html`** — Fetches **`/mfs/events-data`** and **`/mfs/cms-data`** in parallel, merges into the same shape as the old “combined” payload (`schedule`, `cms_by_display_id`), then flattens windows for the cards UI.
+- **`fortnite/event.html`** — Loads calendar via the same two endpoints, finds the parent **`eventId`** in **`schedule.events`**, merges CMS copy/images, and loads the table with **`/mfs/event-leaderboard`**. Display names fall back to **“Player”** when Epic resolution is not available (the Worker used bulk account lookup; that path was removed).
 
-`/competitive/events`, `/competitive/events/active`, etc. still read the same D1 via [`CompetitiveQueries`](../../src/db/competitive-queries.js). Prefer **`/v1/tournaments/*`** for new clients.
+---
 
-`POST /competitive/crawler/run` runs the **full** [`CompetitiveCrawler.crawl()`](../../src/db/competitive-crawler.js) (events **+** active leaderboards). Treat as **high cost**; prefer `/admin/tournaments/sync` for metadata-only refresh.
+## Local development
 
-## Wrangler / D1 setup
+- Plain static **`serve`** does **not** execute Pages Functions — **`/mfs/*` will 404**.
+- Use **`npx wrangler pages dev .`** from the **game-database** repo root so **`/mfs`** proxies work while editing **`fortnite/*.html`**.
 
-1. Create a D1 database (once per Cloudflare account / name):  
-   `npx wrangler d1 create fortnite-competitive`
-2. In [`wrangler.toml`](../../wrangler.toml), bind it as `COMPETITIVE_DB` with the printed `database_id`.
-3. Apply the **importer** schema (not root `schema.sql`):  
-   `npx wrangler d1 execute fortnite-competitive --remote --file=schema-v2.sql`  
-   For local `wrangler dev`:  
-   `npx wrangler d1 execute fortnite-competitive --local --file=schema-v2.sql`
-4. If an older DB was created before the `images` column existed:  
-   `npx wrangler d1 execute fortnite-competitive --remote --file=migrations/0015_competitive_events_add_images.sql`
+---
 
-**Vars** ([`wrangler.toml`](../../wrangler.toml)):
+## Combined payload (client merge)
 
-- `CRON_TOURNAMENT_EVENTS_SYNC` — `true` runs bulk event sync on the hourly cron (`0 * * * *`) with CCU.
-- `CRON_TOURNAMENT_LEADERBOARDS` — keep **`false`** unless you intentionally enable the legacy expensive crawl (requires `CRON_HEAVY`).
+Match keys used in **`fortnite/events.html`** / **`event.html`**:
 
-**Frontend base URLs:** production `https://fapi.gdb.gg`, Workers `https://fortnite-api.lewie.workers.dev` (same routes).
+```text
+data.schedule          ← raw events-data JSON
+data.assets            ← raw cms-data JSON
+data.cms_by_display_id ← map tournament_display_id → CMS row
+```
 
-## Phase B (future) — leaderboards without $800 surprises
+Join rule: for each entry in **`data.schedule.events`**, read **`displayDataId`** and look up **`data.cms_by_display_id[displayDataId]`** when present.
 
-- Separate cron flag from event sync.
-- Use [`CompetitiveImporter.importLeaderboard`](../../src/db/competitive-importer.js) (batched rows, capped session rows), **not** `getEnhancedLeaderboard(..., saveToDb: true)` in scheduled jobs.
-- Per-window **cooldown**, max **windows per tick**, max **pages** per window, and **D1 pruning** for old rows.
+---
+
+## Other gdb.gg pages
+
+Shop, profile, CCU, and user search may still call **`https://fapi.gdb.gg`**; only **competitive calendar / tournament viewer** traffic was moved off the Worker as described here.
