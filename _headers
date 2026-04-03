@@ -1,0 +1,21 @@
+# Cloudflare Pages / static deploy (repo root). Ensures search crawlers are not told "noindex" at the edge.
+# Sitemap and robots.txt intentionally have no X-Robots-Tag so Google/Bing treat them as normal resources.
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600, s-maxage=3600
+
+/robots.txt
+  Cache-Control: public, max-age=86400, s-maxage=86400
+
+# IndexNow verification (plain text)
+/d86078e67f7c48eaaccd4c54ece9ab6b.txt
+  Content-Type: text/plain
+
+# HTML hubs — explicit allow-index at the edge (root / uses meta robots in index.html)
+/marathon/*
+  X-Robots-Tag: index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1
+  Content-Security-Policy-Report-Only: frame-ancestors 'self'
+
+/pages/*
+  X-Robots-Tag: index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1
+  Content-Security-Policy-Report-Only: frame-ancestors 'self'

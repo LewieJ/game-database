@@ -1,5 +1,31 @@
-# gdb.gg — canonical origin is https://gdb.gg (apex). If you use www, 301-redirect to apex and
-# keep Sitemap + meta canonicals on a single host.
+# gdb.gg — apex https://gdb.gg (301 www → apex). Cloudflare may prepend “Content-Signal” / AI-bot rules in the
+# live file; this tail must stay crawl-friendly. Submit this sitemap in Google Search Console + Bing Webmaster.
+
+# Major search indexers (explicit allow; avoids ambiguity if other layers add rules)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Google-InspectionTool
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: BingPreview
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
 User-agent: *
 Allow: /
 
