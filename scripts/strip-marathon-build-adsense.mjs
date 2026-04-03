@@ -1,5 +1,6 @@
 /**
- * Strips legacy AdSense markup from marathon/build/ssg*.js (old MarathonDB ca-pub IDs).
+ * Strips duplicated hard-coded AdSense script blocks from marathon/build/ssg*.js.
+ * Publisher ca-pub-1865737750178944 is the shared authorized seller for gdb.gg and related sites; prefer adsense-snippets.js + env for builds.
  */
 import fs from 'fs';
 import path from 'path';

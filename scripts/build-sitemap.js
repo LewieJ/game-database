@@ -1,5 +1,5 @@
 /**
- * Writes root sitemap.xml: https://gdb.gg/ + all marathon routes (index-based + lone .html files).
+ * Writes root sitemap.xml: https://gdb.gg/ + /pages/* + all marathon routes (index-based + lone .html files).
  * Omits duplicate legacy .html when a matching .../name/ index route exists.
  */
 const fs = require("fs");
@@ -7,6 +7,7 @@ const path = require("path");
 
 const repoRoot = path.join(__dirname, "..");
 const marathonRoot = path.join(repoRoot, "marathon");
+const pagesRoot = path.join(repoRoot, "pages");
 const outFile = path.join(repoRoot, "sitemap.xml");
 const origin = "https://gdb.gg";
 
@@ -50,6 +51,16 @@ for (const f of looseHtml) {
   urls.add(`${origin}/marathon/${rel}`);
 }
 
+if (fs.existsSync(pagesRoot)) {
+  walk(pagesRoot, (full) => {
+    if (!full.endsWith(".html") || path.basename(full) !== "index.html") return;
+    const rel = path.relative(pagesRoot, full).split(path.sep).join("/");
+    const dir = rel.replace(/\/index\.html$/i, "");
+    const slug = dir || "";
+    urls.add(`${origin}/pages/${slug ? `${slug}/` : ""}`);
+  });
+}
+
 const sorted = [...urls].sort();
 const today = new Date().toISOString().slice(0, 10);
 
@@ -60,7 +71,9 @@ const body = sorted
         ? "1.0"
         : loc.endsWith("/marathon/")
           ? "0.95"
-          : "0.8";
+          : loc.includes("/pages/")
+            ? "0.65"
+            : "0.8";
     return `  <url>
     <loc>${loc}</loc>
     <lastmod>${today}</lastmod>
@@ -72,7 +85,7 @@ const body = sorted
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Canonical: https://gdb.gg (apex). Homepage + /marathon/ only. Re-run: node scripts/build-sitemap.js -->
+  <!-- Canonical: https://gdb.gg (apex). Homepage + /pages/ + /marathon/. Re-run: node scripts/build-sitemap.js -->
 ${body}
 </urlset>
 `;

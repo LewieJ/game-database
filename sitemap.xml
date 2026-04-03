@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Canonical: https://gdb.gg (apex). Homepage + /marathon/ only. Re-run: node scripts/build-sitemap.js -->
+  <!-- Canonical: https://gdb.gg (apex). Homepage + /pages/ + /marathon/. Re-run: node scripts/build-sitemap.js -->
   <url>
     <loc>https://gdb.gg/</loc>
     <lastmod>2026-04-03</lastmod>
@@ -1223,205 +1223,205 @@
     <loc>https://gdb.gg/marathon/pages/about/</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/beta.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/contact/</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/contract.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cookie-policy.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/core.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cores.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic-background.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic-charm.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic-emblem.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic-sticker.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic-weapon.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-backgrounds.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-charms.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-destiny2.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-emblems.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-runners.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-stickers.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-weapons.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/faction.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/factions.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/item.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/items.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/mod.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/mods.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/privacy-policy/</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/runner.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/runners.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/search.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/terms-and-conditions/</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/twitch.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/weapon.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/weapons.html</loc>
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/population/</loc>
@@ -2556,5 +2556,29 @@
     <lastmod>2026-04-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gdb.gg/pages/about/</loc>
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://gdb.gg/pages/contact/</loc>
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://gdb.gg/pages/privacy-policy/</loc>
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://gdb.gg/pages/terms-and-conditions/</loc>
+    <lastmod>2026-04-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
   </url>
 </urlset>

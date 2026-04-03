@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Opt-in AdSense for gdb.gg builds (replaces legacy MarathonDB publisher IDs).
+ * Opt-in AdSense for gdb.gg builds. Default client matches the shared ca-pub used across gdb.gg / partner properties.
  *
  * Enable when you have an approved AdSense client ID:
  *   RNK_ADSENSE_CLIENT=ca-pub-XXXXXXXXXXXXXXXX node build/ssg.js ...

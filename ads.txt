@@ -1,1 +1,2 @@
+# Shared authorized seller for gdb.gg and related properties on the same AdSense account.
 google.com, pub-1865737750178944, DIRECT, f08c47fec0942fa0
