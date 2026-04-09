@@ -14,7 +14,7 @@ const SEO = {
   MARATHON_PATH,
   MARATHON_SITE_URL,
   /** og:site_name */
-  OG_SITE_NAME: 'gdb.gg Marathon',
+  OG_SITE_NAME: 'GDB.GG Marathon',
   /** Default when page has no custom image */
   DEFAULT_OG_IMAGE: `${SITE_ORIGIN}/assets/icons/marathon.svg`,
   TWITTER_SITE: '@MarathonDB',

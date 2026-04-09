@@ -280,7 +280,7 @@ function displayCores(cores) {
                     ${core.description ? `<div class="core-description-snippet">${escapeHtml(core.description)}</div>` : ''}
                 </div>
                 <div class="core-card-footer">
-                    ${credits ? `<span class="core-card-credits"><img src="/assets/icons/credits.webp" alt="" width="14" height="14">${credits.toLocaleString()}</span>` : '<span></span>'}
+                    ${credits ? `<span class="core-card-credits"><img src="/marathon/assets/icons/credits.webp" alt="" width="14" height="14">${credits.toLocaleString()}</span>` : '<span></span>'}
                     <span class="core-card-cta">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                 </div>
                 <div class="cw-heat-strip" data-slug="${escapeAttr(slug)}">
@@ -452,7 +452,7 @@ function renderCoreModal(core) {
         : '';
     const credits = core.credits;
     const valueBadge = credits
-        ? `<span class="cd-badge cd-badge-value"><img src="/assets/icons/credits.webp" alt="" width="12" height="12" style="vertical-align:middle"> ${credits.toLocaleString()}</span>`
+        ? `<span class="cd-badge cd-badge-value"><img src="/marathon/assets/icons/credits.webp" alt="" width="12" height="12" style="vertical-align:middle"> ${credits.toLocaleString()}</span>`
         : '';
     document.getElementById('coreModalBadges').innerHTML = `
         <span class="cd-badge cd-badge-runner ${runnerType}">
@@ -643,11 +643,11 @@ function renderSeoDetailBlock(slug) {
     // ── 1. Update <link rel="canonical"> ──
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
-        canonical.href = `https://marathondb.gg/cores/?core=${encodeURIComponent(slug)}`;
+        canonical.href = `https://gdb.gg/marathon/cores/?core=${encodeURIComponent(slug)}`;
     }
 
     // ── 2. Update <title> ──
-    document.title = `${core.name} – ${rarityLabel} ${runnerLabel} Core | MarathonDB`;
+    document.title = `${core.name} – ${rarityLabel} ${runnerLabel} Core | GDB.GG`;
 
     // ── 3. Update meta description ──
     const metaDesc = document.querySelector('meta[name="description"]');
@@ -660,13 +660,13 @@ function renderSeoDetailBlock(slug) {
 
     // ── 4. Update OG / Twitter tags ──
     const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.content = `${core.name} – ${rarityLabel} ${runnerLabel} Core | MarathonDB`;
+    if (ogTitle) ogTitle.content = `${core.name} – ${rarityLabel} ${runnerLabel} Core | GDB.GG`;
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.content = metaDesc ? metaDesc.content : '';
     const ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) ogUrl.content = `https://marathondb.gg/cores/?core=${encodeURIComponent(slug)}`;
+    if (ogUrl) ogUrl.content = `https://gdb.gg/marathon/cores/?core=${encodeURIComponent(slug)}`;
     const twTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twTitle) twTitle.content = `${core.name} – ${rarityLabel} ${runnerLabel} Core | MarathonDB`;
+    if (twTitle) twTitle.content = `${core.name} – ${rarityLabel} ${runnerLabel} Core | GDB.GG`;
     const twDesc = document.querySelector('meta[name="twitter:description"]');
     if (twDesc) twDesc.content = metaDesc ? metaDesc.content : '';
 
@@ -677,12 +677,12 @@ function renderSeoDetailBlock(slug) {
         'name': core.name,
         'headline': `${core.name} – Marathon ${runnerLabel} Core`,
         'description': core.description || `${core.name} is a ${rarityLabel} ${runnerLabel} core in Bungie's Marathon.`,
-        'url': `https://marathondb.gg/cores/?core=${encodeURIComponent(slug)}`,
-        'image': iconUrl.startsWith('http') ? iconUrl : `https://marathondb.gg/${iconUrl}`,
+        'url': `https://gdb.gg/marathon/cores/?core=${encodeURIComponent(slug)}`,
+        'image': iconUrl.startsWith('http') ? iconUrl : `https://gdb.gg/${iconUrl}`,
         'isPartOf': {
             '@type': 'CollectionPage',
             'name': 'Marathon Cores Database',
-            'url': 'https://marathondb.gg/cores/'
+            'url': 'https://gdb.gg/marathon/cores/'
         },
         'about': {
             '@type': 'Thing',
@@ -691,8 +691,8 @@ function renderSeoDetailBlock(slug) {
         },
         'author': {
             '@type': 'Organization',
-            'name': 'MarathonDB',
-            'url': 'https://marathondb.gg'
+            'name': 'GDB.GG',
+            'url': 'https://gdb.gg'
         }
     };
     const schemaScript = document.createElement('script');
@@ -762,7 +762,7 @@ function renderSeoDetailBlock(slug) {
             </div>
             ${core.description ? `<p class="core-seo-detail-desc">${escapeHtml(core.description)}</p>` : ''}
             ${statsListHtml}
-            <p class="core-seo-backlink"><a href="/cores/">← Browse all Marathon cores</a></p>
+            <p class="core-seo-backlink"><a href="/marathon/cores/">← Browse all Marathon cores</a></p>
         </div>
     `;
     container.style.display = '';
@@ -777,9 +777,9 @@ function removeSeoDetailBlock() {
     }
     // Restore canonical to hub page
     const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) canonical.href = 'https://marathondb.gg/cores/';
+    if (canonical) canonical.href = 'https://gdb.gg/marathon/cores/';
     // Restore title
-    document.title = 'Marathon Cores – All Runner Upgrades, Stats & Effects | MarathonDB';
+    document.title = 'Marathon Cores – All Runner Upgrades, Stats & Effects | GDB.GG';
 }
 
 // ─── Helpers ────────────────────────────────────────────────

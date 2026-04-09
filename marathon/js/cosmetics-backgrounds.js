@@ -10,12 +10,14 @@
     // ─── API ────────────────────────────────────────────────────────────
     const BG_API   = 'https://backgrounds.marathondb.gg';
     const BG_CDN   = 'https://helpbot.marathondb.gg/';       // image CDN prefix
+    const BG_URL_PARAM = 'background';
 
     // ─── State ──────────────────────────────────────────────────────────
     let allBackgrounds      = [];
     let filteredBackgrounds  = [];
     let currentView          = 'grid';
     let ratingsMap           = {};
+    let bgBySlug             = {};
     let currentFilters = {
         search:      '',
         rarity:      'all',
@@ -53,7 +55,9 @@
             backgroundsGrid:document.getElementById('backgroundsGrid'),
             emptyState:     document.getElementById('emptyState'),
             resetFilters:   document.getElementById('resetFilters'),
-            obtainableToggle: document.getElementById('obtainableToggle')
+            obtainableToggle: document.getElementById('obtainableToggle'),
+            itemModal:      document.getElementById('itemModal'),
+            modalContent:   document.getElementById('modalContent')
         };
     }
 
@@ -73,6 +77,10 @@
                     else badge.remove();
                 });
             }, 1000);
+
+            // Open modal if URL has a background param
+            const slugFromUrl = new URLSearchParams(window.location.search).get(BG_URL_PARAM);
+            if (slugFromUrl) openBgModal(slugFromUrl, true);
         } catch (err) {
             console.error('Failed to init backgrounds page:', err);
             showError();
@@ -81,15 +89,30 @@
 
     // ─── Data fetching ──────────────────────────────────────────────────
     async function loadBackgrounds() {
-        const res  = await fetch(`${BG_API}/api/backgrounds`);
-        if (!res.ok) throw new Error(`API ${res.status}`);
-        const json = await res.json();
+        // Try build-time prefetch.json first (avoids live API call)
+        let rawData = null;
+        try {
+            const prefetchRes = await fetch('/marathon/backgrounds/prefetch.json', { cache: 'force-cache' });
+            if (prefetchRes.ok) {
+                const prefetchData = await prefetchRes.json();
+                if (Array.isArray(prefetchData) && prefetchData.length) rawData = prefetchData;
+            }
+        } catch { /* fall through to live API */ }
 
-        if (!json.data || !Array.isArray(json.data)) throw new Error('Bad API response');
+        let backgrounds;
+        if (rawData) {
+            backgrounds = rawData;
+        } else {
+            const res  = await fetch(`${BG_API}/api/backgrounds`);
+            if (!res.ok) throw new Error(`API ${res.status}`);
+            const json = await res.json();
+            if (!json.data || !Array.isArray(json.data)) throw new Error('Bad API response');
+            backgrounds = json.data;
+        }
 
         // Deduplicate by slug (safeguard)
         const map = new Map();
-        json.data.forEach(bg => {
+        backgrounds.forEach(bg => {
             if (!map.has(bg.slug)) {
                 map.set(bg.slug, {
                     ...bg
@@ -98,6 +121,9 @@
         });
         allBackgrounds      = Array.from(map.values());
         filteredBackgrounds  = [...allBackgrounds];
+
+        // Build slug lookup for modal
+        allBackgrounds.forEach(bg => { bgBySlug[bg.slug] = bg; });
     }
 
     // ─── Event listeners ────────────────────────────────────────────────
@@ -156,6 +182,43 @@
         if (el.resetFilters) {
             el.resetFilters.addEventListener('click', resetAllFilters);
         }
+
+        // Grid click delegation — open modal on card click
+        const grid = document.getElementById('backgroundsGrid');
+        if (grid) {
+            grid.addEventListener('click', (e) => {
+                if (e.target.closest('.cw-heat-emoji')) return;
+                const card = e.target.closest('[data-slug]');
+                if (!card?.dataset.slug) return;
+                if (e.metaKey || e.ctrlKey) return;
+                e.preventDefault();
+                openBgModal(card.dataset.slug);
+            });
+            grid.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                if (e.target.closest('.cw-heat-emoji')) return;
+                const card = e.target.closest('[data-slug]');
+                if (!card?.dataset.slug) return;
+                e.preventDefault();
+                openBgModal(card.dataset.slug);
+            });
+        }
+
+        // Modal close handlers
+        document.getElementById('closeModal')?.addEventListener('click', closeBgModal);
+        if (el.itemModal) {
+            el.itemModal.addEventListener('click', (e) => {
+                if (e.target === el.itemModal) closeBgModal();
+            });
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeBgModal();
+        });
+        window.addEventListener('popstate', () => {
+            const slug = new URLSearchParams(window.location.search).get(BG_URL_PARAM);
+            if (slug) openBgModal(slug, true);
+            else closeBgModal(true);
+        });
     }
 
     function syncFilterPills() {
@@ -263,7 +326,7 @@
             : '';
 
         return `
-            <a href="/backgrounds/${slug}/" class="bg-card" data-rarity="${rarity}"${unavailableAttr}>
+            <a href="/backgrounds/${slug}/" class="bg-card" data-rarity="${rarity}" data-slug="${slug}"${unavailableAttr}>
                 <div class="bg-card-image">
                     ${preview ? `
                         <img src="${preview}"
@@ -471,5 +534,111 @@
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
+    }
+
+    // ─── Modal ──────────────────────────────────────────────────────────
+
+    function openBgModal(slug, skipPush) {
+        const bg = bgBySlug[slug];
+        if (!bg || !el.itemModal || !el.modalContent) return;
+
+        if (!skipPush) {
+            const url = new URL(window.location.href);
+            url.searchParams.set(BG_URL_PARAM, slug);
+            history.pushState({ bgSlug: slug }, '', url);
+        }
+
+        el.itemModal.classList.add('active');
+        el.itemModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        renderBgModalContent(bg);
+    }
+
+    function closeBgModal(skipPush) {
+        if (!el.itemModal?.classList.contains('active')) return;
+        el.itemModal.classList.remove('active');
+        el.itemModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (!skipPush) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete(BG_URL_PARAM);
+            const qs = url.searchParams.toString();
+            history.pushState({}, '', url.pathname + (qs ? `?${qs}` : ''));
+        }
+    }
+
+    function renderBgModalContent(bg) {
+        const preview = imgUrl(bg, 'preview');
+        const full    = imgUrl(bg, 'full');
+        const displayImg = preview || full;
+        const rarity = bg.rarity || 'common';
+        const sourceLabel = SOURCE_LABELS[bg.source_type] || esc(bg.source_type || '');
+        const factionRow = bg.faction_name
+            ? `<div class="skin-modal-meta-row"><span class="skin-modal-meta-label">Faction</span><span>${esc(bg.faction_name)}</span></div>`
+            : '';
+        const sourceRow = sourceLabel
+            ? `<div class="skin-modal-meta-row"><span class="skin-modal-meta-label">Source</span><span>${sourceLabel}</span></div>`
+            : '';
+        const availRow = bg.is_available === false
+            ? `<div class="skin-modal-meta-row skin-modal-meta-row--warn"><span class="skin-modal-meta-label">Availability</span><span>No longer available</span></div>`
+            : '';
+        const acqRow = bg.acquisition_summary
+            ? `<div class="skin-modal-section"><h4>How to Get</h4><p class="acq-detail">${esc(bg.acquisition_summary)}</p></div>`
+            : '';
+        const shareUrl = (() => {
+            const u = new URL(window.location.href);
+            u.searchParams.set(BG_URL_PARAM, bg.slug);
+            return u.toString();
+        })();
+
+        el.modalContent.innerHTML = `
+            <div class="skin-modal-grid">
+                <div class="skin-modal-gallery">
+                    <div class="skin-modal-main-image" data-rarity="${rarity}">
+                        ${displayImg
+                            ? `<img src="${esc(displayImg)}" alt="${esc(bg.name)}" loading="lazy">`
+                            : `<div class="cw-skin-placeholder"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>`}
+                    </div>
+                </div>
+                <div class="skin-modal-details">
+                    <div class="skin-modal-header">
+                        <span class="skin-modal-rarity rarity-${rarity}">${rarity.toUpperCase()}</span>
+                    </div>
+                    <h2 class="skin-modal-title">${esc(bg.name)}</h2>
+                    ${sourceRow}
+                    ${factionRow}
+                    ${availRow}
+                    ${bg.description ? `<p class="skin-modal-description">${esc(bg.description)}</p>` : ''}
+                    ${acqRow}
+                    <div class="skin-modal-actions skin-modal-actions--split">
+                        <button type="button" class="modal-action-btn primary" id="bgModalCopyLink">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            <span class="bg-modal-copy-label">Copy link</span>
+                        </button>
+                        <a href="/backgrounds/${esc(bg.slug)}/" class="modal-action-btn modal-action-btn--ghost">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/></svg>
+                            Full page
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const copyBtn = el.modalContent.querySelector('#bgModalCopyLink');
+        const copyLabel = copyBtn?.querySelector('.bg-modal-copy-label');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    if (copyLabel) {
+                        const prev = copyLabel.textContent;
+                        copyLabel.textContent = 'Copied!';
+                        setTimeout(() => { copyLabel.textContent = prev; }, 1600);
+                    }
+                } catch (_) {
+                    window.prompt('Copy link:', shareUrl);
+                }
+            });
+        }
     }
 })();

@@ -19,6 +19,7 @@ const steps = [
   { title: 'Runners listing (prebuild)', args: ['build/prebuild-runners.js'] },
   { title: 'Mods listing (prebuild)', args: ['build/prebuild-mods.js'] },
   { title: 'Items listing (prebuild)', args: ['build/prebuild-items.js'] },
+  { title: 'Cosmetics listings (prefetch.json)', args: ['build/prebuild-cosmetics.js'] },
   { title: 'Background detail pages', args: ['build/ssg-backgrounds.js'] },
   { title: 'Sticker detail pages', args: ['build/ssg-stickers.js'] },
   { title: 'Weapon skin stubs + hub data', args: ['build/ssg-weapon-skins.js'] },

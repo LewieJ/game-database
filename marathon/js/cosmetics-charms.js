@@ -8,12 +8,14 @@
 
     // API Base URL
     const API_BASE = 'https://helpbot.marathondb.gg';
+    const CHARM_URL_PARAM = 'charm';
 
     // State
     let allCharms = [];
     let filteredCharms = [];
     let currentView = 'grid';
     let ratingsMap = {};
+    let charmBySlug = {};
     let currentFilters = {
         search: '',
         rarity: 'all',
@@ -60,7 +62,9 @@
             charmsGrid: document.getElementById('charmsGrid'),
             emptyState: document.getElementById('emptyState'),
             resultsCount: document.getElementById('resultsCount'),
-            resetFilters: document.getElementById('resetFilters')
+            resetFilters: document.getElementById('resetFilters'),
+            itemModal: document.getElementById('itemModal'),
+            modalContent: document.getElementById('modalContent')
         };
     }
 
@@ -109,6 +113,10 @@
                     else badge.remove();
                 });
             }, 1000);
+
+            // Open modal if URL has a charm param
+            const slugFromUrl = new URLSearchParams(window.location.search).get(CHARM_URL_PARAM);
+            if (slugFromUrl) openCharmModal(slugFromUrl, true);
         } catch (error) {
             console.error('Failed to initialize charms page:', error);
             showError();
@@ -120,29 +128,30 @@
      */
     async function loadCharms() {
         const response = await MarathonAPI.get('/cosmetics/charms');
-        
-        if (response.success && response.data) {
-            // Deduplicate charms by name (prefer entries with more complete data)
-            const charmMap = new Map();
-            response.data.forEach(charm => {
-                const key = charm.name.toLowerCase();
-                const existing = charmMap.get(key);
-                if (!existing) {
+        if (!(response.success && response.data)) throw new Error('Failed to load charms');
+        const rawItems = response.data;
+
+        // Deduplicate charms by name (prefer entries with more complete data)
+        const charmMap = new Map();
+        rawItems.forEach(charm => {
+            const key = charm.name.toLowerCase();
+            const existing = charmMap.get(key);
+            if (!existing) {
+                charmMap.set(key, charm);
+            } else {
+                // Prefer the one with more complete data (has meta_title, is_limited, etc.)
+                const existingScore = (existing.meta_title ? 1 : 0) + (existing.is_limited ? 1 : 0) + (existing.source_detail ? 1 : 0);
+                const newScore = (charm.meta_title ? 1 : 0) + (charm.is_limited ? 1 : 0) + (charm.source_detail ? 1 : 0);
+                if (newScore > existingScore) {
                     charmMap.set(key, charm);
-                } else {
-                    // Prefer the one with more complete data (has meta_title, is_limited, etc.)
-                    const existingScore = (existing.meta_title ? 1 : 0) + (existing.is_limited ? 1 : 0) + (existing.source_detail ? 1 : 0);
-                    const newScore = (charm.meta_title ? 1 : 0) + (charm.is_limited ? 1 : 0) + (charm.source_detail ? 1 : 0);
-                    if (newScore > existingScore) {
-                        charmMap.set(key, charm);
-                    }
                 }
-            });
-            allCharms = Array.from(charmMap.values());
-            filteredCharms = [...allCharms];
-        } else {
-            throw new Error('Failed to load charms');
-        }
+            }
+        });
+        allCharms = Array.from(charmMap.values());
+        filteredCharms = [...allCharms];
+
+        // Build slug lookup for modal
+        allCharms.forEach(c => { charmBySlug[c.slug] = c; });
     }
 
     /**
@@ -223,6 +232,41 @@
         if (elements.resetFilters) {
             elements.resetFilters.addEventListener('click', resetAllFilters);
         }
+
+        // Grid click delegation — open modal on card click
+        const grid = document.getElementById('charmsGrid');
+        if (grid) {
+            grid.addEventListener('click', (e) => {
+                if (e.target.closest('.cw-heat-emoji')) return;
+                const card = e.target.closest('[data-slug]');
+                if (!card?.dataset.slug) return;
+                if (e.metaKey || e.ctrlKey) return;
+                e.preventDefault();
+                openCharmModal(card.dataset.slug);
+            });
+            grid.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                if (e.target.closest('.cw-heat-emoji')) return;
+                const card = e.target.closest('[data-slug]');
+                if (!card?.dataset.slug) return;
+                e.preventDefault();
+                openCharmModal(card.dataset.slug);
+            });
+        }
+
+        // Modal close handlers
+        document.getElementById('closeModal')?.addEventListener('click', closeCharmModal);
+        elements.itemModal?.addEventListener('click', (e) => {
+            if (e.target === elements.itemModal) closeCharmModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeCharmModal();
+        });
+        window.addEventListener('popstate', () => {
+            const slug = new URLSearchParams(window.location.search).get(CHARM_URL_PARAM);
+            if (slug) openCharmModal(slug, true);
+            else closeCharmModal(true);
+        });
     }
 
     /**
@@ -369,7 +413,7 @@
             ? `<div class="cw-countdown-badge" data-expiry="${charmExpiry}">\u23f1 &hellip;</div>` : '';
 
         return `
-            <a href="${getCharmDetailUrl(charm.slug)}" class="cw-skin-card sticker-card-simple" data-rarity="${charm.rarity}"${unavailableAttr}>
+            <a href="${getCharmDetailUrl(charm.slug)}" class="cw-skin-card sticker-card-simple" data-rarity="${charm.rarity}" data-slug="${charm.slug}"${unavailableAttr}>
                 <div class="cw-skin-image">
                     ${imageUrl ? `
                         <img src="${lowResUrl}" 
@@ -702,5 +746,117 @@
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
+    }
+
+    // ─── Modal ───────────────────────────────────────────────────────
+
+    function openCharmModal(slug, skipPush) {
+        const charm = charmBySlug[slug];
+        if (!charm || !elements.itemModal || !elements.modalContent) return;
+
+        if (!skipPush) {
+            const url = new URL(window.location.href);
+            url.searchParams.set(CHARM_URL_PARAM, slug);
+            history.pushState({ charmSlug: slug }, '', url);
+        }
+
+        elements.itemModal.classList.add('active');
+        elements.itemModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        renderCharmModalContent(charm);
+    }
+
+    function closeCharmModal(skipPush) {
+        if (!elements.itemModal?.classList.contains('active')) return;
+        elements.itemModal.classList.remove('active');
+        elements.itemModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (!skipPush) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete(CHARM_URL_PARAM);
+            const qs = url.searchParams.toString();
+            history.pushState({}, '', url.pathname + (qs ? `?${qs}` : ''));
+        }
+    }
+
+    function escapeAttr(s) {
+        if (!s) return '';
+        return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    }
+
+    function renderCharmModalContent(charm) {
+        const imageUrl = charm.icon_path
+            ? (charm.icon_path.startsWith('http') ? charm.icon_path : `${API_BASE}${charm.icon_path}`)
+            : '';
+        const rarity = charm.rarity || 'common';
+        const sourceName = sourceNames[charm.source] || charm.source || '';
+        const collectionRow = charm.collection_name
+            ? `<div class="skin-modal-meta-row"><span class="skin-modal-meta-label">Collection</span><span>${escapeHtml(charm.collection_name)}</span></div>`
+            : '';
+        const sourceRow = sourceName
+            ? `<div class="skin-modal-meta-row"><span class="skin-modal-meta-label">Source</span><span>${escapeHtml(sourceName)}</span></div>`
+            : '';
+        const availRow = charm.is_available === false
+            ? `<div class="skin-modal-meta-row skin-modal-meta-row--warn"><span class="skin-modal-meta-label">Availability</span><span>No longer available</span></div>`
+            : '';
+        const acqRow = charm.source_detail
+            ? `<div class="skin-modal-section"><h4>How to Get</h4><p class="acq-detail">${escapeHtml(charm.source_detail)}</p></div>`
+            : '';
+        const shareUrl = (() => {
+            const u = new URL(window.location.href);
+            u.searchParams.set(CHARM_URL_PARAM, charm.slug);
+            return u.toString();
+        })();
+
+        elements.modalContent.innerHTML = `
+            <div class="skin-modal-grid">
+                <div class="skin-modal-gallery">
+                    <div class="skin-modal-main-image" data-rarity="${rarity}">
+                        ${imageUrl
+                            ? `<img src="${escapeAttr(imageUrl)}" alt="${escapeAttr(charm.name)}" loading="lazy">`
+                            : `<div class="cw-skin-placeholder"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>`}
+                    </div>
+                </div>
+                <div class="skin-modal-details">
+                    <div class="skin-modal-header">
+                        <span class="skin-modal-rarity rarity-${rarity}">${rarity.toUpperCase()}</span>
+                        ${charm.is_limited ? '<span class="modal-limited-badge">LIMITED TIME</span>' : ''}
+                    </div>
+                    <h2 class="skin-modal-title">${escapeHtml(charm.name)}</h2>
+                    ${collectionRow}
+                    ${sourceRow}
+                    ${availRow}
+                    ${charm.description ? `<p class="skin-modal-description">${escapeHtml(charm.description)}</p>` : ''}
+                    ${acqRow}
+                    <div class="skin-modal-actions skin-modal-actions--split">
+                        <button type="button" class="modal-action-btn primary" id="charmModalCopyLink">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            <span class="charm-modal-copy-label">Copy link</span>
+                        </button>
+                        <a href="${escapeAttr(getCharmDetailUrl(charm.slug))}" class="modal-action-btn modal-action-btn--ghost">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/></svg>
+                            Full page
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const copyBtn = elements.modalContent.querySelector('#charmModalCopyLink');
+        const copyLabel = copyBtn?.querySelector('.charm-modal-copy-label');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    if (copyLabel) {
+                        const prev = copyLabel.textContent;
+                        copyLabel.textContent = 'Copied!';
+                        setTimeout(() => { copyLabel.textContent = prev; }, 1600);
+                    }
+                } catch (_) {
+                    window.prompt('Copy link:', shareUrl);
+                }
+            });
+        }
     }
 })();

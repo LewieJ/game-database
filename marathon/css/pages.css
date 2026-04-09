@@ -16076,14 +16076,17 @@ body.compare-active .weapon-card.compare-selected {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    background: var(--bg-dark);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
 }
 
-.core-icon.standard   { }
-.core-icon.enhanced   { }
-.core-icon.deluxe     { }
-.core-icon.superior   { }
-.core-icon.prestige   { }
-.core-icon.contraband { }
+.core-icon.standard   { border-color: #80808025; }
+.core-icon.enhanced   { border-color: #02e18525; }
+.core-icon.deluxe     { border-color: #3b82f625; }
+.core-icon.superior   { border-color: #a855f725; }
+.core-icon.prestige   { border-color: #f0de0f30; }
+.core-icon.contraband { border-color: #8b000040; }
 
 .core-card:hover .core-icon {
     transform: scale(1.05);
@@ -17325,7 +17328,7 @@ body.modal-open {
 .core-modal-icon-frame {
     width: 160px;
     height: 160px;
-    border-radius: var(--radius-md);
+    border-radius: 0;
     background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(0,0,0,0.3));
     border: 3px solid var(--border);
     display: flex;

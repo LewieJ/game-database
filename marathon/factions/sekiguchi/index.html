@@ -1,77 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+    
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Sekiguchi is a multinational corporation specializing in manufacturing and engineering. They are known for their advanced production technologies and innovative engineering solutions. Learn about Sekiguchi perks, cosmetics, contracts, and reputation in Marathon.">
     <meta name="keywords" content="Marathon Sekiguchi, Sekiguchi faction, Sekiguchi contracts, Sekiguchi perks, Sekiguchi cosmetics, Sekiguchi reputation, Marathon factions">
     <meta name="robots" content="index, follow">
-        <link rel="icon" type="image/svg+xml" href="/assets/icons/gdb-mark.svg">
-    <link rel="apple-touch-icon" href="/assets/icons/gdb-mark.svg">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/marathon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/marathon.svg">
     
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://gdb.gg/marathon/factions/sekiguchi/">
-    <meta property="og:title" content="Sekiguchi Faction Hub | gdb.gg">
+    <meta property="og:title" content="Sekiguchi Faction Hub | MarathonDB">
     <meta property="og:description" content="Sekiguchi is a multinational corporation specializing in manufacturing and engineering. They are known for their advanced production technologies and innovative engineering solutions. Learn about Sekiguchi perks, cosmetics, contracts, and reputation in Marathon.">
     <meta property="og:image" content="https://helpbot.marathondb.gg/assets/items/reputations/sekiguchi-200x200.png">
     
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Sekiguchi Faction Hub | gdb.gg">
+    <meta name="twitter:title" content="Sekiguchi Faction Hub | MarathonDB">
     <meta name="twitter:description" content="Sekiguchi is a multinational corporation specializing in manufacturing and engineering. They are known for their advanced production technologies and innovative engineering solutions. Learn about Sekiguchi perks, cosmetics, contracts, and reputation in Marathon.">
     <meta name="twitter:image" content="https://helpbot.marathondb.gg/assets/items/reputations/sekiguchi-200x200.png">
     
     <link rel="canonical" href="https://gdb.gg/marathon/factions/sekiguchi/">
-    <title>Sekiguchi Faction Hub | gdb.gg</title>
+    <title>Sekiguchi Faction Hub | MarathonDB</title>
     <link rel="stylesheet" href="/marathon/css/style.css">
     <link rel="stylesheet" href="/marathon/css/pages.css">
     <link rel="stylesheet" href="/marathon/css/auth.css">
-    <link rel="stylesheet" href="/marathon/css/faction-hub-upgrades.css">
-    <link rel="stylesheet" href="/marathon/css/faction-hub-contracts.css">
-    <style>
-        :root{--faction-color:#73f2c9;--faction-on-color:#1c1a1b}
-
-        /* ── Tab Navigation ── */
-        .fh-tabs-wrap{margin:16px 0 0;border-bottom:1px solid rgba(255,255,255,.08)}
-        .fh-tabs-nav{display:flex;gap:4px;padding:0 0 0 2px}
-        .fh-tab{background:none;border:none;color:rgba(255,255,255,.55);font-size:.875rem;font-weight:500;padding:10px 18px;cursor:pointer;position:relative;letter-spacing:.02em;transition:color .15s}
-        .fh-tab::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--faction-color);opacity:0;transition:opacity .15s}
-        .fh-tab:hover{color:rgba(255,255,255,.85)}
-        .fh-tab.active{color:#fff}
-        .fh-tab.active::after{opacity:1}
-        .fh-tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:99px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-size:.65rem;font-weight:600;vertical-align:middle}
-        .fh-tab.active .fh-tab-count{background:var(--faction-color);color:#000}
-        .fh-tab-panel{display:block}
-        .fh-tab-panel[hidden]{display:none!important}
-        .fh-contract-filter-bar{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px 0}
-        .fh-contract-filter-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:99px;color:rgba(255,255,255,.65);font-size:.75rem;font-weight:500;padding:4px 12px;cursor:pointer;transition:all .15s}
-        .fh-contract-filter-btn:hover{background:rgba(255,255,255,.12);color:#fff}
-        .fh-contract-filter-btn.active{background:var(--faction-color);border-color:var(--faction-color);color:#000;font-weight:600}
-        .fh-contracts-rows{display:flex;flex-direction:column;gap:2px;padding:8px 0 4px}
-        .fh-contract-row{display:flex;align-items:stretch;gap:12px;padding:12px 16px;cursor:pointer;border-radius:6px;transition:background .12s;outline:none}
-        .fh-contract-row:hover,.fh-contract-row:focus{background:rgba(255,255,255,.06)}
-        .fh-contract-row-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
-        .fh-contract-row-badges{display:flex;flex-wrap:wrap;gap:4px}
-        .fh-contract-row-name{font-size:.9rem;font-weight:600;color:#fff;line-height:1.3}
-        .fh-contract-row-desc{font-size:.78rem;color:rgba(255,255,255,.5);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-        .fh-contract-row-footer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px}
-        .fh-contract-row-meta{display:flex;flex-wrap:wrap;gap:8px}
-        .fh-contract-row-tags{display:flex;flex-wrap:wrap;gap:4px}
-        .fh-contract-row-rep{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;flex-shrink:0}
-        .fh-contract-rep-badge{background:rgba(255,255,255,.1);color:var(--faction-color);font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
-        .fh-contract-row-arrow{opacity:.3;flex-shrink:0}
-        .fh-contract-row:hover .fh-contract-row-arrow{opacity:.7}
-        .fh-upgrade-category-group{margin-bottom:12px}
-        .fh-upgrade-category-header{display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.06em;padding:8px 0 6px;border-bottom:1px solid rgba(255,255,255,.07)}
-        .fh-upgrade-category-header svg{opacity:.6}
-        .fh-upgrade-category-count{margin-left:auto;background:rgba(255,255,255,.1);border-radius:99px;font-size:.65rem;padding:1px 7px;color:rgba(255,255,255,.6)}
-        .fh-upgrade-row{display:flex;flex-direction:column;gap:2px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)}
-        .fh-upgrade-row:last-child{border-bottom:none}
-        .fh-upgrade-row-info{display:flex;align-items:center;gap:6px}
-        .fh-upgrade-row-name{font-size:.83rem;font-weight:500;color:rgba(255,255,255,.85)}
-        .fh-upgrade-row-desc{font-size:.75rem;color:rgba(255,255,255,.45);line-height:1.35}
-        .fh-empty-note{font-size:.82rem;color:rgba(255,255,255,.35);padding:12px 0}
-    </style>
-
 </head>
 <body>
     
@@ -158,12 +112,6 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
                             Emblems
                         </a>
-                        <div class="nav-dropdown-divider"></div>
-                        <span class="nav-dropdown-label">Cross-Promotion</span>
-                        <a href="/marathon/pages/cosmetics-destiny2" class="nav-dropdown-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-                            Destiny 2 Items
-                        </a>
                     </div>
                 </div>
 
@@ -190,10 +138,6 @@
                             Tier Lists
                         </a>
                         <div class="nav-dropdown-divider"></div>
-                        <a href="/marathon/news/" class="nav-dropdown-item">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
-                            News
-                        </a>
                         <a href="/population/" class="nav-dropdown-item">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
                             Population
@@ -449,7 +393,6 @@
                     <a href="/marathon/weapon-skins/" class="footer-link">Skins</a>
                     <a href="/marathon/tier-lists/" class="footer-link">Tier Lists</a>
                     <a href="/marathon/marathon-pc-requirements/" class="footer-link">PC Requirements</a>
-                    <a href="/marathon/news/" class="footer-link">News</a>
                 </div>
                 <div class="footer-social">
                     <a href="https://x.com/MarathonDB" target="_blank" rel="noopener noreferrer" class="footer-social-link" title="X/Twitter">

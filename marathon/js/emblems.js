@@ -70,6 +70,15 @@ function emblemImageUrl(emblem) {
 // ─── API ──────────────────────────────────────────────────
 
 async function fetchEmblems() {
+    // Try build-time prefetch.json first (avoids live API call)
+    try {
+        const prefetchRes = await fetch('/marathon/emblems/prefetch.json', { cache: 'force-cache' });
+        if (prefetchRes.ok) {
+            const arr = await prefetchRes.json();
+            if (Array.isArray(arr) && arr.length) return arr;
+        }
+    } catch { /* fall through to live API */ }
+
     const res = await fetch(`${EMBLEMS_API}/api/emblems`);
     if (!res.ok) throw new Error(`API ${res.status}`);
     const json = await res.json();

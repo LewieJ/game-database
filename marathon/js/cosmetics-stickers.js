@@ -37,6 +37,12 @@ function formatCountdown(ms) {
 // API Base
 const API_BASE = 'https://weaponstickers.marathondb.gg';
 
+// URL param for deep-linking into a sticker modal
+const STICKER_URL_PARAM = 'sticker';
+
+// Slug → sticker lookup (populated after load)
+let stickerBySlug = {};
+
 // DOM Elements
 const elements = {
     loadingState: null,
@@ -45,7 +51,9 @@ const elements = {
     emptyState: null,
     searchInput: null,
     totalCount: null,
-    resultsCount: null
+    resultsCount: null,
+    itemModal: null,
+    modalContent: null
 };
 
 /**
@@ -64,6 +72,10 @@ async function init() {
             badge.textContent = `⏱ ENDS ${formatCountdown(ms)}`;
         });
     }, 1000);
+
+    // Open modal if URL has a sticker param
+    const slugFromUrl = new URLSearchParams(window.location.search).get(STICKER_URL_PARAM);
+    if (slugFromUrl) openStickerModal(slugFromUrl, true);
 }
 
 /**
@@ -77,6 +89,8 @@ function cacheElements() {
     elements.searchInput = document.getElementById('searchInput');
     elements.totalCount = document.getElementById('totalCount');
     elements.resultsCount = document.getElementById('resultsCount');
+    elements.itemModal = document.getElementById('itemModal');
+    elements.modalContent = document.getElementById('modalContent');
 }
 
 /**
@@ -109,21 +123,72 @@ function setupEventListeners() {
     document.getElementById('clearFilters')?.addEventListener('click', resetFilters);
     document.getElementById('resetFilters')?.addEventListener('click', resetFilters);
 
+    // Grid click delegation — open modal on card click
+    const grid = document.getElementById('stickersGrid');
+    if (grid) {
+        grid.addEventListener('click', (e) => {
+            if (e.target.closest('.cw-heat-emoji')) return;
+            const card = e.target.closest('[data-slug]');
+            if (!card?.dataset.slug) return;
+            if (e.metaKey || e.ctrlKey) return; // let browser open in new tab
+            e.preventDefault();
+            openStickerModal(card.dataset.slug);
+        });
+        grid.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            if (e.target.closest('.cw-heat-emoji')) return;
+            const card = e.target.closest('[data-slug]');
+            if (!card?.dataset.slug) return;
+            e.preventDefault();
+            openStickerModal(card.dataset.slug);
+        });
+    }
+
+    // Modal close handlers
+    document.getElementById('closeModal')?.addEventListener('click', closeModal);
+    elements.itemModal?.addEventListener('click', (e) => {
+        if (e.target === elements.itemModal) closeModal();
+    });
+
     // Escape key
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            // Close any modals if needed
-        }
+        if (e.key === 'Escape') closeStickerModal();
+    });
+
+    // Browser back/forward
+    window.addEventListener('popstate', () => {
+        const slug = new URLSearchParams(window.location.search).get(STICKER_URL_PARAM);
+        if (slug) openStickerModal(slug, true);
+        else closeStickerModal(true);
     });
 }
 
 /**
- * Load stickers from API
+ * Try loading stickers from a build-time prefetch.json (avoids live API call).
+ * Returns an array on success, null on any failure.
+ */
+async function tryLoadStickersPrefetch() {
+    try {
+        const res = await fetch('/marathon/stickers/prefetch.json', { cache: 'force-cache' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return Array.isArray(data) && data.length ? data : null;
+    } catch { return null; }
+}
+
+/**
+ * Load stickers from prefetch.json, falling back to live API
  */
 async function loadStickers() {
     try {
-        const response = await fetch(`${API_BASE}/api/stickers`);
-        const data = await response.json();
+        let rawData = await tryLoadStickersPrefetch();
+        let data;
+        if (rawData) {
+            data = { success: true, data: rawData };
+        } else {
+            const response = await fetch(`${API_BASE}/api/stickers`);
+            data = await response.json();
+        }
 
         if (data.success && data.data) {
             allStickers = data.data.map(sticker => ({
@@ -135,6 +200,9 @@ async function loadStickers() {
             }));
             
             filteredStickers = [...allStickers];
+
+            // Build slug lookup for modal
+            allStickers.forEach(s => { stickerBySlug[s.slug] = s; });
 
             updateStats();
             populateFilters();
@@ -358,7 +426,7 @@ function renderStickerCard(sticker) {
         : '';
 
     return `
-        <a href="${getStickerDetailUrl(sticker.slug)}" class="cw-skin-card sticker-card-simple" data-rarity="${sticker.rarity}"${isUnavailable ? ' data-unavailable' : ''}>
+        <a href="${getStickerDetailUrl(sticker.slug)}" class="cw-skin-card sticker-card-simple" data-rarity="${sticker.rarity}" data-slug="${sticker.slug}"${isUnavailable ? ' data-unavailable' : ''}>
             <div class="cw-skin-image">
                 ${imageUrl ? `
                     <img src="${lowResUrl}" 
@@ -557,3 +625,108 @@ function debounce(func, wait) {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', init);
+
+// ─── Modal ────────────────────────────────────────────────────────────────────
+
+function openStickerModal(slug, skipPush) {
+    const sticker = stickerBySlug[slug];
+    if (!sticker || !elements.itemModal || !elements.modalContent) return;
+
+    if (!skipPush) {
+        const url = new URL(window.location.href);
+        url.searchParams.set(STICKER_URL_PARAM, slug);
+        history.pushState({ stickerSlug: slug }, '', url);
+    }
+
+    elements.itemModal.classList.add('active');
+    elements.itemModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    renderStickerModalContent(sticker);
+}
+
+function closeStickerModal(skipPush) {
+    if (!elements.itemModal?.classList.contains('active')) return;
+    elements.itemModal.classList.remove('active');
+    elements.itemModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (!skipPush) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete(STICKER_URL_PARAM);
+        const qs = url.searchParams.toString();
+        history.pushState({}, '', url.pathname + (qs ? `?${qs}` : ''));
+    }
+}
+
+// Alias used by close button handler
+function closeModal() { closeStickerModal(); }
+
+function renderStickerModalContent(sticker) {
+    const imageUrl = sticker.image_url
+        ? (sticker.image_url.startsWith('http') ? sticker.image_url : `${API_BASE}${sticker.image_url}`)
+        : '';
+    const isUnavailable = sticker.is_available === false;
+    const rarity = sticker.rarity || 'common';
+    const factionRow = sticker.faction_name
+        ? `<div class="skin-modal-meta-row"><span class="skin-modal-meta-label">Faction</span><span>${escapeHtml(sticker.faction_name)}</span></div>`
+        : '';
+    const availRow = isUnavailable
+        ? `<div class="skin-modal-meta-row skin-modal-meta-row--warn"><span class="skin-modal-meta-label">Availability</span><span>No longer available</span></div>`
+        : '';
+    const acqRow = sticker.acquisition_summary
+        ? `<div class="skin-modal-section"><h4>How to Get</h4><p class="acq-detail">${escapeHtml(sticker.acquisition_summary)}</p></div>`
+        : '';
+    const shareUrl = (() => {
+        const u = new URL(window.location.href);
+        u.searchParams.set(STICKER_URL_PARAM, sticker.slug);
+        return u.toString();
+    })();
+
+    elements.modalContent.innerHTML = `
+        <div class="skin-modal-grid">
+            <div class="skin-modal-gallery">
+                <div class="skin-modal-main-image" data-rarity="${rarity}">
+                    ${imageUrl
+                        ? `<img src="${imageUrl}" alt="${escapeHtml(sticker.name)}" loading="lazy">`
+                        : `<div class="cw-skin-placeholder"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>`}
+                </div>
+            </div>
+            <div class="skin-modal-details">
+                <div class="skin-modal-header">
+                    <span class="skin-modal-rarity rarity-${rarity}">${rarity.toUpperCase()}</span>
+                </div>
+                <h2 class="skin-modal-title">${escapeHtml(sticker.name)}</h2>
+                ${factionRow}
+                ${availRow}
+                ${sticker.description ? `<p class="skin-modal-description">${escapeHtml(sticker.description)}</p>` : ''}
+                ${acqRow}
+                <div class="skin-modal-actions skin-modal-actions--split">
+                    <button type="button" class="modal-action-btn primary" id="stickerModalCopyLink">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                        <span class="sticker-modal-copy-label">Copy link</span>
+                    </button>
+                    <a href="${escapeHtml(getStickerDetailUrl(sticker.slug))}" class="modal-action-btn modal-action-btn--ghost">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/></svg>
+                        Full page
+                    </a>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const copyBtn = elements.modalContent.querySelector('#stickerModalCopyLink');
+    const copyLabel = copyBtn?.querySelector('.sticker-modal-copy-label');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(shareUrl);
+                if (copyLabel) {
+                    const prev = copyLabel.textContent;
+                    copyLabel.textContent = 'Copied!';
+                    setTimeout(() => { copyLabel.textContent = prev; }, 1600);
+                }
+            } catch (_) {
+                window.prompt('Copy link:', shareUrl);
+            }
+        });
+    }
+}
