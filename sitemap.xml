@@ -3,2581 +3,2563 @@
   <!-- Canonical: https://gdb.gg (apex). Homepage + /pages/ + /marathon/. Re-run: node scripts/build-sitemap.js -->
   <url>
     <loc>https://gdb.gg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://gdb.gg/marathon/auth/create-account/</loc>
-    <lastmod>2026-04-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://gdb.gg/marathon/auth/settings/</loc>
-    <lastmod>2026-04-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://gdb.gg/marathon/authors/chandler-bellgrave/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/active-trespasser/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/agricultural-enthusiast/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/amplify/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/apogee-intercept/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/arachene-operative/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/baseline-calibration/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/breach-protocol/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/crash-casket/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/cyac-operative/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/cyber-red/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/cyro/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/desperate-escape/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/echo-pulse/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/errdooor/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/greetings-salutations/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/horde-mentality/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/jagged-purpose/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/luxe-palace/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/marsh-runner/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/mida-operative/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/nucal-operative/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/outpost-runner/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/overdrive-tsl/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/perimeter-runner/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/pickpocket-drone/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/pink-graffiti-bingus/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/protosynth/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/reboot-plus/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/ruthless-survivor/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/sacrificer/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/scavenger/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/search-and-destroy/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/sekgen-operative/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/smoke-screen/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/the-get-back/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/traxus-operative/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/weaveworm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/white-rabbit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/backgrounds/zero-step/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/charms/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/charms/battle-guitar-charm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/charms/crowbar-charm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/charms/emerald-catch-charm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/charms/emerald-clutch-charm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/charms/for-freedom-charm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/charms/onryo-charm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/charms/zero-step-rc-charm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/complete-loadout-builder/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/contracts/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/contracts/friction-2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/contracts/introducing-nucaloric/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/contracts/inventory-control-1/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/cores/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/cores/assassin/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/cores/destroyer/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/cores/recon/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/cores/thief/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/cores/triage/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/cores/vandal/</loc>
-    <lastmod>2026-04-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://gdb.gg/marathon/discord-bot/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/editorial-policy/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/emblems/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/arachne/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/cyberacme/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/mida/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/nucaloric/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/nucaloric/contracts/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/nucaloric/contracts/introducing-nucaloric/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/sekiguchi/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/sekiguchi/contracts/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/sekiguchi/contracts/friction-2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/traxus/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/traxus/contracts/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/factions/traxus/contracts/inventory-control-1/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/implants/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/implants/traits/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/16xs-base-pack/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/24xs-base-pack/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/24xs-med-pack-plus/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/8xs-base-pack/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/8xs-med-pack/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/advanced-mechanics-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/advanced-os-reboot/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/advanced-patch-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/advanced-shield-charge/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/augmented-capacitors-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/augmented-capacitors-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/bionic-leg-upgrades-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/bionic-leg-upgrades-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/bionic-leg-upgrades-v4/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/bionic-leg-upgrades-v5/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/broken-alarm-system/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/bubble-shield/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/cardio-kick/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/cetinite-rods/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/chem-grenade/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/claymore-mine/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/combat-grip-deluxe/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/combat-grip-enhanced/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/combat-xerogel/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/credits/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/deimosite-rods/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/distance-runner-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/emp-grenade/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/energy-amp/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/energy-harvesting-v1/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/energy-harvesting-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/energy-harvesting-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/enhanced-arachne-sponsored-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/enhanced-cyberacme-sponsored-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/enhanced-mida-sponsored-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/enhanced-nucaloric-sponsored-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/enhanced-sekiguchi-sponsored-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/enhanced-traxus-sponsored-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/extended-feather-mag/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/far-reach-optic/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/flash-draw-chip/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/flechette-grenade/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/frag-grenade/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/graceful-landings-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/graceful-landings-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/heat-grenade/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/heavy-rounds/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/hec/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/helping-hands-v1/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/helping-hands-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/helping-hands-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/hollow-case-rounds-deluxe/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/hollow-case-rounds-enhanced/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/hurting-hands-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/hurting-hands-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/keen-scout-chip/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/kinetic-resistance-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/knife-fight-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/knife-fight-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/lab-xerogel/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/large-med-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/light-rounds/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/lost-contract-traxus/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/medium-med-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/midsight-optic-deluxe/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/midsight-optic-enhanced/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/mips/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/motionsense-chip/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/nimble-fingers-v5/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/north-relay-storage/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/ornithologist/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/os-reboot/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/panacea-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/patch-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/ping-plus-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/precision-barrel/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/protector-v1/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/protector-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/protector-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/proximity-sensor/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/purchasable/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/ranked-rewards/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/reclaimed-biostripping/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/regen-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/regen-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/self-revive/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/shell-id/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/shield-booster/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/shield-charge/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/small-med-kit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/smoke-grenade/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/sterilized-biostripping/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/storage-drive/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/survival-kit-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/survival-kit-v3/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/tapered-heatsink/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/torch-bug/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/trap-pack/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/volt-battery/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/volt-cell/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/items/volt-resistance-v2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/loadout-builder/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/maps/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/marathon-pc-requirements/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/mods/</loc>
-    <lastmod>2026-04-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://gdb.gg/marathon/news/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/cryo-archive-goes-live-march-20/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/marathon-duos-mode-coming-to-perimeter/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/marathon-launch-times/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/marathon-networking-and-security/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/marathon-rewards-pass-s1-update/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/marathon-server-slam-go-live-times/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/marathon-server-slam-live-how-to-download/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/marathon-shadow-index-runner-skin-collection-revealed/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/marathon-update-1-0-0-4-patch-notes/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/marathon-update-1-0-5-patch-notes/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/playstation-plus-exclusive-marathon-weapon-charms/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/steam-exclusive-crowbar-marathon-weapon-charm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/news/xbox-exclusive-minecraft-marathon-weapon-charms/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/about/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/beta.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/contact/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/contract.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cookie-policy.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/core.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cores.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic-background.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic-charm.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic-emblem.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic-sticker.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic-weapon.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetic.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-backgrounds.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-charms.html</loc>
-    <lastmod>2026-04-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
-    <loc>https://gdb.gg/marathon/pages/cosmetics-destiny2.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-emblems.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-runners.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-stickers.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/cosmetics-weapons.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/faction.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/factions.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/item.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/items.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/mod.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/mods.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/privacy-policy/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/runner.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/runners.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/search.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/terms-and-conditions/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/twitch.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/weapon.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/pages/weapons.html</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/population/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runner-loadout-builder/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runner-skins/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runner-skins/assassin/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runner-skins/destroyer/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runner-skins/recon/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runner-skins/rook/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runner-skins/thief/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runner-skins/triage/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runner-skins/vandal/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runners/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runners/assassin/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runners/destroyer/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runners/recon/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runners/rook/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runners/thief/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runners/tier-list/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runners/triage/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/runners/vandal/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/servers/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/stickers/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/stickers/cryo/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/stickers/glowworm-sticker/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/stickers/pink-graffiti-bingus/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/stickers/smol-k-i-t-t-y/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/stickers/zero-step-shift-sticker/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/tier-lists/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-loadout-builder/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/AMR 2442/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/AZAZEL MELEE/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/Achromatic Rush Impact H AR/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/Achromatic Rush Pistol/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/AcromaticrushSMG/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/CYANOSIS MELEE/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gdb.gg/marathon/weapon-skins/Tresspass Protocol Knife/</loc>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/abyss-sunrise/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/achromatic-rush/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/anti-caution/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/ares-rg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/azazel/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/b33-volley-rifle/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/backstabber/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/blank-slate/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/brrt-smg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/brute-force/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/bubble-pop/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/bully-smg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/callous-embrace/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/canary-breeze/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/carbon bloom melee/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/carbon-bloom/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/casual-flex/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/caution/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/ce-tactical-sidearm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/concrete-green/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/conquest-lmg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/copperhead-rf/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/crash-casket/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/cryo-shift/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/cryo/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/cyanosis/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/cyber-red/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/deconstruction/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/deep-blue/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/demolition-hmg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/emergency-action-plan/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/exodus-red/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/exodus-sunset/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/expanse/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/expiration-matrix/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/fineline-xs/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/finish-line/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/flinch/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/footnote-5/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/fresh-cut/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/glacial-strafe/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/goes-boom/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/greenthumb/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/hard-targeter-2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/hard-targeter/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/hardhat/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/hardline-pr/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/heavy-metal/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/heavy-payload/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/horde-engine/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/hotswap/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/impact-har/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/kniferunner/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/limelight/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/longshot/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/luxe-palance/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/m77-assault-rifle/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/magnum-mc/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/melee/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/midnight-decay-misriah-2442/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/midnight-decay-misriah2442-skin/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/midnight-decay-overrun-ar-skin/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/midnight-decay-overrun-ar/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/midnight-doc/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/midnight-illuminator/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/mint-condition/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/misriah-2442/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/no-harm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/optimized-hc/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/outland/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/overdrive-tsl/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/overrun-ar/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/paladin/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/passive-impact/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/passive-rose/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/past-scraper/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/pink-mist/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/plume-tactics/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/protosynth/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/redline/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/refresh-resist/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/repeater-hpr/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/retaliator-lmg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/riot-blue/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/shadow-index-alt/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/shadow-index/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/simply-black/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/small-fire/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/solid-plume/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/strategic-hc/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/stryder-m1t/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/subtle-impact/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/success/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/syntax-disrupt/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/tactical-black/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/toolkit/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://gdb.gg/marathon/weapon-skins/trespass-protocol/</loc>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/twin-tap-hbr/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/twitch-engine-demolition-hmg-skin/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/twitch-engine/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/utility-basic-2/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/utility-basic/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/v00-zeus-rg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/v11-punch/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/v22-volt-thrower/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/v66-lookout/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/v75-scar/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/v85-circuit-breaker/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/v99-channel-rifle/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/versatile-abyss/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/vibrant-sport/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/white-and-purple/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/winner-winner/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/winter-blitz/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/wstr-combat-shotgun/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/zero-step-004-ce-tactical-sidearm-skin/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapon-skins/zero-step-004-ce-tactical-sidearm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/ares-rg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/b33-volley-rifle/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/biotoxic-disinjector/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/brrt-smg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/bully-smg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/ce-tactical-sidearm/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/conquest-lmg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/copperhead-rf/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/demolition-hmg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/drrvish/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/hardline-pr/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/impact-har/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/longshot/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/m77-assault-rifle/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/m77-omnipositor/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/magnum-mc/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/melee/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/misriah-2442/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/outland/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/overrun-ar/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/repeater-hpr/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/retaliator-lmg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/salt-wages/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/stryder-m1t/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/tier-list/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/twin-tap-hbr/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/v00-zeus-rg/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/v11-punch/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/v22-volt-thrower/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/v66-lookout/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/v75-scar/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/v85-circuit-breaker/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/v85-free-tail/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/v95-lookout/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/v99-channel-rifle/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/v99-watchtower/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/marathon/weapons/wstr-combat-shotgun/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://gdb.gg/pages/about/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/pages/contact/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/pages/privacy-policy/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://gdb.gg/pages/terms-and-conditions/</loc>
-    <lastmod>2026-04-03</lastmod>
+    <lastmod>2026-04-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.65</priority>
   </url>
