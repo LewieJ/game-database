@@ -1,0 +1,114 @@
+/* ============================================
+   GDB.GG — Cookie Consent Banner
+   GDPR-compliant consent UI
+   ============================================ */
+
+#gdb-cookie-banner {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 99999;
+    background: rgba(8, 8, 12, 0.97);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 14px 24px;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.82rem;
+    color: rgba(220, 220, 230, 0.82);
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.45);
+}
+
+#gdb-cookie-banner.gdb-consent-visible {
+    display: flex;
+}
+
+/* Push mobile bottom nav up above the banner when both are present */
+.mobile-bottom-nav {
+    bottom: var(--gdb-consent-height, 0px);
+}
+
+.gdb-cookie-text {
+    flex: 1;
+    min-width: 200px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.gdb-cookie-text a {
+    color: rgba(94, 234, 212, 0.9);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.gdb-cookie-text a:hover {
+    color: #5eead4;
+}
+
+.gdb-cookie-buttons {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.gdb-cookie-btn {
+    padding: 8px 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-family: inherit;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.gdb-cookie-btn--secondary {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.18);
+    color: rgba(220, 220, 230, 0.65);
+}
+
+.gdb-cookie-btn--secondary:hover {
+    border-color: rgba(255, 255, 255, 0.35);
+    color: rgba(220, 220, 230, 1);
+}
+
+.gdb-cookie-btn--primary {
+    background: #5eead4;
+    color: #050508;
+    border-color: #5eead4;
+}
+
+.gdb-cookie-btn--primary:hover {
+    background: #4dd9c3;
+    border-color: #4dd9c3;
+}
+
+@media (max-width: 600px) {
+    #gdb-cookie-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+        padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        gap: 12px;
+    }
+
+    .gdb-cookie-buttons {
+        width: 100%;
+    }
+
+    .gdb-cookie-btn {
+        flex: 1;
+        text-align: center;
+    }
+}

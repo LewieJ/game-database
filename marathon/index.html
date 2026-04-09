@@ -4,16 +4,18 @@
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="MarathonDB — the community database for Bungie's Marathon. Browse weapons, runners, cores, items, mods, maps, and cosmetics. Free on Steam, PS5, and Xbox.">
-    <meta name="keywords" content="MarathonDB, Marathon game database, Marathon game, Bungie Marathon, Marathon weapons, Marathon guns, Marathon runners, Marathon items, Marathon mods, Marathon factions, Marathon cores, Marathon implants, Marathon loadout builder, Marathon tier list, Marathon weapon skins, Marathon runner skins, Marathon cosmetics, Marathon free to play, Marathon PS5, Marathon Xbox, Marathon Steam, Marathon cross-play, Marathon extraction shooter">
     <meta name="author" content="GDB.GG Marathon">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-    
+
     <!-- Open Graph Tags -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://gdb.gg/marathon/">
     <meta property="og:title" content="GDB.GG Marathon — The Marathon Game Database">
     <meta property="og:description" content="Community database for Marathon by Bungie. Browse weapons, runners, items, mods, factions, and cosmetics. Free on Steam, PS5, and Xbox.">
-    <meta property="og:image" content="https://gdb.gg/assets/icons/marathon.svg">
+    <meta property="og:image" content="https://gdb.gg/assets/og-default.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="GDB.GG Marathon — The Marathon Game Database">
     <meta property="og:site_name" content="GDB.GG Marathon">
     <meta property="og:locale" content="en_US">
     
@@ -22,7 +24,7 @@
     <meta name="twitter:url" content="https://gdb.gg/marathon/">
     <meta name="twitter:title" content="GDB.GG Marathon — The Marathon Game Database">
     <meta name="twitter:description" content="The complete Marathon database — weapons, runners, items, mods, and more. Free on Steam, PS5, and Xbox.">
-    <meta name="twitter:image" content="https://gdb.gg/assets/icons/marathon.svg">
+    <meta name="twitter:image" content="https://gdb.gg/assets/og-default.png">
     
     <!-- Additional SEO -->
     <meta name="theme-color" content="#d4ff00">
@@ -72,8 +74,13 @@
     }
     </script>
 
-      <script src="/marathon/js/unified-site-nav.js" defer></script>
-<link rel="stylesheet" href="/marathon/css/rnk-theme.css">
+    <link rel="stylesheet" href="/marathon/css/rnk-theme.css">
+    <link rel="stylesheet" href="/assets/cookie-consent.css">
+    <!-- GDPR: set non-personalised-ads flag before AdSense script loads -->
+    <script>!function(){try{var c=localStorage.getItem('gdb_consent'),t=Intl.DateTimeFormat().resolvedOptions().timeZone||'',eu=/^Europe\/|^Atlantic\/(Canary|Faroe|Madeira)|^Arctic\/Longyearbyen/.test(t);if(c==='essential'||(!c&&eu)){window.adsbygoogle=window.adsbygoogle||[];window.adsbygoogle.requestNonPersonalizedAds=1;}}catch(e){}}();</script>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1865737750178944" crossorigin="anonymous"></script>
+    <script src="/marathon/js/unified-site-nav.js" defer></script>
 </head>
 <body>
 <div class="rnk-site-rail"><a href="/marathon/" class="rnk-site-rail__brand">Marathon</a></div>
@@ -605,5 +612,8 @@
         })();
 
     </script>
+    <!-- Cookie consent banner -->
+    <div id="gdb-cookie-banner" role="dialog" aria-label="Cookie preferences" aria-live="polite"></div>
+    <script src="/assets/cookie-consent.js" defer></script>
 </body>
 </html>

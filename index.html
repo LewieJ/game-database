@@ -12,9 +12,11 @@
     <title>GDB.GG — Game Database · Marathon &amp; more</title>
     <link rel="canonical" href="https://gdb.gg/" />
     <link rel="icon" href="assets/icons/gdb-mark.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/icons/gdb-mark.svg" />
 
-    <!-- After claiming the site: paste verification codes from Google Search Console and Bing Webmaster Tools. -->
+    <!-- Google Search Console: replace YOUR_GOOGLE_CODE with the value from https://search.google.com/search-console -->
     <!-- <meta name="google-site-verification" content="YOUR_GOOGLE_CODE" /> -->
+    <!-- Bing Webmaster Tools: replace YOUR_BING_CODE with the value from https://www.bing.com/webmasters -->
     <!-- <meta name="msvalidate.01" content="YOUR_BING_CODE" /> -->
 
     <meta property="og:type" content="website" />
@@ -68,6 +70,11 @@
     />
     <link rel="stylesheet" href="assets/global.css" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="assets/cookie-consent.css" />
+    <!-- GDPR: set non-personalised-ads flag before AdSense script loads -->
+    <script>!function(){try{var c=localStorage.getItem('gdb_consent'),t=Intl.DateTimeFormat().resolvedOptions().timeZone||'',eu=/^Europe\/|^Atlantic\/(Canary|Faroe|Madeira)|^Arctic\/Longyearbyen/.test(t);if(c==='essential'||(!c&&eu)){window.adsbygoogle=window.adsbygoogle||[];window.adsbygoogle.requestNonPersonalizedAds=1;}}catch(e){}}();</script>
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1865737750178944" crossorigin="anonymous"></script>
   </head>
   <body class="page-home-landing">
     <div id="global-nav"></div>
@@ -165,5 +172,8 @@
 
     <script src="assets/global.js" defer></script>
     <script src="script.js" defer></script>
+    <!-- Cookie consent banner -->
+    <div id="gdb-cookie-banner" role="dialog" aria-label="Cookie preferences" aria-live="polite"></div>
+    <script src="assets/cookie-consent.js" defer></script>
   </body>
 </html>
