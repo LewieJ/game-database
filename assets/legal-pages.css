@@ -3,8 +3,11 @@
    Shared styling for /pages/*
    ============================================ */
 
+html[data-rnk-platform],
 html[data-rnk-platform] body {
+  background: #0f1419;
   color: var(--text-primary, #e8eaed);
+  min-height: 100%;
 }
 
 .legal-wrap {

@@ -45,8 +45,8 @@
         return pathOnly + hash;
     }
 
-    function marathonNavIcon() {
-        return '<img src="' + siteHref('/assets/icons/marathon.svg') + '" style="width: 14px; height: 14px;" alt="Marathon">';
+    function gdbNavIcon() {
+        return '<img src="' + siteHref('/assets/icons/gdb-mark.svg') + '" style="width: 14px; height: 14px;" alt="GDB.GG">';
     }
 
     // Determine active section based on URL
@@ -61,9 +61,10 @@
         return null;
     }
 
-    // Platform links (slim top bar — brand is “home”). Only surfaces titles with live APIs.
+    // Platform links pointing to external project sites
     const PLATFORM_LINKS = [
-        { id: 'marathon', path: '/marathon/', label: 'Marathon' }
+        { id: 'marathon', path: 'https://marathondb.gg/', label: 'Marathon DB', external: true },
+        { id: 'gta6', path: 'https://gta6central.gg/', label: 'GTA 6 Central', external: true }
     ];
 
     const HOME_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>';
@@ -71,14 +72,18 @@
     function platformNavItemDesktop(link, activeSection) {
         var isActive = activeSection === link.id ? ' active' : '';
         var label = '<span class="master-nav-label">' + link.label + '</span>';
-        return '<a href="' + siteHref(link.path) + '" class="nav-' + link.id + isActive + '" data-platform="' + link.id + '">' +
+        var href = link.external ? link.path : siteHref(link.path);
+        var target = link.external ? ' target="_blank" rel="noopener noreferrer"' : '';
+        return '<a href="' + href + '"' + target + ' class="nav-' + link.id + isActive + '" data-platform="' + link.id + '">' +
             link.iconHtml + label + '</a>';
     }
 
     function platformNavItemMobile(link, activeSection) {
         var isActive = activeSection === link.id ? ' active' : '';
+        var href = link.external ? link.path : siteHref(link.path);
+        var target = link.external ? ' target="_blank" rel="noopener noreferrer"' : '';
         var inner = link.iconHtml + '<span>' + link.label + '</span>';
-        return '<a href="' + siteHref(link.path) + '" class="nav-' + link.id + isActive + '">' + inner + '</a>';
+        return '<a href="' + href + '"' + target + ' class="nav-' + link.id + isActive + '">' + inner + '</a>';
     }
 
     // Generate navbar HTML (Tracker-style single compact row)
@@ -86,18 +91,14 @@
         const activeSection = getActiveSection();
 
         const platformLinksResolved = PLATFORM_LINKS.map(function (l) {
-            return { id: l.id, path: l.path, label: l.label, iconHtml: marathonNavIcon() };
+            return { id: l.id, path: l.path, label: l.label, external: l.external, iconHtml: gdbNavIcon() };
         });
 
         const platformsHTML = platformLinksResolved.map(function (link) {
             return platformNavItemDesktop(link, activeSection);
         }).join('');
 
-        const homeAnchors = activeSection === 'home'
-            ? '<div class="master-nav-anchors" aria-label="Sections">' +
-              '<a href="' + siteHref('/#games') + '">Games</a>' +
-              '</div>'
-            : '';
+        const homeAnchors = '';
 
         const mobileItems = [{ id: 'home', path: '/', label: 'Home', iconHtml: HOME_ICON }].concat(platformLinksResolved);
         const mobileLinksHTML = mobileItems.map(function (link) {
